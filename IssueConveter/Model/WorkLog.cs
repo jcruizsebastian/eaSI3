@@ -1,10 +1,10 @@
 ﻿using System;
 
-namespace Jira
+namespace IssueConveter.Model
 {
     public class WorkLog
     {
-        public JiraWorkLog.Author Author { get; set; }
+        public string Author { get; set; }
         public string TimeSpent { get; set; }
         public int TimeSpentSeconds { get; set; }
         public string Comment { get; set; }

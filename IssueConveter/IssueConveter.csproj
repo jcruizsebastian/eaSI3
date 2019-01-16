@@ -5,12 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="RestSharp" Version="106.5.4" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\IssueConveter\IssueConveter.csproj" />
     <ProjectReference Include="..\Jira\Jira.csproj" />
+    <ProjectReference Include="..\SI3\SI3.csproj" />
   </ItemGroup>
 
 </Project>

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using JiraConnector;
 using Microsoft.AspNetCore.Mvc;
+using IssueConveter.Model;
 
 namespace eaSI3Web.Controllers
 {
@@ -21,7 +22,7 @@ namespace eaSI3Web.Controllers
             //return new List<WeekJiraIssues>() { new WeekJiraIssues() { Fecha = DateTime.Today.ToString("dd/MM/yyyy"), Issues = new List<WeekJiraIssues.JiraIssues>(){ new WeekJiraIssues.JiraIssues() { IssueId = "Hola", Tiempo = 2.5, Titulo = "Tarea 1" }, new WeekJiraIssues.JiraIssues() { IssueId = "Hola", Tiempo = 5, Titulo = "Tarea 2" } } }  };
         }
 
-        public static IEnumerable<WeekJiraIssues> Convert(List<Jira.WorkLog> worklog)
+        public static IEnumerable<WeekJiraIssues> Convert(List<WorkLog> worklog)
         {
             List<WeekJiraIssues> weekJiraIssues = new List<WeekJiraIssues>();
 

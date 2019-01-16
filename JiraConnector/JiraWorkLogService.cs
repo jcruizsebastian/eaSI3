@@ -1,8 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using IssueConveter;
+using IssueConveter.Model;
 using Jira;
 using RestSharp;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace JiraConnector
 {
@@ -36,7 +38,7 @@ namespace JiraConnector
                 workLog.AddRange(GetWorkLog(issue.id));
             }
 
-            workLog.RemoveAll(x => (x.RecordDate < startOfWeek || x.RecordDate > endOfWeek) || x.Author.key != _username);
+            workLog.RemoveAll(x => (x.RecordDate < startOfWeek || x.RecordDate > endOfWeek) || x.Author != _username);
 
             foreach (var log in workLog)
             {
@@ -60,7 +62,7 @@ namespace JiraConnector
             if (response == null || response.Data == null)
                 throw new Exception("Error with : " + key);
 
-            return ConvertToWorklog(response.Data);
+            return JiraConverter.ConvertWorklog(response.Data);
         }
 
         public Issue GetIssue(string key)
@@ -72,27 +74,9 @@ namespace JiraConnector
             if (response == null || response.Data == null)
                 throw new Exception("Error with : " + key);
 
-            return ConvertToJiraIssue(response.Data);
+            return JiraConverter.ConvertIssue(response.Data);
         }
 
-        private Issue ConvertToJiraIssue(JiraIssue data)
-        {
-            return new Issue() { Key = data.key, Summary= data.fields.summary };
-        }
-
-        private List<WorkLog> ConvertToWorklog(JiraWorkLog data)
-        {
-            var worklogs = new List<WorkLog>();
-
-            foreach (var log in data.worklogs)
-            {
-                var worklog = new WorkLog() { IssueId = log.issueId, Author = log.author, TimeSpentSeconds = log.timeSpentSeconds, TimeSpent = log.timeSpent, Comment = log.comment, RecordDate = log.started };
-
-                worklogs.Add(worklog);
-            }
-
-            return worklogs;
-        }
 
         private IRestResponse<T> DoJiraRequest<T>(string queryStringRequest) where T : new()
         {
@@ -109,7 +93,7 @@ namespace JiraConnector
         public static string Base64Encode(string plainText)
         {
             var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
-            return System.Convert.ToBase64String(plainTextBytes);
+            return Convert.ToBase64String(plainTextBytes);
         }
     }
 }
