@@ -18,17 +18,15 @@ namespace SI3Connector
         public SI3Service(string username, string password)
         {
             this.username = username;
-            this.password = password;
-
-            
+            this.password = password;           
         }
 
         public async Task<string> Login()
         {
-            var dict = new Dictionary<string, string>();
-            dict.Add("user", username);
-            dict.Add("pwd", password);
-            dict.Add("DSN", "GESOPENFINANCE");
+            var x_www_form_url_encoded = new Dictionary<string, string>();
+            x_www_form_url_encoded.Add("user", username);
+            x_www_form_url_encoded.Add("pwd", password);
+            x_www_form_url_encoded.Add("DSN", "GESOPENFINANCE");
 
             var request = new HttpRequestMessage(HttpMethod.Post, "http://si3.infobolsa.es/si3/asp/identificacion.asp");
             request.Headers.Add("cache-control", "no-cache");
@@ -36,9 +34,8 @@ namespace SI3Connector
             request.Headers.Add("Accept", "*/*");
             request.Headers.Add("accept-encoding", "gzip, deflate");
             request.Headers.Add("Accept-Language", "es-ES,es;q=0.5");
-            request.Headers.TryAddWithoutValidation("Content-Type", "application/x-www-form-urlencoded");
             
-            request.Content = new FormUrlEncodedContent(dict);
+            request.Content = new FormUrlEncodedContent(x_www_form_url_encoded);
 
             var cookieContainer = new CookieContainer();
             using (var handler = new HttpClientHandler() { CookieContainer = cookieContainer })
