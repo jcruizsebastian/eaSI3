@@ -11,8 +11,7 @@ namespace SI3Connector.Test
         public void TestMethod1()
         {
             SI3Service service = new SI3Service("ofjcruiz", "_*_d1d4ct1c");
-            service.Login().Wait();
-            service.AddWorklog("45817", DateTime.Today, 1).Wait();
+            service.AddWorklog("45817", DateTime.Today, 1);
         }
 
         [TestMethod]

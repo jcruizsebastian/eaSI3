@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("SI3Connector.Test")]
 namespace SI3Connector
 {
-    public class SI3HttpRequest
+    internal class SI3HttpRequest
     {
         private HttpClient httpClient { get; set; }
         private CookieContainer cookieContainer { get; set; }
