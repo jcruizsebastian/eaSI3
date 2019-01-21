@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace SI3Connector.Test
 {
     [TestClass]
-    public class UnitTest1
+    public class SI3IntegrationTests
     {
         [TestMethod]
         public void TestMethod1()

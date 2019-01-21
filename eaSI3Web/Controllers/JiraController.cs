@@ -29,7 +29,7 @@ namespace eaSI3Web.Controllers
             foreach (var workDate in worklog.GroupBy(x => x.RecordDate.Date))
             {
                 WeekJiraIssues dateIssues = new WeekJiraIssues();
-                dateIssues.Fecha = workDate.First().RecordDate.ToString("dd/MM/yyyy");
+                dateIssues.Fecha = workDate.First().RecordDate;//.ToString("dd/MM/yyyy");
 
                 dateIssues.Issues = new List<WeekJiraIssues.JiraIssues>();
 
@@ -45,7 +45,7 @@ namespace eaSI3Web.Controllers
 
         public class WeekJiraIssues
         {
-            public string Fecha { get; set; }
+            public DateTime Fecha { get; set; }
             public List<JiraIssues> Issues { get; set; }
 
             public class JiraIssues

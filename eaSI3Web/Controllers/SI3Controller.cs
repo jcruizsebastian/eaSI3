@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using SI3Connector;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,10 +15,17 @@ namespace eaSI3Web.Controllers
         [HttpPost("[action]")]
         public string Register([FromQuery]string username, [FromQuery]string password, [FromBody]IEnumerable<WeekJiraIssues> model)
         {
+            SI3Service SI3Service = new SI3Service(username, password);
+
+            //foreach(var dateIssues in model)
+            //{
+            //    foreach (var issue in dateIssues.Issues)
+            //    {
+            //        SI3Service.AddWorklog(issue.IssueId, dateIssues.Fecha, issue.Tiempo);
+            //    }
+            //}
 
             return "";
-
-            //return new List<WeekJiraIssues>() { new WeekJiraIssues() { Fecha = DateTime.Today.ToString("dd/MM/yyyy"), Issues = new List<WeekJiraIssues.JiraIssues>(){ new WeekJiraIssues.JiraIssues() { IssueId = "Hola", Tiempo = 2.5, Titulo = "Tarea 1" }, new WeekJiraIssues.JiraIssues() { IssueId = "Hola", Tiempo = 5, Titulo = "Tarea 2" } } }  };
         }
     }
 }

@@ -24,6 +24,7 @@
   <ItemGroup>
     <ProjectReference Include="..\IssueConveter\IssueConveter.csproj" />
     <ProjectReference Include="..\JiraConnector\JiraConnector.csproj" />
+    <ProjectReference Include="..\SI3Connector\SI3Connector.csproj" />
   </ItemGroup>
 
   <Target Name="DebugRunWebpack" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('wwwroot\dist') ">

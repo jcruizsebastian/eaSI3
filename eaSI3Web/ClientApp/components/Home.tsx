@@ -17,7 +17,7 @@ interface UserCredentials {
 }
 
 interface WeekJiraIssues {
-    fecha: string;
+    fecha: Date;
     issues: JiraIssues[];
 }
 
@@ -25,6 +25,7 @@ interface JiraIssues {
     issueId: string;
     titulo: string;
     tiempo: string;
+    tiempoCorregido: string;
 }
 
 export class Home extends React.Component<RouteComponentProps<{}>, UserCredentials> {
@@ -38,6 +39,7 @@ export class Home extends React.Component<RouteComponentProps<{}>, UserCredentia
         this.handleChangePass = this.handleChangePass.bind(this);
         this.handleChangeUserSI3 = this.handleChangeUserSI3.bind(this);
         this.handleChangePassSI3 = this.handleChangePassSI3.bind(this);
+        this.prueba = this.prueba.bind(this);
 
         this.state = { user: 'jcruiz', pass: '_*_d1d4ct1c97', Weekissues: [], loadedJira: false, loadingJira: false, passSI3: '', userSI3: '', loadedSI3: false, loadingSI3: false };
     }
@@ -60,6 +62,25 @@ export class Home extends React.Component<RouteComponentProps<{}>, UserCredentia
     public handleChangePassSI3(event: { target: { value: any; }; }) {
 
         this.setState({ passSI3: event.target.value });
+    }
+
+    public prueba(event: { target: { value: any; id: any; }; }) {
+
+        let day = event.target.id.split('-')[1];
+        let issueId = event.target.id.split('-')[0];
+
+        for (let dayIssue of this.state.Weekissues)
+        {
+            if (new Date(dayIssue.fecha).getDate() == day)
+            {
+                for (let issue of dayIssue.issues) {
+                    if (issue.issueId == issueId)
+                        issue.tiempo = event.target.value;
+                }
+            }
+        }
+
+        //this.setState({ passSI3: event.target.value });
     }
 
     public handleSubmitSi3(e: { preventDefault: () => void; }) {
@@ -96,7 +117,7 @@ export class Home extends React.Component<RouteComponentProps<{}>, UserCredentia
     }
 
     private renderAgenda(Weekissues: WeekJiraIssues[]) {
-        
+
         return <div>
             <table className="table table-condensed table-bordered">
             <thead>
@@ -110,17 +131,20 @@ export class Home extends React.Component<RouteComponentProps<{}>, UserCredentia
                 {
                     Weekissues.map(Weekissue => 
 
-                        <tr>
-                            <td className="agenda-date active">
-                                <div className="shortdate text-muted">{Weekissue.fecha}</div>
-                            </td>
-                            <td className="agenda-events">
-                                {Weekissue.issues.map(issue => <div> {issue.titulo} </div>)}
-                        </td>
-                            <td className="agenda-events">
-                                {Weekissue.issues.map(issue => <div> {issue.tiempo} </div>)}
-                            </td>
-                        </tr>
+                            <tr>
+                                <td className="agenda-date active">
+                                    <div className="shortdate text-muted">{new Date(Weekissue.fecha).toLocaleDateString()}</div>
+                                </td>
+                                <td className="agenda-events">
+                                    {Weekissue.issues.map(issue => <div> {issue.titulo} </div>)}
+                                </td>
+                                <td className="agenda-events">
+                                    {Weekissue.issues.map(issue => <div> {issue.tiempo} </div>)}
+                                </td>
+                                <td className="agenda-events">
+                                    {Weekissue.issues.map(issue => <input type="text" id={issue.issueId + '-' + new Date(Weekissue.fecha).getDate()} name="tbTiempoCorregido" value={issue.tiempoCorregido} placeholder={issue.tiempo} onChange={this.prueba} />)}
+                                </td>
+                            </tr>
 
                         )
                 }
