@@ -44,43 +44,41 @@ export class Home extends React.Component<RouteComponentProps<{}>, UserCredentia
         this.state = { user: 'jcruiz', pass: '_*_d1d4ct1c97', Weekissues: [], loadedJira: false, loadingJira: false, passSI3: '', userSI3: '', loadedSI3: false, loadingSI3: false };
     }
 
-    public handleChangeUser(event: { target: { value: any; }; }) {
-
-        this.setState({ user: event.target.value });
+    //    public handleChangeUser(event: { target: { value: any; }; }) {
+    public handleChangeUser(event: React.FormEvent<HTMLInputElement>) {
+        this.setState({ user: event.currentTarget.value });
     }
 
-    public handleChangePass(event: { target: { value: any; }; }) {
+    public handleChangePass(event: React.FormEvent<HTMLInputElement>) {
 
-        this.setState({ pass: event.target.value });
+        this.setState({ pass: event.currentTarget.value });
     }
 
-    public handleChangeUserSI3(event: { target: { value: any; }; }) {
+    public handleChangeUserSI3(event: React.FormEvent<HTMLInputElement>) {
 
-        this.setState({ userSI3: event.target.value });
+        this.setState({ userSI3: event.currentTarget.value });
     }
 
-    public handleChangePassSI3(event: { target: { value: any; }; }) {
+    public handleChangePassSI3(event: React.FormEvent<HTMLInputElement>) {
 
-        this.setState({ passSI3: event.target.value });
+        this.setState({ passSI3: event.currentTarget.value });
     }
 
-    public prueba(event: { target: { value: any; id: any; }; }) {
+    public prueba(event: React.FormEvent<HTMLInputElement>) {
 
-        let day = event.target.id.split('-')[1];
-        let issueId = event.target.id.split('-')[0];
+        let day = event.currentTarget.id.split('-')[1];
+        let issueId = event.currentTarget.id.split('-')[0];
 
         for (let dayIssue of this.state.Weekissues)
         {
-            if (new Date(dayIssue.fecha).getDate() == day)
+            if (new Date(dayIssue.fecha.toString()).getDate().toString() == day)
             {
                 for (let issue of dayIssue.issues) {
                     if (issue.issueId == issueId)
-                        issue.tiempo = event.target.value;
+                        issue.tiempo = event.currentTarget.value;
                 }
             }
         }
-
-        //this.setState({ passSI3: event.target.value });
     }
 
     public handleSubmitSi3(e: { preventDefault: () => void; }) {
