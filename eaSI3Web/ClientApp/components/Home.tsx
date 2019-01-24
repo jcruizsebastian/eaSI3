@@ -127,11 +127,10 @@ export class Home extends React.Component<RouteComponentProps<{}>, UserCredentia
             </thead>
             <tbody>
                 {
-                    Weekissues.map(Weekissue => 
-
+                        Weekissues.map(Weekissue => {
                             <tr>
                                 <td className="agenda-date active">
-                                    <div className="shortdate text-muted">{new Date(Weekissue.fecha).toLocaleDateString()}</div>
+                                    <div className="shortdate text-muted">{new Date(Weekissue.fecha.toString()).toLocaleDateString()}</div>
                                 </td>
                                 <td className="agenda-events">
                                     {Weekissue.issues.map(issue => <div> {issue.titulo} </div>)}
@@ -140,10 +139,10 @@ export class Home extends React.Component<RouteComponentProps<{}>, UserCredentia
                                     {Weekissue.issues.map(issue => <div> {issue.tiempo} </div>)}
                                 </td>
                                 <td className="agenda-events">
-                                    {Weekissue.issues.map(issue => <input type="text" id={issue.issueId + '-' + new Date(Weekissue.fecha).getDate()} name="tbTiempoCorregido" value={issue.tiempoCorregido} placeholder={issue.tiempo} onChange={this.prueba} />)}
+                                    {Weekissue.issues.map(issue => <input type="text" id={issue.issueId + '-' + new Date(Weekissue.fecha.toString()).getDate()} name="tbTiempoCorregido" value={issue.tiempoCorregido} placeholder={issue.tiempo} onChange={this.prueba} />)}
                                 </td>
                             </tr>
-
+                        }
                         )
                 }
             </tbody>
