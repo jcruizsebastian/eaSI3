@@ -2,6 +2,9 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import 'isomorphic-fetch';
 import ReactLoading from "react-loading";
+import Agenda from './Agenda';
+import LoginJira from './LoginJira';
+
 //import { Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
 
 interface UserCredentials {
@@ -34,24 +37,11 @@ export class Home extends React.Component<RouteComponentProps<{}>, UserCredentia
         super(props);
 
         this.handleSubmitSi3 = this.handleSubmitSi3.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-        this.handleChangeUser = this.handleChangeUser.bind(this);
-        this.handleChangePass = this.handleChangePass.bind(this);
         this.handleChangeUserSI3 = this.handleChangeUserSI3.bind(this);
         this.handleChangePassSI3 = this.handleChangePassSI3.bind(this);
-        this.prueba = this.prueba.bind(this);
+        
 
         this.state = { user: 'jcruiz', pass: '_*_d1d4ct1c97', Weekissues: [], loadedJira: false, loadingJira: false, passSI3: '', userSI3: '', loadedSI3: false, loadingSI3: false };
-    }
-
-    //    public handleChangeUser(event: { target: { value: any; }; }) {
-    public handleChangeUser(event: React.FormEvent<HTMLInputElement>) {
-        this.setState({ user: event.currentTarget.value });
-    }
-
-    public handleChangePass(event: React.FormEvent<HTMLInputElement>) {
-
-        this.setState({ pass: event.currentTarget.value });
     }
 
     public handleChangeUserSI3(event: React.FormEvent<HTMLInputElement>) {
@@ -63,7 +53,7 @@ export class Home extends React.Component<RouteComponentProps<{}>, UserCredentia
 
         this.setState({ passSI3: event.currentTarget.value });
     }
-
+    /*
     public prueba(event: React.FormEvent<HTMLInputElement>) {
 
         let day = event.currentTarget.id.split('-')[1];
@@ -80,7 +70,7 @@ export class Home extends React.Component<RouteComponentProps<{}>, UserCredentia
             }
         }
     }
-
+    */
     public handleSubmitSi3(e: { preventDefault: () => void; }) {
 
         e.preventDefault();
@@ -100,9 +90,11 @@ export class Home extends React.Component<RouteComponentProps<{}>, UserCredentia
             });
     }
 
-
+    /*
     public handleSubmit(e: { preventDefault: () => void; }) {
 
+        //handleSubmitJira(e);
+        
         e.preventDefault();
 
         this.setState({ loadingJira: true });
@@ -112,62 +104,54 @@ export class Home extends React.Component<RouteComponentProps<{}>, UserCredentia
             .then(data => {
                 this.setState({ Weekissues: data, loadingJira: false, loadedJira: true });
             });
+       
+    }
+    */
+    public onJiraDataLoaded(weekJiraIssues: WeekJiraIssues[])
+    {
+         this.setState({ loadedJira: true, Weekissues: weekJiraIssues }); 
     }
 
     private renderAgenda(Weekissues: WeekJiraIssues[]) {
 
-        return <div>
-            <table className="table table-condensed table-bordered">
-            <thead>
-                <tr>
-                    <th>Fecha</th>
-                    <th>Tareas</th>
-                    <th>Horas</th>
-                </tr>
-            </thead>
-            <tbody>
-                {
-                        Weekissues.map(Weekissue => {
-                            <tr>
-                                <td className="agenda-date active">
-                                    <div className="shortdate text-muted">{new Date(Weekissue.fecha.toString()).toLocaleDateString()}</div>
-                                </td>
-                                <td className="agenda-events">
-                                    {Weekissue.issues.map(issue => <div> {issue.titulo} </div>)}
-                                </td>
-                                <td className="agenda-events">
-                                    {Weekissue.issues.map(issue => <div> {issue.tiempo} </div>)}
-                                </td>
-                                <td className="agenda-events">
-                                    {Weekissue.issues.map(issue => <input type="text" id={issue.issueId + '-' + new Date(Weekissue.fecha.toString()).getDate()} name="tbTiempoCorregido" value={issue.tiempoCorregido} placeholder={issue.tiempo} onChange={this.prueba} />)}
-                                </td>
-                            </tr>
-                        }
-                        )
-                }
-            </tbody>
-            </table>
-            <br />
+        return <Agenda weekissues={Weekissues} />
 
+            /*
             <form className="si3Form" onSubmit={this.handleSubmitSi3}>
                 <input type="text" id="tbUserSI3" name="tbUserSI3" value={this.state.userSI3} onChange={this.handleChangeUserSI3} placeholder='si3 user' />
                 <input type="password" id="tbPassSI3" name="tbPassSI3" value={this.state.passSI3} onChange={this.handleChangePassSI3} placeholder='si3 pass' />
                 <input type="submit" value="Enviar a SI3" />
             </form>
+            */
 
-        </div>
+        
     }
 
     public render() {
+
         let agenda = <p><em>Sin datos</em></p>;
 
         if (this.state.loadedJira)
             agenda = this.renderAgenda(this.state.Weekissues);
 
-        if (this.state.loadingJira)
+        /*
+        if (!this.state.loadedJira)
             agenda = <ReactLoading color='#000' type='balls' />
+        */
+        
 
-        return <div>
+        
+        
+        return (
+            <div>
+            <LoginJira onJiraLoginSuccessfully={this.onJiraDataLoaded} />
+            {agenda} 
+
+            </div>
+        )
+            
+            /*
+            <div>
             
             <form className="dataForm" onSubmit={this.handleSubmit}>
                 <input type="text" id="tbUser" name="tbUser" value={this.state.user} onChange={this.handleChangeUser} placeholder='jira user name' />
@@ -179,5 +163,11 @@ export class Home extends React.Component<RouteComponentProps<{}>, UserCredentia
             {agenda}
 
             </div>
+            */
+                
+        
     }
 }
+export default Home
+
+
