@@ -1,5 +1,6 @@
 .main-nav li .glyphicon {
     margin-right: 10px;
+   
 }
 
 /* Highlighting rules for nav menu items */
@@ -62,5 +63,17 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+    }
+
+
+
+    .table 
+    {
+        margin-top : 10px;
+    }
+
+    .dataForm 
+    {
+        margin-top : 10px;
     }
 }
