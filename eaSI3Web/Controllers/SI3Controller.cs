@@ -17,15 +17,57 @@ namespace eaSI3Web.Controllers
         {
             SI3Service SI3Service = new SI3Service(username, password);
 
-            //foreach(var dateIssues in model)
-            //{
-            //    foreach (var issue in dateIssues.Issues)
-            //    {
-            //        SI3Service.AddWorklog(issue.IssueId, dateIssues.Fecha, issue.Tiempo);
-            //    }
-            //}
+            //Recorrer el modelo y:
+            //Si id de si3 que viene en la issue se puede convertir en un numero
+            //Se trata de una imputación a issue SI3Service.AddIssueWork
+            //sino
+            //Se trata de una imputación a proyecto SI3Service.AddProjectWork
+            Dictionary<string, Dictionary<DayOfWeek, int>> weekWork = new Dictionary<string, Dictionary<DayOfWeek, int>>();
+            
+
+            foreach (var dateIssue in model)
+            {
+                Console.WriteLine("estoy dentro");
+                foreach (var issue in dateIssue.Issues)
+                {
+                    char[] charsToTrim = { 'h', 'm' };
+                    string time = issue.Tiempo.Trim(charsToTrim);
+                    int timeToInt = Int32.Parse(time);
+
+                    int idNumber;
+                    if (Int32.TryParse(issue.IssueSI3Code,  out idNumber))
+                    {
+                        SI3Service.AddIssueWork( issue.IssueSI3Code, dateIssue.Fecha, timeToInt );
+                    }
+                    else
+                    {
+                        if(!weekWork.ContainsKey(issue.IssueSI3Code))
+                        {
+                            weekWork.Add(issue.IssueSI3Code, new Dictionary<DayOfWeek, int>());
+                        }
+
+                        Dictionary<DayOfWeek, int> dayWork = weekWork[issue.IssueSI3Code];
+
+                        if (!dayWork.ContainsKey(dateIssue.Fecha.DayOfWeek))
+                        {
+                            dayWork.Add(dateIssue.Fecha.DayOfWeek, timeToInt);
+                        }
+                        else
+                        {
+                            dayWork[dateIssue.Fecha.DayOfWeek] += timeToInt;
+                        }
+                    }
+                }
+            }
+
+            foreach(var week in weekWork)
+            {
+                SI3Service.AddProjectWork(week.Key, week.Value);
+            }
+
 
             return "";
         }
     }
 }
+ 

@@ -4,6 +4,7 @@ import 'isomorphic-fetch';
 import ReactLoading from "react-loading";
 
 interface UserCredentials {
+    
     user: string;
     pass: string;
     userSI3: string;
@@ -18,7 +19,9 @@ interface WeekJiraIssues {
 }
 
 interface JiraIssues {
-    issueId: string;
+    issueSi3: string;
+    issueCode: string;
+    issueKey: string;
     titulo: string;
     tiempo: string;
     tiempoCorregido: string;

@@ -65,6 +65,7 @@ namespace SI3Connector
 
         internal Milestones GetAllSubprojects()
         {
+            Login();
             StringBuilder sb = new StringBuilder();
             for (int i = 72; i < 100; i++)
             {
@@ -88,7 +89,7 @@ namespace SI3Connector
 
         // This presumes that weeks start with Monday.
         // Week 1 is the 1st week of the year with a Thursday in it.
-        public static int GetIso8601WeekOfYear(DateTime time)
+        internal static int GetIso8601WeekOfYear(DateTime time)
         {
             // Seriously cheat.  If its Monday, Tuesday or Wednesday, then it'll 
             // be the same week# as whatever Thursday, Friday or Saturday are,
@@ -103,8 +104,9 @@ namespace SI3Connector
             return CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(time, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
         }
 
-        internal string AddProjectWork(string issueid, Dictionary<DayOfWeek, int> weekWork)
+        public string AddProjectWork(string issueid, Dictionary<DayOfWeek, int> weekWork)
         {
+            Login();
             var projectCode = GetAllSubprojects().milestone.First(hito => hito.Name.StartsWith(issueid.Replace("-", "."), StringComparison.CurrentCulture)).Code;
             var weekNumber = GetIso8601WeekOfYear(DateTime.Today);
             var weekCode = GetWeekCode(weekNumber);
@@ -127,8 +129,9 @@ namespace SI3Connector
             return request.Result;
         }
 
-        internal string AddIssueWork(string issueid, DateTime date, int time)
+        public string AddIssueWork(string issueid, DateTime date, int time)
         {
+            Login();
             var x_www_form_url_encoded = new Dictionary<string, string>();
             x_www_form_url_encoded.Clear();
             x_www_form_url_encoded.Add("newTimeRecord", time.ToString());
@@ -166,22 +169,6 @@ namespace SI3Connector
             }
 
             throw new Exception("Semana no dada de alta");
-        }
-
-        public string GetProjects()
-        {
-            return "";
-
-            //var x_www_form_url_encoded = new Dictionary<string, string>();
-            //x_www_form_url_encoded.Clear();
-            //x_www_form_url_encoded.Add("newTimeRecord", time.ToString());
-            //x_www_form_url_encoded.Add("newDate", $"{date.Day.ToString("D2")}/{date.Month.ToString("D2")}/{date.Year - 2000}");
-            //x_www_form_url_encoded.Add("timerecordtype", "R");
-
-            //var request = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/its/asp/newTimeRecord.asp?cod={issueid}&type=1"), x_www_form_url_encoded);
-            //request.Wait();
-
-            //return request.Result;
         }
     }
 }

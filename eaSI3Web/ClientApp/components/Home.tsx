@@ -26,7 +26,9 @@ interface WeekJiraIssues {
 }
 
 interface JiraIssues {
-    issueId: string;
+    issueSi3: string;
+    issueCode: string;
+    issueKey: string;
     titulo: string;
     tiempo: string;
     tiempoCorregido: string;

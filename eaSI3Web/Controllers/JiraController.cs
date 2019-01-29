@@ -35,7 +35,7 @@ namespace eaSI3Web.Controllers
 
                 foreach(var work in workDate)
                 {
-                    dateIssues.Issues.Add(new WeekJiraIssues.JiraIssues() { Titulo = work.Key + " - " + work.Summary + " - " + work.Comment, IssueId = work.IssueId, Tiempo = work.TimeSpent });
+                    dateIssues.Issues.Add(new WeekJiraIssues.JiraIssues() { Titulo = work.Summary + " - " + work.Comment, IssueKey = work.Key, IssueCode = work.IssueId, Tiempo = work.TimeSpent, IssueSI3Code =  work.si3ID });
                 }
                 weekJiraIssues.Add(dateIssues);
             }
@@ -50,8 +50,9 @@ namespace eaSI3Web.Controllers
 
             public class JiraIssues
             {
-
-                public string IssueId { get; set; }
+                public string IssueSI3Code { get; set; }
+                public string IssueCode { get; set; }
+                public string IssueKey { get; set; }
                 public string Titulo { get; set; }
                 public string Tiempo { get; set; }
             }
