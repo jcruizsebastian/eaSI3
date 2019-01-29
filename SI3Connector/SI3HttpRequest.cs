@@ -32,8 +32,16 @@ namespace SI3Connector
 
             if(x_www_form_url_encoded != null)
             {
-                if(x_www_form_url_encoded.ContainsKey("modificaval"))
-                    request.Content = new StringContent("modificaval=YES&fweek=&000990+++-5-1=5&000990+++-5-4=3&COMM000990+++=", Encoding.UTF8, "application/x-www-form-urlencoded");//request.Content = new StringContent("modificaval=YES&fweek=&000990+++-5-1=5&000990+++-5-4=3&COMM000990+++=");
+                if (x_www_form_url_encoded.ContainsKey("modificaval"))
+                {
+                    StringBuilder sb = new StringBuilder();
+                    foreach (var value in x_www_form_url_encoded)
+                        sb.Append($"{value.Key}={value.Value}&");
+
+                    sb.Remove(sb.Length -1, 1);
+
+                    request.Content = new StringContent(sb.ToString(), Encoding.UTF8, "application/x-www-form-urlencoded");
+                }
                 else
                     request.Content = new FormUrlEncodedContent(x_www_form_url_encoded);
             }

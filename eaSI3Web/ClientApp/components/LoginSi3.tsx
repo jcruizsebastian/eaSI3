@@ -67,6 +67,7 @@ export class LoginSi3 extends React.Component<WeekJiraIssuesProps, UserCredentia
         })
             .then(res => {
                 console.log(res);
+                alert("Imputado");
             });
     }
     render() {
