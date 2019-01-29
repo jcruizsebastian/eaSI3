@@ -9,10 +9,7 @@ interface UserCredentials {
     userSI3: string;
     passSI3: string;
     Weekissues: WeekJiraIssues[];
-    loadedJira: boolean;
-    loadingJira: boolean;
-    loadedSI3: boolean;
-    loadingSI3: boolean;
+
 }
 
 interface WeekJiraIssues {
@@ -40,7 +37,7 @@ export class LoginSi3 extends React.Component<WeekJiraIssuesProps, UserCredentia
         this.handleChangeUserSI3 = this.handleChangeUserSI3.bind(this);
         this.handleChangePassSI3 = this.handleChangePassSI3.bind(this);
 
-        this.state = { user: 'jcruiz', pass: '_*_d1d4ct1c97', Weekissues: this.props.weekissues, loadedJira: false, loadingJira: false, passSI3: '', userSI3: '', loadedSI3: false, loadingSI3: false };
+        this.state = { user: 'jcruiz', pass: '_*_d1d4ct1c97', Weekissues: this.props.weekissues, passSI3: '', userSI3: ''};
     }
 
     public handleChangeUserSI3(event: React.FormEvent<HTMLInputElement>) {
@@ -57,8 +54,6 @@ export class LoginSi3 extends React.Component<WeekJiraIssuesProps, UserCredentia
 
         e.preventDefault();
 
-        this.setState({ loadingSI3: true });
-
         fetch('api/SI3/register?username=' + this.state.userSI3 + '&password=' + this.state.passSI3, {
             method: 'post',
             body: JSON.stringify(this.state.Weekissues),
@@ -72,6 +67,7 @@ export class LoginSi3 extends React.Component<WeekJiraIssuesProps, UserCredentia
             });
     }
     render() {
+
         return (
             <div>
             <form className="si3Form" onSubmit={this.handleSubmitSi3}>

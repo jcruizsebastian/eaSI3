@@ -1,4 +1,5 @@
-﻿import * as React from 'react';
+﻿//import './css/agenda.css';
+import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import 'isomorphic-fetch';
 import ReactLoading from "react-loading";
@@ -63,7 +64,7 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, WeekJiraIssuesP
                         this.props.weekissues.map(Weekissue =>
                             <tr>
                                 <td className="agenda-date active">
-                                    <div className="shortdate text-muted">{new Date(Weekissue.fecha.toString()).toLocaleDateString()}</div>
+                                    <div className="shortdate text-muted" key={this.props.weekissues.indexOf(Weekissue)}>{new Date(Weekissue.fecha.toString()).toLocaleDateString()}</div>
                                 </td>
                                 <td className="agenda-events">
                                     {Weekissue.issues.map(issue => <div> {issue.titulo} </div>)}

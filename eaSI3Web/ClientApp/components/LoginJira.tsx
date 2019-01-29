@@ -21,13 +21,8 @@ interface JiraIssues {
 interface UserCredentials {
     user: string;
     pass: string;
-    userSI3: string;
-    passSI3: string;
     Weekissues: WeekJiraIssues[];
-    loadedJira: boolean;
     loadingJira: boolean;
-    loadedSI3: boolean;
-    loadingSI3: boolean;
 }
 
 interface LoginJiraProps {
@@ -44,7 +39,7 @@ export class LoginJira extends React.Component<LoginJiraProps, UserCredentials> 
         this.handleChangePass = this.handleChangePass.bind(this);
         this.confirmLoadedJira = this.confirmLoadedJira.bind(this);
 
-        this.state = { user: 'jcruiz', pass: '_*_d1d4ct1c97', Weekissues: [], loadedJira: false, loadingJira: false, passSI3: '', userSI3: '', loadedSI3: false, loadingSI3: false };
+        this.state = { user: 'jcruiz', pass: '_*_d1d4ct1c97', Weekissues: [], loadingJira: false};
 
 
     }
@@ -60,7 +55,7 @@ export class LoginJira extends React.Component<LoginJiraProps, UserCredentials> 
         fetch('api/Jira/worklog?username=' + this.state.user + '&password=' + this.state.pass)
             .then(response => response.json() as Promise<WeekJiraIssues[]>)
             .then(data => {
-                this.setState({ Weekissues: data, loadingJira: false, loadedJira: true }, this.confirmLoadedJira);
+                this.setState({ Weekissues: data}, this.confirmLoadedJira);
             });
 
     }
