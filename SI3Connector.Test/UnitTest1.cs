@@ -8,10 +8,21 @@ namespace SI3Connector.Test
     public class SI3IntegrationTests
     {
         [TestMethod]
-        public void TestMethod1()
+        public void AddIssueWork()
         {
             SI3Service service = new SI3Service("ofjcruiz", "_*_d1d4ct1c");
-            service.AddWorklog("45817", DateTime.Today, 1);
+            service.AddIssueWork("45817", DateTime.Today, 1);
+        }
+
+        [TestMethod]
+        public void AddProjectWork()
+        {
+            SI3Service service = new SI3Service("ofjcruiz", "_*_d1d4ct1c");
+            Dictionary<DayOfWeek, int> work = new Dictionary<DayOfWeek, int>();
+            work.Add(DayOfWeek.Monday, 5);
+            work.Add(DayOfWeek.Thursday, 3);
+
+            service.AddProjectWork("H-53", work);
         }
 
         [TestMethod]
@@ -32,5 +43,20 @@ namespace SI3Connector.Test
 
             request.Post(new Uri("http://si3.infobolsa.es/Si3/its/asp/newTimeRecord.asp?cod=45817&type=1"), x_www_form_url_encoded).Wait();
         }
+
+        [TestMethod]
+        public void testGetWeekCode()
+        {
+            SI3Service service = new SI3Service("ofjcruiz", "_*_d1d4ct1c");
+            var a = service.GetWeekCode(5);
+        }
+
+        [TestMethod]
+        public void testGetAllSubprojects()
+        {
+            SI3Service service = new SI3Service("ofjcruiz", "_*_d1d4ct1c");
+            var a = service.GetAllSubprojects();
+        }
+
     }
 }
