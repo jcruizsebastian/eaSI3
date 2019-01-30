@@ -67,7 +67,7 @@ namespace SI3Connector
         {
             Login();
             StringBuilder sb = new StringBuilder();
-            for (int i = 72; i < 100; i++)
+            for (int i = 76; i < 100; i++)
             {
                 var request = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/gestion/asp/MilestonesXML.asp?cod={i.ToString().PadLeft(6,'0')}"), null);
                 request.Wait();
