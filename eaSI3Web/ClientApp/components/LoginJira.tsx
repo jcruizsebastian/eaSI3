@@ -16,8 +16,8 @@ interface JiraIssues {
     issueCode: string;
     issueKey: string;
     titulo: string;
-    tiempo: string;
-    tiempoCorregido: string;
+    tiempo: number;
+    tiempoCorregido: number;
 }
 
 interface UserCredentials {
@@ -86,7 +86,6 @@ export class LoginJira extends React.Component<LoginJiraProps, UserCredentials> 
             <form className="dataForm" onSubmit={this.handleSubmit}>
                 <input type="text" id="tbUser" name="tbUser" value={this.state.user} onChange={this.handleChangeUser} placeholder='jira user name' />
                 <input type="password" id="tbPass" name="tbPass" value={this.state.pass} onChange={this.handleChangePass} placeholder='jira pass' />
-
                 <input disabled={this.state.loadingJira} type="submit" value="Obtener Issues de Jira" />
             </form>
 

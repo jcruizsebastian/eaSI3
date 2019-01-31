@@ -3,6 +3,7 @@ import { RouteComponentProps } from 'react-router';
 import 'isomorphic-fetch';
 import ReactLoading from "react-loading";
 
+
 interface UserCredentials {
     
     user: string;
@@ -23,8 +24,8 @@ interface JiraIssues {
     issueCode: string;
     issueKey: string;
     titulo: string;
-    tiempo: string;
-    tiempoCorregido: string;
+    tiempo: number;
+    tiempoCorregido: number;
 }
 
 interface WeekJiraIssuesProps {
@@ -41,7 +42,8 @@ export class LoginSi3 extends React.Component<WeekJiraIssuesProps, UserCredentia
         this.handleChangePassSI3 = this.handleChangePassSI3.bind(this);
         this.isDisabled = this.isDisabled.bind(this);
 
-        this.state = { user: 'jcruiz', pass: '_*_d1d4ct1c97', Weekissues: this.props.weekissues, passSI3: '', userSI3: ''};
+        this.state = { user: 'jcruiz', pass: '_*_d1d4ct1c97', Weekissues: this.props.weekissues, passSI3: '', userSI3: '' };
+
     }
 
     public handleChangeUserSI3(event: React.FormEvent<HTMLInputElement>) {
@@ -81,11 +83,11 @@ export class LoginSi3 extends React.Component<WeekJiraIssuesProps, UserCredentia
         let WeekJiraIssues = this.state.Weekissues;
         for (let weekIssue of WeekJiraIssues) {
             for (let Issue of weekIssue.issues) {
-                tiempo = Number(Issue.tiempo.substring(0, Issue.tiempo.length - 1));
+                tiempo = Number(Issue.tiempo);
                 total += tiempo;
             }
         }
-
+        console.log(total);
         if (total === 40) { return true; }
         else { return false; }
     }
@@ -96,9 +98,9 @@ export class LoginSi3 extends React.Component<WeekJiraIssuesProps, UserCredentia
             <div>
             <form className="si3Form" onSubmit={this.handleSubmitSi3}>
                 <input type="text" id="tbUserSI3" name="tbUserSI3" value={this.state.userSI3} onChange={this.handleChangeUserSI3} placeholder='si3 user' />
-                    <input type="password" id="tbPassSI3" name="tbPassSI3" value={this.state.passSI3} onChange={this.handleChangePassSI3} placeholder='si3 pass' />
-                    <input disabled={!this.isDisabled()} type="submit" value="Enviar a SI3"  />
-                </form>
+                <input type="password" id="tbPassSI3" name="tbPassSI3" value={this.state.passSI3} onChange={this.handleChangePassSI3} placeholder='si3 pass' />
+                <input disabled={!this.isDisabled()} type="submit" value="Enviar a SI3"  />
+            </form>
             </div>
             )
     }

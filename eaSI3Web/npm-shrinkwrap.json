@@ -1703,8 +1703,7 @@
         "ansi-regex": {
           "version": "2.1.1",
           "bundled": true,
-          "dev": true,
-          "optional": true
+          "dev": true
         },
         "aproba": {
           "version": "1.2.0",
@@ -2106,8 +2105,7 @@
         "safe-buffer": {
           "version": "5.1.1",
           "bundled": true,
-          "dev": true,
-          "optional": true
+          "dev": true
         },
         "safer-buffer": {
           "version": "2.1.2",
@@ -2162,7 +2160,6 @@
           "version": "3.0.1",
           "bundled": true,
           "dev": true,
-          "optional": true,
           "requires": {
             "ansi-regex": "^2.0.0"
           }
@@ -2206,14 +2203,12 @@
         "wrappy": {
           "version": "1.0.2",
           "bundled": true,
-          "dev": true,
-          "optional": true
+          "dev": true
         },
         "yallist": {
           "version": "3.0.2",
           "bundled": true,
-          "dev": true,
-          "optional": true
+          "dev": true
         }
       }
     },
@@ -4192,6 +4187,12 @@
           }
         }
       }
+    },
+    "react-inputs-validation": {
+      "version": "2.1.5",
+      "resolved": "https://registry.npmjs.org/react-inputs-validation/-/react-inputs-validation-2.1.5.tgz",
+      "integrity": "sha512-pCo+sKmag1IIg/HXulj+hWAUAnDKJEYaeIerz80lz4AG7jRq14xAUZApsyLhW1sP1Z0Sl0DA1dGo063+auG1HQ==",
+      "dev": true
     },
     "react-loading": {
       "version": "2.0.3",

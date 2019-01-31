@@ -30,16 +30,18 @@ interface JiraIssues {
     issueCode: string;
     issueKey: string;
     titulo: string;
-    tiempo: string;
-    tiempoCorregido: string;
+    tiempo: number;
+    tiempoCorregido: number;
 }
 
 export class Home extends React.Component<RouteComponentProps<{}>, UserCredentials> {
 
     constructor(props: RouteComponentProps<{}>) {
         super(props);
-      
+
+        this.agendaModified = this.agendaModified.bind(this);
         this.onJiraDataLoaded = this.onJiraDataLoaded.bind(this);
+
         this.state = { user: 'jcruiz', pass: '_*_d1d4ct1c97', Weekissues: [], loadedJira: false, loadingJira: false, passSI3: '', userSI3: '', loadedSI3: false, loadingSI3: false };
     }
 
@@ -49,8 +51,15 @@ export class Home extends React.Component<RouteComponentProps<{}>, UserCredentia
             this.setState({ loadedJira: true, Weekissues: weekJiraIssues });        
     }
 
+
+    public agendaModified(weekJiraIssues: WeekJiraIssues[])
+    {
+        this.setState({ Weekissues: weekJiraIssues });
+    }
+
     private renderAgenda(Weekissues: WeekJiraIssues[]) {
-        return <Agenda weekissues={Weekissues} />        
+
+        return <Agenda weekissues={Weekissues} onAgendaModified={this.agendaModified} />        
     }
 
     private renderSi3(Weekissues: WeekJiraIssues[]) {
@@ -63,7 +72,8 @@ export class Home extends React.Component<RouteComponentProps<{}>, UserCredentia
         let si3;
 
         if (this.state.loadedJira) {
-           
+
+          
             agenda = this.renderAgenda(this.state.Weekissues);
             si3 = this.renderSi3(this.state.Weekissues);
         }

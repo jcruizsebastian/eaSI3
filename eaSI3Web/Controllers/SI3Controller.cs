@@ -30,9 +30,7 @@ namespace eaSI3Web.Controllers
                 Console.WriteLine("estoy dentro");
                 foreach (var issue in dateIssue.Issues)
                 {
-                    char[] charsToTrim = { 'h', 'm' };
-                    string time = issue.Tiempo.Trim(charsToTrim);
-                    int timeToInt = Int32.Parse(time);
+                    int timeToInt = (int)issue.Tiempo; //SI3 no permite horas parciales, solo horas enteras.
 
                     int idNumber;
                     if (Int32.TryParse(issue.IssueSI3Code,  out idNumber))
