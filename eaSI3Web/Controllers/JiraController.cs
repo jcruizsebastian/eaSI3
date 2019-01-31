@@ -13,9 +13,13 @@ namespace eaSI3Web.Controllers
         [HttpGet("[action]")]
         public IEnumerable<WeekJiraIssues> Worklog(string username, string password)
         {
+            //TODO: Este código debería ser refactorizado o adaptado si es que finalmente se pueden elegir fechas en la aplicación
+            var today = DateTime.Today;
+            var startOfWeek = today.AddDays(-1 * ((int)(DateTime.Today.DayOfWeek + 6) % 7)).AddDays(-1);
+            DateTime endOfWeek = startOfWeek.AddDays(7);
 
             JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(username, password);
-            var currentWorklog = jiraWorkLogService.GetCurrentWeekWorkLog();
+            var currentWorklog = jiraWorkLogService.GetWorklog(startOfWeek, endOfWeek, username);
 
             return Convert(currentWorklog);
 
