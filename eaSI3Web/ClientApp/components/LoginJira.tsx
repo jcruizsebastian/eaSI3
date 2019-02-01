@@ -85,15 +85,14 @@ export class LoginJira extends React.Component<LoginJiraProps, UserCredentials> 
 
             <form className="dataForm" onSubmit={this.handleSubmit}>
 
-                <h2>Ingrese credenciales de Jira</h2>
-
-
+                <h3>Ingrese credenciales de Jira</h3>
+                <hr></hr>
                 <label htmlFor="tbUser">Nombre de usuario</label>
                 <input type="text" id="tbUser" className="form-control" name="tbUser" value={this.state.user} onChange={this.handleChangeUser} />
 
                 <label htmlFor="tbPass">Contraseña</label>
                 <input type="password" id="tbPass" className="form-control" name="tbPass" value={this.state.pass} onChange={this.handleChangePass} />
-
+                <hr></hr>
                 <input disabled={this.state.loadingJira} type="submit" className="btn btn-primary" value="Obtener issues" />                
             </form>
 

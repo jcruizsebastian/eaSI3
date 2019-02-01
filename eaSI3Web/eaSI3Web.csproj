@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <None Remove="ClientApp\components\Agenda.tsx" />
+    <None Remove="ClientApp\components\Login.tsx" />
     <None Remove="ClientApp\components\LoginJira.tsx" />
     <None Remove="ClientApp\components\LoginSi3.tsx" />
   </ItemGroup>
@@ -35,6 +36,7 @@
 
   <ItemGroup>
     <TypeScriptCompile Include="ClientApp\components\Agenda.tsx" />
+    <TypeScriptCompile Include="ClientApp\components\Login.tsx" />
     <TypeScriptCompile Include="ClientApp\components\LoginJira.tsx" />
     <TypeScriptCompile Include="ClientApp\components\LoginSi3.tsx" />
   </ItemGroup>

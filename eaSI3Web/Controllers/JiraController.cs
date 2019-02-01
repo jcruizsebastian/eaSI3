@@ -39,7 +39,7 @@ namespace eaSI3Web.Controllers
 
                 foreach(var work in workDate)
                 {
-                    dateIssues.Issues.Add(new WeekJiraIssues.JiraIssues() { Titulo = work.Summary + " - " + work.Comment, IssueKey = work.Key, IssueCode = work.IssueId, Tiempo = (work.TimeSpentSeconds / 3600), IssueSI3Code =  work.si3ID });
+                    dateIssues.Issues.Add(new WeekJiraIssues.JiraIssues() { Titulo = work.Summary + " - " + work.Comment, IssueKey = work.Key, IssueCode = work.IssueId, Tiempo = (work.TimeSpentSeconds / 3600.0), IssueSI3Code =  work.si3ID });
                 }
                 weekJiraIssues.Add(dateIssues);
             }
