@@ -95,12 +95,22 @@ export class LoginSi3 extends React.Component<WeekJiraIssuesProps, UserCredentia
     render() {
 
         return (
-            <div>
-            <form className="si3Form" onSubmit={this.handleSubmitSi3}>
-                <input type="text" id="tbUserSI3" name="tbUserSI3" value={this.state.userSI3} onChange={this.handleChangeUserSI3} placeholder='si3 user' />
-                <input type="password" id="tbPassSI3" name="tbPassSI3" value={this.state.passSI3} onChange={this.handleChangePassSI3} placeholder='si3 pass' />
-                <input disabled={!this.isDisabled()} type="submit" value="Enviar a SI3"  />
-            </form>
+       
+            <div className="form-group">
+
+                <form className="dataForm" onSubmit={this.handleSubmitSi3}>
+
+                    <h3>Ingrese credenciales de Si3</h3>
+                    <hr></hr>
+                    <label htmlFor="tbUser">Nombre de usuario</label>
+                    <input type="text" id="tbUser" className="form-control" name="tbUserSi3" value={this.state.userSI3} onChange={this.handleChangeUserSI3} />
+
+                    <label htmlFor="tbPass">Contraseña</label>
+                    <input type="password" id="tbPass" className="form-control" name="tbPassSi3" value={this.state.passSI3} onChange={this.handleChangePassSI3} />
+                    <hr></hr>
+                    <input disabled={!this.isDisabled()} type="submit" className="btn btn-primary" value="Enviar a SI3" />
+                </form>
+
             </div>
             )
     }

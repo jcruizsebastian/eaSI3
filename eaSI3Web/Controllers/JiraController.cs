@@ -13,6 +13,8 @@ namespace eaSI3Web.Controllers
         [HttpGet("[action]")]
         public IEnumerable<WeekJiraIssues> Worklog(string username, string password)
         {
+            
+
             //TODO: Este código debería ser refactorizado o adaptado si es que finalmente se pueden elegir fechas en la aplicación
             var today = DateTime.Today;
             var startOfWeek = today.AddDays(-1 * ((int)(DateTime.Today.DayOfWeek + 6) % 7)).AddDays(-1);
@@ -39,7 +41,7 @@ namespace eaSI3Web.Controllers
 
                 foreach(var work in workDate)
                 {
-                    dateIssues.Issues.Add(new WeekJiraIssues.JiraIssues() { Titulo = work.Summary + " - " + work.Comment, IssueKey = work.Key, IssueCode = work.IssueId, Tiempo = (work.TimeSpentSeconds / 3600), IssueSI3Code =  work.si3ID });
+                    dateIssues.Issues.Add(new WeekJiraIssues.JiraIssues() { Titulo = work.Summary + " - " + work.Comment, IssueKey = work.Key, IssueCode = work.IssueId, Tiempo = (work.TimeSpentSeconds / 3600.0), IssueSI3Code =  work.si3ID });
                 }
                 weekJiraIssues.Add(dateIssues);
             }
