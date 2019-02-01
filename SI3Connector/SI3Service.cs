@@ -63,29 +63,42 @@ namespace SI3Connector
             public string Status { get; set; }
         }
 
-        internal Milestones GetAllSubprojects()
+        internal Milestone GetSubproject(string subprojectCode)
         {
             Login();
-            StringBuilder sb = new StringBuilder();
-            for (int i = 76; i < 100; i++)
-            {
-                var request = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/gestion/asp/MilestonesXML.asp?cod={i.ToString().PadLeft(6,'0')}"), null);
-                request.Wait();
 
-                sb.Append(request.Result.Replace($"<?xml version=\"1.0\" encoding=\"ISO-8859-1\" ?>", "").Replace("<milestones>", "").Replace("</milestones>", "").Trim());
+            var request = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/gestion/asp/PlanSistemas.asp"), null);
+            request.Wait();
+
+            var doc = new HtmlDocument();
+            doc.LoadHtml(request.Result);
+
+            var documentMilestones = doc.DocumentNode.SelectNodes("//*[@id=\"TableExcel\"]/tr/td/table/tr/td/a[@onclick]");
+            string documentMilestoneCode = string.Empty;
+            for (int i = 4; i < documentMilestones.Count; i = i+2)
+            {
+                string documentProjectCode = doc.DocumentNode.SelectSingleNode($"//*[@id=\"TableExcel\"]/tr/td/table/tr[{i}][not(@valign)]/td[2]").InnerHtml.Trim();
+                if (subprojectCode.Split(",")[0].Replace("-","") == documentProjectCode)
+                {
+                    documentMilestoneCode = doc.DocumentNode.SelectSingleNode($"//*[@id=\"TableExcel\"]/tr/td/table/tr[{i}]/td/a[@onclick]").OuterHtml.Split("id=\"img")[1].Split("\"></a>")[0].Split("\"")[0];
+                    break;
+                }
             }
 
-            sb = new StringBuilder("<milestones>\n" + sb.ToString());
-            sb.AppendLine("</milestones>");
+            request = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/gestion/asp/MilestonesXML.asp?cod={documentMilestoneCode}"), null);
+            request.Wait();
+
+            Milestones milestones;
 
             XmlSerializer serializer = new XmlSerializer(typeof(Milestones));
-            using (TextReader reader = new StringReader(sb.ToString()))
+            using (TextReader reader = new StringReader(request.Result.Replace("\r\n<?xml version=\"1.0\" encoding=\"ISO-8859-1\" ?>\r\n", "")))
             {
-                return (Milestones)serializer.Deserialize(reader);
+                milestones = (Milestones)serializer.Deserialize(reader);
             }
 
-            throw new Exception("Hubo un problema obteniendo los hitos.");
+            return milestones.milestone.First(x => x.Name.StartsWith(subprojectCode.Split(",")[1].Replace("-", ".")));
         }
+
 
         // This presumes that weeks start with Monday.
         // Week 1 is the 1st week of the year with a Thursday in it.
@@ -107,7 +120,8 @@ namespace SI3Connector
         public string AddProjectWork(string issueid, Dictionary<DayOfWeek, int> weekWork)
         {
             Login();
-            var projectCode = GetAllSubprojects().milestone.First(hito => hito.Name.StartsWith(issueid.Replace("-", "."), StringComparison.CurrentCulture)).Code;
+            //var projectCode = GetAllSubprojects().milestone.First(hito => hito.Name.StartsWith(issueid.Replace("-", "."), StringComparison.CurrentCulture)).Code;
+            var projectCode = GetSubproject(issueid).Code;
             var weekNumber = GetIso8601WeekOfYear(DateTime.Today);
             var weekCode = GetWeekCode(weekNumber);
 

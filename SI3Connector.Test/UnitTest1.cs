@@ -52,10 +52,10 @@ namespace SI3Connector.Test
         }
 
         [TestMethod]
-        public void testGetAllSubprojects()
+        public void testGetSubproject()
         {
             SI3Service service = new SI3Service("ofjcruiz", "_*_d1d4ct1c");
-            var a = service.GetAllSubprojects();
+            var a = service.GetSubproject("O-180,H-10");
         }
 
     }
