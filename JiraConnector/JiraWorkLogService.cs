@@ -31,7 +31,7 @@ namespace JiraConnector
 
             foreach (var log in workLog)
             {
-                log.si3ID = response.Data.Issues.First(x => x.id == log.IssueId)?.fields?.customfield_10300?.ToString();
+                log.si3ID = response.Data.Issues.First(x => x.id == log.IssueId)?.fields?.customfield_10300?.ToString().Trim();
                 var issue = GetIssue(log.IssueId);
                 log.Summary = issue.Summary;
                 log.Key = issue.Key;

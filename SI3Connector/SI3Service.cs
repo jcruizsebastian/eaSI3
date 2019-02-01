@@ -85,6 +85,8 @@ namespace SI3Connector
                 }
             }
 
+            Login();
+
             request = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/gestion/asp/MilestonesXML.asp?cod={documentMilestoneCode}"), null);
             request.Wait();
 
@@ -135,7 +137,7 @@ namespace SI3Connector
                 x_www_form_url_encoded.Add($"{projectCode}+++-{weekNumber}-{((int)work.Key)}", work.Value.ToString());
             }
 
-            x_www_form_url_encoded.Add($"COMM{projectCode}+++", string.Empty);            
+            x_www_form_url_encoded.Add($"COMM{projectCode}+++", string.Empty);
 
             var request = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/treport/asp/saveWReport.asp?cod={weekCode}&stchange=0&initst=1&usercode={usercode}&aa={DateTime.Today.Year}&pn=Resumen"), x_www_form_url_encoded);
             request.Wait();
