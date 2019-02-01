@@ -17,3 +17,10 @@
 .agenda-events-hours {
     height: 40px;
 }
+.invalid {
+    border-color: red;
+    width: 100px;
+}
+.valid {
+    width: 100px;
+}

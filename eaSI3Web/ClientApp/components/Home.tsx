@@ -39,6 +39,7 @@ export class Home extends React.Component<RouteComponentProps<{}>, UserCredentia
         this.confirmLoadedJira = this.confirmLoadedJira.bind(this);
         this.isDisabledBtnJira = this.isDisabledBtnJira.bind(this);
         this.isDisabledBtnSi3 = this.isDisabledBtnSi3.bind(this);
+        this.calculateTotalHours = this.calculateTotalHours.bind(this);
 
         this.state = {  Weekissues: [], loadedJira: false, loadingJira: false };
     }
@@ -49,8 +50,8 @@ export class Home extends React.Component<RouteComponentProps<{}>, UserCredentia
     }
 
     private renderAgenda(Weekissues: WeekJiraIssues[]) {
-        
-        return <Agenda weekissues={Weekissues} onAgendaModified={this.agendaModified} />     
+
+        return <Agenda weekissues={Weekissues} onAgendaModified={this.agendaModified} calculateTotalHours={this.calculateTotalHours} />     
 
     }
 
@@ -65,7 +66,8 @@ export class Home extends React.Component<RouteComponentProps<{}>, UserCredentia
 
     private onLoginJira(e: { preventDefault: () => void; }, user: string, password: string) {
 
-        user = user.replace(" ", " ").trim();
+       
+            user = user.replace(" ", " ").trim();
             e.preventDefault();
             this.setState({ loadingJira: true });
 
@@ -74,25 +76,30 @@ export class Home extends React.Component<RouteComponentProps<{}>, UserCredentia
                 .then(data => {
                     this.setState({ Weekissues: data }, this.confirmLoadedJira);
                 });
-        
+       
     }
+
+    
     private onLoginSi3(e: { preventDefault: () => void; }, user: string, password: string) {
 
         user = user.replace("'", " ").trim();
 
         e.preventDefault();
-        fetch('api/SI3/register?username=' + user + '&password=' + password, {
-            method: 'post',
-            body: JSON.stringify(this.state.Weekissues),
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-        })
-            .then(res => {
-                console.log(res);
-                alert("Imputado");
-            });
+        
+            fetch('api/SI3/register?username=' + user + '&password=' + password, {
+                method: 'post',
+                body: JSON.stringify(this.state.Weekissues),
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+            })
+                .then(res => {
+                    console.log(res);
+                    alert("Imputado");
+                });
+        
+        
     }
 
     private isDisabledBtnJira() {
@@ -101,21 +108,40 @@ export class Home extends React.Component<RouteComponentProps<{}>, UserCredentia
     }
 
     private isDisabledBtnSi3() {
-        
-            let total = 0;
-            let tiempo: number;
 
-            let WeekJiraIssues = this.state.Weekissues;
-            for (let weekIssue of WeekJiraIssues) {
-                for (let Issue of weekIssue.issues) {
-                    tiempo = Number(Issue.tiempo);
-                    total += tiempo;
+        let total = 0;
+        let tiempo: number;
+
+        let WeekJiraIssues = this.state.Weekissues;
+        for (let weekIssue of WeekJiraIssues) {
+            for (let Issue of weekIssue.issues) {
+                tiempo = Number(Issue.tiempo);
+                total += tiempo;
+                if (tiempo % 1 != 0) {
+                    return true;
                 }
             }
-            console.log(total);
-            if (total === 40) { return true; }
-            else { return false; }
+        }
         
+        if (total == 40) { return false; }
+            else { return true; }
+        
+    }
+
+    private calculateTotalHours() {
+
+        let total = 0;
+        let tiempo: number;
+
+        let WeekJiraIssues = this.state.Weekissues;
+        for (let weekIssue of WeekJiraIssues) {
+            for (let Issue of weekIssue.issues) {
+                tiempo = Number(Issue.tiempo);
+                total += tiempo;
+            }
+        }
+        
+        return total;
     }
 
     public render() {

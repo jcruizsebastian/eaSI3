@@ -7,6 +7,7 @@ import LoginSi3 from './LoginSi3';
 
 
 
+
 interface JiraIssues {
     issueSi3: string;
     issueCode: string;
@@ -26,11 +27,12 @@ interface WeekJiraIssues {
 interface WeekJiraIssuesProps {
     weekissues: WeekJiraIssues[];
     onAgendaModified: Function;
+    calculateTotalHours: Function;
 }
 interface AgendaState {
     weekissues: WeekJiraIssues[];
     link: String;
-
+    error: boolean;
 }
 export class Agenda extends React.Component<    WeekJiraIssuesProps, AgendaState> {
 
@@ -39,7 +41,7 @@ export class Agenda extends React.Component<    WeekJiraIssuesProps, AgendaState
 
   
         this.timeReassignment = this.timeReassignment.bind(this);
-        this.state = { weekissues: this.props.weekissues, link: "https://jira.openfinance.es/browse/"};
+        this.state = { weekissues: this.props.weekissues, link: "https://jira.openfinance.es/browse/", error: false };
     }
 
     public timeReassignment(event: React.FormEvent<HTMLInputElement>) {
@@ -55,16 +57,16 @@ export class Agenda extends React.Component<    WeekJiraIssuesProps, AgendaState
                 }
             }
         }
-        
-       
+
         this.props.onAgendaModified(this.state.weekissues);
     }
 
-   
-
     public render() {
         
+        let total: number = this.props.calculateTotalHours();
+        
         return <div>
+            
             <table className="table table-condensed table-bordered">
                 <thead>
                     <tr>
@@ -105,7 +107,9 @@ export class Agenda extends React.Component<    WeekJiraIssuesProps, AgendaState
                                 <td className="agenda-events">
                                     {Weekissue.issues.map(issue =>
                                         <div className="agenda-events-hours" key={issue.issueKey}>
-                                            <input type="text" id={issue.issueKey + '|' + new Date(Weekissue.fecha.toString()).getDate()} name="tbTiempoCorregido" value={issue.tiempoCorregido} placeholder={String(issue.tiempo)} onChange={this.timeReassignment} />
+                                            <input type="text" id={issue.issueKey + '|' + new Date(Weekissue.fecha.toString()).getDate()} name="tbTiempoCorregido" value={issue.tiempoCorregido}
+                                                placeholder={String(issue.tiempo)} onChange={this.timeReassignment} className={(Number(issue.tiempo) % 1 != 0) ? "invalid" : "valid"} />
+                                           
                                         </div>
                                     )}
                                 </td>
@@ -114,6 +118,13 @@ export class Agenda extends React.Component<    WeekJiraIssuesProps, AgendaState
                             
                         ) 
                     }
+
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td><label className="agenda-total">Total : {total.toString()}</label></td>
+                    </tr>
                 </tbody>
             </table>
             <br />
