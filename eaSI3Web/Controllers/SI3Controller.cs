@@ -15,6 +15,8 @@ namespace eaSI3Web.Controllers
         [HttpPost("[action]")]
         public string Register([FromQuery]string username, [FromQuery]string password, [FromBody]IEnumerable<WeekJiraIssues> model)
         {
+            NormalizarHoras(model);
+
             SI3Service SI3Service = new SI3Service(username, password);
 
             //Recorrer el modelo y:
@@ -23,7 +25,6 @@ namespace eaSI3Web.Controllers
             //sino
             //Se trata de una imputación a proyecto SI3Service.AddProjectWork
             Dictionary<string, Dictionary<DayOfWeek, int>> weekWork = new Dictionary<string, Dictionary<DayOfWeek, int>>();
-            
 
             foreach (var dateIssue in model)
             {
@@ -65,6 +66,54 @@ namespace eaSI3Web.Controllers
 
 
             return "";
+        }
+
+        public void NormalizarHoras(IEnumerable<WeekJiraIssues> tareasSinNormalizar)
+        {
+            var diasConHorasDeMas = tareasSinNormalizar.Where(x => x.Issues.Sum(y => (y.Tiempo)) > 8);
+            var diasConHorasDeMenos = tareasSinNormalizar.Where(x => x.Issues.Sum(y => (y.Tiempo)) < 8) ;
+            Queue<WeekJiraIssues.JiraIssues> sobrante = new Queue<WeekJiraIssues.JiraIssues>();
+
+            foreach(var diaConSobrante in diasConHorasDeMas)
+            {
+                double horas_sobrantes = diaConSobrante.Issues.Sum(x => x.Tiempo) - 8;
+
+                var issuesConHorasSobrantes = diaConSobrante.Issues.Where(x => x.Tiempo >= (horas_sobrantes));
+
+                if (issuesConHorasSobrantes != null && issuesConHorasSobrantes.Any())
+                {
+                    var issue = issuesConHorasSobrantes.First();
+
+                    for (int i = 0; i < horas_sobrantes; i++)
+                    {
+                        var clonedIssue = (WeekJiraIssues.JiraIssues)issue.Clone();
+                        clonedIssue.Tiempo = 1;
+                        sobrante.Enqueue(clonedIssue);
+                    }
+
+                    issue.Tiempo -= horas_sobrantes;
+                }
+                else //Solo tiene issues de 1 hora
+                {
+                    var issues = diaConSobrante.Issues.Where(x => x.Tiempo == 1).ToList().Take((int)horas_sobrantes);
+                    foreach (var issue in issues)
+                    {
+                        sobrante.Enqueue(issue);
+                        diaConSobrante.Issues.Remove(issue);
+                    }
+                }
+            }
+            
+            foreach(var diaConFaltante in diasConHorasDeMenos)
+            {
+                double horas_faltantes = Math.Abs(diaConFaltante.Issues.Sum(x => x.Tiempo) - 8);
+
+                for(int i = 0; i < horas_faltantes; i++)
+                {
+                    var issue = sobrante.Dequeue();
+                    diaConFaltante.Issues.Add(issue);
+                }
+            }
         }
     }
 }

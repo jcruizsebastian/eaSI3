@@ -35,18 +35,22 @@ namespace eaSI3Web.Controllers
             foreach (var workDate in worklog.GroupBy(x => x.RecordDate.Date))
             {
                 WeekJiraIssues dateIssues = new WeekJiraIssues();
-                dateIssues.Fecha = workDate.First().RecordDate;//.ToString("dd/MM/yyyy");
+                dateIssues.Fecha = workDate.First().RecordDate.Date;
 
                 dateIssues.Issues = new List<WeekJiraIssues.JiraIssues>();
 
                 foreach(var work in workDate)
                 {
-                    dateIssues.Issues.Add(new WeekJiraIssues.JiraIssues() { Titulo = work.Summary + " - " + work.Comment, IssueKey = work.Key, IssueCode = work.IssueId, Tiempo = (work.TimeSpentSeconds / 3600.0), IssueSI3Code =  work.si3ID });
+                    var issue = dateIssues.Issues.SingleOrDefault(x => x.IssueKey == work.Key);
+                    if (issue != null)
+                        issue.Tiempo += (work.TimeSpentSeconds / 3600.0);
+                    else
+                        dateIssues.Issues.Add(new WeekJiraIssues.JiraIssues() { Titulo = work.Summary + " - " + work.Comment, IssueKey = work.Key, IssueCode = work.IssueId, Tiempo = (work.TimeSpentSeconds / 3600.0), IssueSI3Code = work.si3ID });
                 }
                 weekJiraIssues.Add(dateIssues);
             }
 
-            return weekJiraIssues;
+            return weekJiraIssues.OrderBy(d => d.Fecha);
         }
 
         public class WeekJiraIssues
@@ -54,13 +58,18 @@ namespace eaSI3Web.Controllers
             public DateTime Fecha { get; set; }
             public List<JiraIssues> Issues { get; set; }
 
-            public class JiraIssues
+            public class JiraIssues : ICloneable
             {
                 public string IssueSI3Code { get; set; }
                 public string IssueCode { get; set; }
                 public string IssueKey { get; set; }
                 public string Titulo { get; set; }
                 public double Tiempo { get; set; }
+
+                public object Clone()
+                {
+                    return (JiraIssues)this.MemberwiseClone();
+                }
             }
         }
     }
