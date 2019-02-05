@@ -3,7 +3,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import 'isomorphic-fetch';
 import ReactLoading from "react-loading";
-import LoginSi3 from './LoginSi3';
+
 
 
 

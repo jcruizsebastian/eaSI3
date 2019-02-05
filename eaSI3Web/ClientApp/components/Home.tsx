@@ -3,8 +3,6 @@ import { RouteComponentProps } from 'react-router';
 import 'isomorphic-fetch';
 import ReactLoading from "react-loading";
 import Agenda from './Agenda';
-import LoginJira from './LoginJira';
-import LoginSi3 from './LoginSi3';
 import Login from './Login';
 //import { Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
 
@@ -27,6 +25,7 @@ interface JiraIssues {
     tiempo: number;
     tiempoCorregido: number;
 }
+
 
 export class Home extends React.Component<RouteComponentProps<{}>, UserCredentials> {
 
@@ -64,6 +63,22 @@ export class Home extends React.Component<RouteComponentProps<{}>, UserCredentia
         });
     }
 
+    private handleErrors(response: Response) {
+        if (!response.ok) {
+            if (response.status == 401) {
+                          
+                throw Error(response.statusText);
+            }
+            if (response.status == 403) {
+                throw Error();
+            }
+            if (response.status == 405) {
+                throw Error();
+            }
+        } 
+        return response;
+    }
+    
     private onLoginJira(e: { preventDefault: () => void; }, user: string, password: string) {
 
        
@@ -71,11 +86,17 @@ export class Home extends React.Component<RouteComponentProps<{}>, UserCredentia
             e.preventDefault();
             this.setState({ loadingJira: true });
 
-            fetch('api/Jira/worklog?username=' + user + '&password=' + password)
-                .then(response => response.json() as Promise<WeekJiraIssues[]>)
-                .then(data => {
-                    this.setState({ Weekissues: data }, this.confirmLoadedJira);
-                });
+        fetch('api/Jira/worklog?username=' + user + '&password=' + password)
+            .then(this.handleErrors)
+            .then(response => response.json() as Promise<WeekJiraIssues[]>)
+            .then(data => {
+                this.setState({ Weekissues: data }, this.confirmLoadedJira);
+            })
+            .catch(err => {
+                
+                alert(err);
+                this.setState({ loadingJira: false, loadedJira: false });
+            });
        
     }
 

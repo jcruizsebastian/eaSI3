@@ -4,30 +4,60 @@ using System.Collections.Generic;
 using JiraConnector;
 using Microsoft.AspNetCore.Mvc;
 using IssueConveter.Model;
+using System.Net.Http;
+using System.Net;
+using System.Threading.Tasks;
+using System.Security.Authentication;
+
 
 namespace eaSI3Web.Controllers
 {
     [Route("api/[controller]")]
     public class JiraController : Controller
     {
-        [HttpGet("[action]")]
-        public IEnumerable<WeekJiraIssues> Worklog(string username, string password)
-        {
-            
 
+        [HttpGet("[action]")]
+        public IActionResult Worklog(string username, string password)   
+        {
+         
             //TODO: Este código debería ser refactorizado o adaptado si es que finalmente se pueden elegir fechas en la aplicación
             var today = DateTime.Today;
             var startOfWeek = today.AddDays(-1 * ((int)(DateTime.Today.DayOfWeek + 6) % 7)).AddDays(-1);
             DateTime endOfWeek = startOfWeek.AddDays(7);
 
             JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(username, password);
-            var currentWorklog = jiraWorkLogService.GetWorklog(startOfWeek, endOfWeek, username);
+            var currentWorklog = new List<WorkLog>();
+            try
+            {
+                currentWorklog = jiraWorkLogService.GetWorklog(startOfWeek, endOfWeek, username);
+            }
+            catch (InvalidCredentialException e) {
 
-            return Convert(currentWorklog);
+                //return NotFound(e.Message);
+                HttpStatusContentResult response = new HttpStatusContentResult(HttpStatusCode.Forbidden, e.Message);
+                return response;
+                
+            }
+            catch (UnauthorizedAccessException e) {
+
+                return NotFound(e.Message);
+                //return new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("Your message here") };
+                
+                
+                
+            }
+            catch (InvalidOperationException e) {
+                return NotFound(e.Message);
+                return StatusCode(405);
+            }
+
+            return Ok(Convert(currentWorklog));
+
+           
 
             //return new List<WeekJiraIssues>() { new WeekJiraIssues() { Fecha = DateTime.Today.ToString("dd/MM/yyyy"), Issues = new List<WeekJiraIssues.JiraIssues>(){ new WeekJiraIssues.JiraIssues() { IssueId = "Hola", Tiempo = 2.5, Titulo = "Tarea 1" }, new WeekJiraIssues.JiraIssues() { IssueId = "Hola", Tiempo = 5, Titulo = "Tarea 2" } } }  };
         }
-
+       
         public static IEnumerable<WeekJiraIssues> Convert(List<WorkLog> worklog)
         {
             List<WeekJiraIssues> weekJiraIssues = new List<WeekJiraIssues>();

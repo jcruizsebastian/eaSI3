@@ -1,8 +1,9 @@
 # eaSI3
 
-TODO:
-8 horas cada día!!!
-Logueo.
-Cacheo de los proyectos en SI3.
-Permitir almacenar usuario y contraseña en cada local.
-Crear tareas.
+## TODO:
+* Control de excepciones 
+* Si no hay tareas en jira, mostar excepción avisando de ello.
+* Cacheo de los proyectos en SI3.
+* Añadir Logging.
+* Permitir almacenar usuario y contraseña en cada local.
+* Crear tareas.
