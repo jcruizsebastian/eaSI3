@@ -26,7 +26,19 @@ interface JiraIssues {
     tiempoCorregido: number;
 }
 
+interface WeekJiraIssuesResponse {
+    weekJiraIssues: WeekJiraIssues[];
+    notOk: boolean;
+    message: string;
+}
 
+interface JiraResponse {
+    message: string;
+}
+
+interface weekOfYear {
+    number: Number;
+}
 export class Home extends React.Component<RouteComponentProps<{}>, UserCredentials> {
 
     constructor(props: RouteComponentProps<{}>) {
@@ -39,8 +51,12 @@ export class Home extends React.Component<RouteComponentProps<{}>, UserCredentia
         this.isDisabledBtnJira = this.isDisabledBtnJira.bind(this);
         this.isDisabledBtnSi3 = this.isDisabledBtnSi3.bind(this);
         this.calculateTotalHours = this.calculateTotalHours.bind(this);
+        this.getWeekofYear = this.getWeekofYear.bind(this);
 
-        this.state = {  Weekissues: [], loadedJira: false, loadingJira: false };
+        
+        this.state = { Weekissues: [], loadedJira: false, loadingJira: false };
+
+        
     }
 
     private agendaModified(weekJiraIssues: WeekJiraIssues[])
@@ -63,39 +79,35 @@ export class Home extends React.Component<RouteComponentProps<{}>, UserCredentia
         });
     }
 
-    private handleErrors(response: Response) {
-        if (!response.ok) {
-            if (response.status == 401) {
-                          
-                throw Error(response.statusText);
-            }
-            if (response.status == 403) {
-                throw Error();
-            }
-            if (response.status == 405) {
-                throw Error();
-            }
-        } 
-        return response;
+    private getWeekofYear() {
+        
+        fetch('api/Jira/Weeks')
+            .then(response => response.json() as Promise<string>)
+            .then(data => {
+                console.log(data);
+            });
     }
     
     private onLoginJira(e: { preventDefault: () => void; }, user: string, password: string) {
-
-       
             user = user.replace(" ", " ").trim();
             e.preventDefault();
             this.setState({ loadingJira: true });
 
         fetch('api/Jira/worklog?username=' + user + '&password=' + password)
-            .then(this.handleErrors)
-            .then(response => response.json() as Promise<WeekJiraIssues[]>)
+
+            .then(response => response.json() as Promise<WeekJiraIssuesResponse>)
             .then(data => {
-                this.setState({ Weekissues: data }, this.confirmLoadedJira);
-            })
-            .catch(err => {
-                
-                alert(err);
-                this.setState({ loadingJira: false, loadedJira: false });
+                if (data.notOk) {
+                    alert(data.message);
+                    this.setState({ loadingJira: false, loadedJira: false });
+                }
+                else if (data.weekJiraIssues.length == 0) {
+                    alert("No hay tareas en Jira");
+                    this.setState({ loadingJira: false, loadedJira: false });
+                    this.getWeekofYear();
+                }
+                else
+                    this.setState({ Weekissues: data.weekJiraIssues }, this.confirmLoadedJira);
             });
        
     }
@@ -115,9 +127,14 @@ export class Home extends React.Component<RouteComponentProps<{}>, UserCredentia
                     'Content-Type': 'application/json'
                 },
             })
-                .then(res => {
-                    console.log(res);
-                    alert("Imputado");
+                .then(response => response.json() as Promise<JiraResponse>)    
+                .then(data => {
+                    if (data.message.length != 0)
+                    {
+                        alert(data.message);
+                    }
+                    else
+                        alert("Horas imputadas en Jira");
                 });
         
         
@@ -144,7 +161,7 @@ export class Home extends React.Component<RouteComponentProps<{}>, UserCredentia
             }
         }
         
-        if (total == 40) { return false; }
+        if (total <= 40) { return false; }
             else { return true; }
         
     }
@@ -167,6 +184,7 @@ export class Home extends React.Component<RouteComponentProps<{}>, UserCredentia
 
     public render() {
 
+       
         let agenda = <p><em>Sin datos</em></p>;
         let si3;
 

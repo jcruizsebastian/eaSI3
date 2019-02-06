@@ -15,66 +15,67 @@ namespace eaSI3Web.Controllers
         [HttpPost("[action]")]
         public string Register([FromQuery]string username, [FromQuery]string password, [FromBody]IEnumerable<WeekJiraIssues> model)
         {
-            NormalizarHoras(model);
-
-            SI3Service SI3Service = new SI3Service(username, password);
-
-            //Recorrer el modelo y:
-            //Si id de si3 que viene en la issue se puede convertir en un numero
-            //Se trata de una imputación a issue SI3Service.AddIssueWork
-            //sino
-            //Se trata de una imputación a proyecto SI3Service.AddProjectWork
-            Dictionary<string, Dictionary<DayOfWeek, int>> weekWork = new Dictionary<string, Dictionary<DayOfWeek, int>>();
-
-            foreach (var dateIssue in model)
+            try
             {
-                Console.WriteLine("estoy dentro");
-                foreach (var issue in dateIssue.Issues)
+                NormalizarHoras(model);
+
+                SI3Service SI3Service = new SI3Service(username, password);
+
+                Dictionary<string, Dictionary<DayOfWeek, int>> weekWork = new Dictionary<string, Dictionary<DayOfWeek, int>>();
+
+                foreach (var dateIssue in model)
                 {
-                    int timeToInt = (int)issue.Tiempo; //SI3 no permite horas parciales, solo horas enteras.
-
-                    int idNumber;
-                    if (Int32.TryParse(issue.IssueSI3Code,  out idNumber))
+                    Console.WriteLine("estoy dentro");
+                    foreach (var issue in dateIssue.Issues)
                     {
-                        SI3Service.AddIssueWork( issue.IssueSI3Code, dateIssue.Fecha, timeToInt );
-                    }
-                    else
-                    {
-                        if(!weekWork.ContainsKey(issue.IssueSI3Code))
-                        {
-                            weekWork.Add(issue.IssueSI3Code, new Dictionary<DayOfWeek, int>());
-                        }
+                        int timeToInt = (int)issue.Tiempo; //SI3 no permite horas parciales, solo horas enteras.
 
-                        Dictionary<DayOfWeek, int> dayWork = weekWork[issue.IssueSI3Code];
-
-                        if (!dayWork.ContainsKey(dateIssue.Fecha.DayOfWeek))
+                        int idNumber;
+                        if (Int32.TryParse(issue.IssueSI3Code, out idNumber))
                         {
-                            dayWork.Add(dateIssue.Fecha.DayOfWeek, timeToInt);
+                            SI3Service.AddIssueWork(issue.IssueSI3Code, dateIssue.Fecha, timeToInt);
                         }
                         else
                         {
-                            dayWork[dateIssue.Fecha.DayOfWeek] += timeToInt;
+                            if (!weekWork.ContainsKey(issue.IssueSI3Code))
+                            {
+                                weekWork.Add(issue.IssueSI3Code, new Dictionary<DayOfWeek, int>());
+                            }
+
+                            Dictionary<DayOfWeek, int> dayWork = weekWork[issue.IssueSI3Code];
+
+                            if (!dayWork.ContainsKey(dateIssue.Fecha.DayOfWeek))
+                            {
+                                dayWork.Add(dateIssue.Fecha.DayOfWeek, timeToInt);
+                            }
+                            else
+                            {
+                                dayWork[dateIssue.Fecha.DayOfWeek] += timeToInt;
+                            }
                         }
                     }
                 }
-            }
 
-            foreach(var week in weekWork)
+                foreach (var week in weekWork)
+                {
+                    SI3Service.AddProjectWork(week.Key, week.Value);
+                }
+            }
+            catch (Exception e)
             {
-                SI3Service.AddProjectWork(week.Key, week.Value);
+                return e.Message;
             }
 
-
-            return "";
+            return string.Empty;
         }
 
         public void NormalizarHoras(IEnumerable<WeekJiraIssues> tareasSinNormalizar)
         {
             var diasConHorasDeMas = tareasSinNormalizar.Where(x => x.Issues.Sum(y => (y.Tiempo)) > 8);
-            var diasConHorasDeMenos = tareasSinNormalizar.Where(x => x.Issues.Sum(y => (y.Tiempo)) < 8) ;
+            var diasConHorasDeMenos = tareasSinNormalizar.Where(x => x.Issues.Sum(y => (y.Tiempo)) < 8);
             Queue<WeekJiraIssues.JiraIssues> sobrante = new Queue<WeekJiraIssues.JiraIssues>();
 
-            foreach(var diaConSobrante in diasConHorasDeMas)
+            foreach (var diaConSobrante in diasConHorasDeMas)
             {
                 double horas_sobrantes = diaConSobrante.Issues.Sum(x => x.Tiempo) - 8;
 
@@ -103,12 +104,12 @@ namespace eaSI3Web.Controllers
                     }
                 }
             }
-            
-            foreach(var diaConFaltante in diasConHorasDeMenos)
+
+            foreach (var diaConFaltante in diasConHorasDeMenos)
             {
                 double horas_faltantes = Math.Abs(diaConFaltante.Issues.Sum(x => x.Tiempo) - 8);
 
-                for(int i = 0; i < horas_faltantes; i++)
+                for (int i = 0; i < horas_faltantes; i++)
                 {
                     var issue = sobrante.Dequeue();
                     diaConFaltante.Issues.Add(issue);
@@ -117,4 +118,3 @@ namespace eaSI3Web.Controllers
         }
     }
 }
- 

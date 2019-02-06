@@ -1,9 +1,14 @@
 # eaSI3
 
-## TODO:
-* Control de excepciones 
-* Si no hay tareas en jira, mostar excepción avisando de ello.
+## Manual
+
+## Desarrollo
+
+### HITO 1 - Imputación:
+* Mostrar calendario para elegir semana.
 * Cacheo de los proyectos en SI3.
 * Añadir Logging.
 * Permitir almacenar usuario y contraseña en cada local.
-* Crear tareas.
+
+### HITO 2 - Creación de _issues_
+* Crear tareas...

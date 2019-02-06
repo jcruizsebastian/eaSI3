@@ -1,25 +1,53 @@
-using System;
-using System.Linq;
-using System.Collections.Generic;
+using IssueConveter.Model;
 using JiraConnector;
 using Microsoft.AspNetCore.Mvc;
-using IssueConveter.Model;
-using System.Net.Http;
-using System.Net;
-using System.Threading.Tasks;
-using System.Security.Authentication;
-
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 
 namespace eaSI3Web.Controllers
 {
     [Route("api/[controller]")]
     public class JiraController : Controller
     {
+        [HttpGet("[action]")]
+        public Dictionary<int,string> Weeks() {
+
+            Dictionary<int, string> dictionaryWeeks = new Dictionary<int, string>();
+            int weekOfYear = CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(DateTime.Now, CalendarWeekRule.FirstDay, DayOfWeek.Monday);
+
+            int intDay = 1;
+            int intMonth = 1;
+
+            for (int i = 0; i < weekOfYear; i++) {
+                
+                DateTime day = new DateTime(DateTime.Now.Year,intMonth,intDay);
+
+                int aSumar = 6;
+                //Este if hay que revisarlo , no sirve para todos los años, solo para el actual
+                //i == 0 es lo mismo que comprobar que es la primera semana.
+                if (i==0) { aSumar = 5;  }
+                //Semana entre dos meses
+                if (intDay+aSumar > CultureInfo.InvariantCulture.Calendar.GetDaysInMonth(DateTime.Now.Year, day.Month)) {
+                    intDay = (intDay + aSumar) - CultureInfo.InvariantCulture.Calendar.GetDaysInMonth(DateTime.Now.Year, day.Month);
+                    aSumar = 0;
+                    intMonth += 1;
+                }
+
+                string description = day.Day + "/" + day.Month + "/" + DateTime.Now.Year + " to " + (intDay+aSumar) + "/" + intMonth + "/" + DateTime.Now.Year ;
+                dictionaryWeeks.Add(i,description);
+
+                intDay += aSumar+1;
+            }
+
+            return dictionaryWeeks;
+        }
+
 
         [HttpGet("[action]")]
-        public IActionResult Worklog(string username, string password)   
+        public WeekJiraIssuesResponse Worklog(string username, string password)   
         {
-         
             //TODO: Este código debería ser refactorizado o adaptado si es que finalmente se pueden elegir fechas en la aplicación
             var today = DateTime.Today;
             var startOfWeek = today.AddDays(-1 * ((int)(DateTime.Today.DayOfWeek + 6) % 7)).AddDays(-1);
@@ -31,33 +59,25 @@ namespace eaSI3Web.Controllers
             {
                 currentWorklog = jiraWorkLogService.GetWorklog(startOfWeek, endOfWeek, username);
             }
-            catch (InvalidCredentialException e) {
+            catch (Exception e)
+            {
+                List<WeekJiraIssues> weekJiraIssues = new List<WeekJiraIssues>();
+                WeekJiraIssuesResponse weekJiraIssuesListError = new WeekJiraIssuesResponse();
+                weekJiraIssuesListError.WeekJiraIssues = weekJiraIssues;
+                weekJiraIssuesListError.NotOk = true;
+                weekJiraIssuesListError.Message = e.Message;
 
-                //return NotFound(e.Message);
-                HttpStatusContentResult response = new HttpStatusContentResult(HttpStatusCode.Forbidden, e.Message);
-                return response;
-                
+                return weekJiraIssuesListError;
             }
-            catch (UnauthorizedAccessException e) {
+            
+            WeekJiraIssuesResponse weekJiraIssuesList = new WeekJiraIssuesResponse();
+            weekJiraIssuesList.WeekJiraIssues = Convert(currentWorklog);
+            weekJiraIssuesList.NotOk = false;
+            weekJiraIssuesList.Message = "Todo bien, todo correcto";
 
-                return NotFound(e.Message);
-                //return new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("Your message here") };
-                
-                
-                
-            }
-            catch (InvalidOperationException e) {
-                return NotFound(e.Message);
-                return StatusCode(405);
-            }
-
-            return Ok(Convert(currentWorklog));
-
-           
-
-            //return new List<WeekJiraIssues>() { new WeekJiraIssues() { Fecha = DateTime.Today.ToString("dd/MM/yyyy"), Issues = new List<WeekJiraIssues.JiraIssues>(){ new WeekJiraIssues.JiraIssues() { IssueId = "Hola", Tiempo = 2.5, Titulo = "Tarea 1" }, new WeekJiraIssues.JiraIssues() { IssueId = "Hola", Tiempo = 5, Titulo = "Tarea 2" } } }  };
+            return weekJiraIssuesList;
         }
-       
+
         public static IEnumerable<WeekJiraIssues> Convert(List<WorkLog> worklog)
         {
             List<WeekJiraIssues> weekJiraIssues = new List<WeekJiraIssues>();
@@ -83,6 +103,14 @@ namespace eaSI3Web.Controllers
             return weekJiraIssues.OrderBy(d => d.Fecha);
         }
 
+        public class WeekJiraIssuesResponse {
+            public IEnumerable<WeekJiraIssues> WeekJiraIssues { get; set; }
+            public bool NotOk { get; set; }
+            public string Message { get; set; }
+
+        }
+
+      
         public class WeekJiraIssues
         {
             public DateTime Fecha { get; set; }
