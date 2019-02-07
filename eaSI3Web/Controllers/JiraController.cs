@@ -1,9 +1,11 @@
 using IssueConveter.Model;
 using JiraConnector;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 
 namespace eaSI3Web.Controllers
@@ -11,10 +13,16 @@ namespace eaSI3Web.Controllers
     [Route("api/[controller]")]
     public class JiraController : Controller
     {
-        [HttpGet("[action]")]
-        public Dictionary<int,string> Weeks() {
+        DateTime startOfWeek;
+        DateTime endOfWeek;
+       
 
-            Dictionary<int, string> dictionaryWeeks = new Dictionary<int, string>();
+        [HttpGet("[action]")]
+        public Calendar Weeks() {
+
+            Calendar calendar = new Calendar();
+            calendar.Weeks = new List<Calendar.CalendarWeeks>();
+            
             int weekOfYear = CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(DateTime.Now, CalendarWeekRule.FirstDay, DayOfWeek.Monday);
 
             int intDay = 1;
@@ -36,22 +44,60 @@ namespace eaSI3Web.Controllers
                 }
 
                 string description = day.Day + "/" + day.Month + "/" + DateTime.Now.Year + " to " + (intDay+aSumar) + "/" + intMonth + "/" + DateTime.Now.Year ;
-                dictionaryWeeks.Add(i,description);
+
+
+                calendar.Weeks.Add(new Calendar.CalendarWeeks() {
+                    numberWeek = i + 1,
+                    description = description,
+                    startOfWeek = new DateTime(DateTime.Now.Year, day.Month, day.Day),
+                    endOfWeek = new DateTime(DateTime.Now.Year, intMonth,(intDay+aSumar))
+                });
+                
 
                 intDay += aSumar+1;
             }
 
-            return dictionaryWeeks;
+            return calendar;
         }
 
+        [HttpPost("[action]")]
+        public void GetCalendarWeek(string selectedWeek) {
+            //Recibe desde la vista la semana elegida y la lista con las semanas disponibles (calendar)
+            //Hay que recorrer calendar hasta encontrar la semana elegida y sacar endOfWeek y starOfWeek
+            Calendar calendar = null;
+
+            using (var reader = new StreamReader(Request.Body))
+            {
+                var body = reader.ReadToEnd();
+                try
+                {
+                    calendar = JsonConvert.DeserializeObject<Calendar>(body);
+                }
+                catch (Exception ex)
+                { }
+            }
+
+            foreach (var week in calendar.Weeks)
+            {
+                if (int.Parse(selectedWeek) == week.numberWeek)
+                {
+                    DateTime startOfWeek1 = week.startOfWeek;
+                    DateTime endOfWeek1 = week.endOfWeek;
+                }
+            }
+        }
 
         [HttpGet("[action]")]
         public WeekJiraIssuesResponse Worklog(string username, string password)   
         {
+           
+
             //TODO: Este código debería ser refactorizado o adaptado si es que finalmente se pueden elegir fechas en la aplicación
             var today = DateTime.Today;
-            var startOfWeek = today.AddDays(-1 * ((int)(DateTime.Today.DayOfWeek + 6) % 7)).AddDays(-1);
-            DateTime endOfWeek = startOfWeek.AddDays(7);
+            
+            startOfWeek = today.AddDays(-1 * ((int)(DateTime.Today.DayOfWeek + 6) % 7)).AddDays(-1);
+            endOfWeek = startOfWeek.AddDays(7);
+            
 
             JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(username, password);
             var currentWorklog = new List<WorkLog>();
@@ -110,6 +156,17 @@ namespace eaSI3Web.Controllers
 
         }
 
+        public class Calendar {
+            public List<CalendarWeeks> Weeks { get; set; }
+
+            public class CalendarWeeks {
+
+                public int numberWeek { get; set; }
+                public string description { get; set; }
+                public DateTime startOfWeek { get; set; }
+                public DateTime endOfWeek { get; set; }
+            }
+        }
       
         public class WeekJiraIssues
         {

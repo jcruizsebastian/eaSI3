@@ -1,7 +1,10 @@
-﻿body {
-
+﻿.calendar {
+    padding: 3px;
+    margin: 20px;
 }
-
+.text {
+    margin: 3px;
+}
 .agenda-events-label {
     max-width: 100%;
     overflow: hidden;

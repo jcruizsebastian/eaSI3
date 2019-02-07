@@ -10,6 +10,7 @@ interface UserCredentials {
     Weekissues: WeekJiraIssues[];
     loadedJira: boolean;
     loadingJira: boolean;
+    calendar: Calendar;
 }
 
 interface WeekJiraIssues {
@@ -36,14 +37,24 @@ interface JiraResponse {
     message: string;
 }
 
-interface weekOfYear {
-    number: Number;
+interface CalendarWeeks {
+    numberWeek: number;
+    description: string;
+    starOfWeek: Date;
+    endOfWeek: Date;
 }
-export class Home extends React.Component<RouteComponentProps<{}>, UserCredentials> {
+
+interface Calendar {
+    weeks: CalendarWeeks[];
+}
+export class Home extends React.Component<RouteComponentProps<{}>,UserCredentials> {
+
+    componentDidMount() { this.getWeekofYear(); }
 
     constructor(props: RouteComponentProps<{}>) {
         super(props);
 
+        
         this.agendaModified = this.agendaModified.bind(this);
         this.onLoginJira = this.onLoginJira.bind(this);
         this.onLoginSi3 = this.onLoginSi3.bind(this);
@@ -52,11 +63,13 @@ export class Home extends React.Component<RouteComponentProps<{}>, UserCredentia
         this.isDisabledBtnSi3 = this.isDisabledBtnSi3.bind(this);
         this.calculateTotalHours = this.calculateTotalHours.bind(this);
         this.getWeekofYear = this.getWeekofYear.bind(this);
-
         
-        this.state = { Weekissues: [], loadedJira: false, loadingJira: false };
 
-        
+        this.state = {
+            Weekissues: [], loadedJira: false, loadingJira: false, calendar: { weeks: [] }
+        };
+
+        //this.getWeekofYear();
     }
 
     private agendaModified(weekJiraIssues: WeekJiraIssues[])
@@ -82,19 +95,27 @@ export class Home extends React.Component<RouteComponentProps<{}>, UserCredentia
     private getWeekofYear() {
         
         fetch('api/Jira/Weeks')
-            .then(response => response.json() as Promise<string>)
+            .then(response => response.json() as Promise<Calendar>)
             .then(data => {
-                console.log(data);
+                this.setState({ calendar: data });  
             });
+        
     }
     
-    private onLoginJira(e: { preventDefault: () => void; }, user: string, password: string) {
-            user = user.replace(" ", " ").trim();
-            e.preventDefault();
-            this.setState({ loadingJira: true });
+    private onLoginJira(e: { preventDefault: () => void; }, user: string, password: string, selectedWeek: string) {
 
-        fetch('api/Jira/worklog?username=' + user + '&password=' + password)
-
+                
+        user = user.replace(" ", " ").trim();
+        e.preventDefault();
+        this.setState({ loadingJira: true });
+        
+        fetch('api/Jira/getCalendarWeek?selectedWeek=' + selectedWeek,
+            {
+                method:'post',
+                body: JSON.stringify(this.state.calendar)
+            })
+        
+        fetch('api/Jira/worklog?username=' + user + '&password=' + password )
             .then(response => response.json() as Promise<WeekJiraIssuesResponse>)
             .then(data => {
                 if (data.notOk) {
@@ -104,11 +125,12 @@ export class Home extends React.Component<RouteComponentProps<{}>, UserCredentia
                 else if (data.weekJiraIssues.length == 0) {
                     alert("No hay tareas en Jira");
                     this.setState({ loadingJira: false, loadedJira: false });
-                    this.getWeekofYear();
+                    
                 }
                 else
                     this.setState({ Weekissues: data.weekJiraIssues }, this.confirmLoadedJira);
-            });
+                });
+        
        
     }
 
@@ -183,7 +205,7 @@ export class Home extends React.Component<RouteComponentProps<{}>, UserCredentia
     }
 
     public render() {
-
+        
        
         let agenda = <p><em>Sin datos</em></p>;
         let si3;
@@ -191,7 +213,7 @@ export class Home extends React.Component<RouteComponentProps<{}>, UserCredentia
         if (this.state.loadedJira) {
 
             agenda = this.renderAgenda(this.state.Weekissues);
-            si3 = <div> <h3>Ingrese credenciales de SI3</h3> <Login onLogin={this.onLoginSi3} isDisabled={this.isDisabledBtnSi3} /> </div>;
+            si3 = <div> <h3>Ingrese credenciales de SI3</h3> <Login onLogin={this.onLoginSi3} isDisabled={this.isDisabledBtnSi3} calendar={this.state.calendar} /> </div>;
         }
 
         if (this.state.loadingJira)
@@ -204,7 +226,7 @@ export class Home extends React.Component<RouteComponentProps<{}>, UserCredentia
             <div>
                 <div>
                     <h3>Ingrese credenciales de Jira</h3>
-                    <Login onLogin={this.onLoginJira} isDisabled={this.isDisabledBtnJira} />
+                    <Login onLogin={this.onLoginJira} isDisabled={this.isDisabledBtnJira} calendar={this.state.calendar} />
                 {agenda}
                 {si3}
                 </div>
