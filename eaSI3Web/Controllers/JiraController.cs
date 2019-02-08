@@ -13,14 +13,11 @@ namespace eaSI3Web.Controllers
     [Route("api/[controller]")]
     public class JiraController : Controller
     {
-        DateTime startOfWeek;
-        DateTime endOfWeek;
-       
+       static Calendar calendar = new Calendar();
 
         [HttpGet("[action]")]
         public Calendar Weeks() {
 
-            Calendar calendar = new Calendar();
             calendar.Weeks = new List<Calendar.CalendarWeeks>();
             
             int weekOfYear = CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(DateTime.Now, CalendarWeekRule.FirstDay, DayOfWeek.Monday);
@@ -31,11 +28,12 @@ namespace eaSI3Web.Controllers
             for (int i = 0; i < weekOfYear; i++) {
                 
                 DateTime day = new DateTime(DateTime.Now.Year,intMonth,intDay);
-
                 int aSumar = 6;
+
                 //Este if hay que revisarlo , no sirve para todos los años, solo para el actual
                 //i == 0 es lo mismo que comprobar que es la primera semana.
                 if (i==0) { aSumar = 5;  }
+
                 //Semana entre dos meses
                 if (intDay+aSumar > CultureInfo.InvariantCulture.Calendar.GetDaysInMonth(DateTime.Now.Year, day.Month)) {
                     intDay = (intDay + aSumar) - CultureInfo.InvariantCulture.Calendar.GetDaysInMonth(DateTime.Now.Year, day.Month);
@@ -52,53 +50,28 @@ namespace eaSI3Web.Controllers
                     startOfWeek = new DateTime(DateTime.Now.Year, day.Month, day.Day),
                     endOfWeek = new DateTime(DateTime.Now.Year, intMonth,(intDay+aSumar))
                 });
-                
-
                 intDay += aSumar+1;
             }
 
             return calendar;
         }
 
-        [HttpPost("[action]")]
-        public void GetCalendarWeek(string selectedWeek) {
-            //Recibe desde la vista la semana elegida y la lista con las semanas disponibles (calendar)
-            //Hay que recorrer calendar hasta encontrar la semana elegida y sacar endOfWeek y starOfWeek
-            Calendar calendar = null;
 
-            using (var reader = new StreamReader(Request.Body))
-            {
-                var body = reader.ReadToEnd();
-                try
-                {
-                    calendar = JsonConvert.DeserializeObject<Calendar>(body);
-                }
-                catch (Exception ex)
-                { }
-            }
+        [HttpGet("[action]")]
+        public WeekJiraIssuesResponse Worklog(string username, string password, string selectedWeek)   
+        {
+            DateTime startOfWeek = DateTime.Now;
+            DateTime endOfWeek= DateTime.Now;
 
             foreach (var week in calendar.Weeks)
             {
                 if (int.Parse(selectedWeek) == week.numberWeek)
                 {
-                    DateTime startOfWeek1 = week.startOfWeek;
-                    DateTime endOfWeek1 = week.endOfWeek;
+                     startOfWeek = week.startOfWeek;
+                     endOfWeek = week.endOfWeek;
                 }
             }
-        }
-
-        [HttpGet("[action]")]
-        public WeekJiraIssuesResponse Worklog(string username, string password)   
-        {
-           
-
-            //TODO: Este código debería ser refactorizado o adaptado si es que finalmente se pueden elegir fechas en la aplicación
-            var today = DateTime.Today;
             
-            startOfWeek = today.AddDays(-1 * ((int)(DateTime.Today.DayOfWeek + 6) % 7)).AddDays(-1);
-            endOfWeek = startOfWeek.AddDays(7);
-            
-
             JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(username, password);
             var currentWorklog = new List<WorkLog>();
             try

@@ -26,16 +26,21 @@ interface Calendar {
 }
 
 export class Login extends React.Component<LoginProps, UserCrendentials> {
+   
+  
 
     constructor(props: LoginProps) {
         super(props);
+
         
         this.handleSubmitLogin = this.handleSubmitLogin.bind(this);
         this.handleChangeUser = this.handleChangeUser.bind(this);
         this.handleChangePassword = this.handleChangePassword.bind(this);
         this.handleChangeWeek = this.handleChangeWeek.bind(this);
-        
+
+        this.state = { user: "", password: "", selectedWeek: this.props.calendar.weeks.length.toString() }
     }
+   
 
     public handleChangeUser(event: React.FormEvent<HTMLInputElement>) {
         this.setState({ user: event.currentTarget.value });
@@ -55,7 +60,8 @@ export class Login extends React.Component<LoginProps, UserCrendentials> {
         
     }
 
-
+    
+    
     render()
     {
         return (
@@ -68,9 +74,12 @@ export class Login extends React.Component<LoginProps, UserCrendentials> {
                     <label htmlFor="tbPass" className="text">Contraseña :</label>
                     <input type="password" id="tbPass" className="form-control" name="password" placeholder="Introduzca su contraseña" onChange={this.handleChangePassword} />
                     <label>Elija semana de trabajo :</label>
-                    <select className="calendar" onChange={this.handleChangeWeek} >
+                    <select className="calendar" onChange={this.handleChangeWeek}>
                         {
-                            this.props.calendar.weeks.map(week => <option value={week.numberWeek} key={week.numberWeek}>{week.description}</option>)
+                            this.props.calendar.weeks.map(week =>
+                                <option value={week.numberWeek} key={week.numberWeek} selected={(week.numberWeek == this.props.calendar.weeks.length) ? true : false} >
+                                    {week.description}
+                                </option>)
                         }
                     </select>
                     <hr></hr>

@@ -11,6 +11,7 @@ interface UserCredentials {
     loadedJira: boolean;
     loadingJira: boolean;
     calendar: Calendar;
+    calendarLoaded: boolean;
 }
 
 interface WeekJiraIssues {
@@ -49,7 +50,7 @@ interface Calendar {
 }
 export class Home extends React.Component<RouteComponentProps<{}>,UserCredentials> {
 
-    componentDidMount() { this.getWeekofYear(); }
+    
 
     constructor(props: RouteComponentProps<{}>) {
         super(props);
@@ -66,11 +67,13 @@ export class Home extends React.Component<RouteComponentProps<{}>,UserCredential
         
 
         this.state = {
-            Weekissues: [], loadedJira: false, loadingJira: false, calendar: { weeks: [] }
+            Weekissues: [], loadedJira: false, loadingJira: false, calendar: { weeks: [] }, calendarLoaded: false
         };
 
-        //this.getWeekofYear();
+        
     }
+
+    componentDidMount() { this.getWeekofYear(); }
 
     private agendaModified(weekJiraIssues: WeekJiraIssues[])
     {
@@ -97,41 +100,35 @@ export class Home extends React.Component<RouteComponentProps<{}>,UserCredential
         fetch('api/Jira/Weeks')
             .then(response => response.json() as Promise<Calendar>)
             .then(data => {
-                this.setState({ calendar: data });  
+                this.setState({ calendar: data, calendarLoaded: true});  
             });
         
     }
     
     private onLoginJira(e: { preventDefault: () => void; }, user: string, password: string, selectedWeek: string) {
 
-                
+
         user = user.replace(" ", " ").trim();
         e.preventDefault();
         this.setState({ loadingJira: true });
-        
-        fetch('api/Jira/getCalendarWeek?selectedWeek=' + selectedWeek,
-            {
-                method:'post',
-                body: JSON.stringify(this.state.calendar)
-            })
-        
-        fetch('api/Jira/worklog?username=' + user + '&password=' + password )
-            .then(response => response.json() as Promise<WeekJiraIssuesResponse>)
-            .then(data => {
-                if (data.notOk) {
-                    alert(data.message);
-                    this.setState({ loadingJira: false, loadedJira: false });
-                }
-                else if (data.weekJiraIssues.length == 0) {
-                    alert("No hay tareas en Jira");
-                    this.setState({ loadingJira: false, loadedJira: false });
-                    
-                }
-                else
-                    this.setState({ Weekissues: data.weekJiraIssues }, this.confirmLoadedJira);
-                });
-        
-       
+
+        fetch('api/Jira/worklog?username=' + user + '&password=' + password + '&selectedWeek=' + selectedWeek)
+           
+             .then(response => response.json() as Promise<WeekJiraIssuesResponse>)
+             .then(data => {
+                   if (data.notOk) {
+                        alert(data.message);
+                        this.setState({ loadingJira: false, loadedJira: false });
+                   }
+                   else if (data.weekJiraIssues.length == 0) {
+                        alert("No hay tareas en Jira");
+                        this.setState({ loadingJira: false, loadedJira: false });
+
+                   }
+                   else
+                        this.setState({ Weekissues: data.weekJiraIssues }, this.confirmLoadedJira);
+                    });
+   
     }
 
     
@@ -163,8 +160,7 @@ export class Home extends React.Component<RouteComponentProps<{}>,UserCredential
     }
 
     private isDisabledBtnJira() {
-        if (this.state.loadedJira) { return true; }
-        else return false;
+       return false;
     }
 
     private isDisabledBtnSi3() {
@@ -209,7 +205,8 @@ export class Home extends React.Component<RouteComponentProps<{}>,UserCredential
        
         let agenda = <p><em>Sin datos</em></p>;
         let si3;
-
+        let jira;
+        if (this.state.calendarLoaded) { jira = <Login onLogin={this.onLoginJira} isDisabled={this.isDisabledBtnJira} calendar={this.state.calendar} /> }
         if (this.state.loadedJira) {
 
             agenda = this.renderAgenda(this.state.Weekissues);
@@ -226,7 +223,7 @@ export class Home extends React.Component<RouteComponentProps<{}>,UserCredential
             <div>
                 <div>
                     <h3>Ingrese credenciales de Jira</h3>
-                    <Login onLogin={this.onLoginJira} isDisabled={this.isDisabledBtnJira} calendar={this.state.calendar} />
+                    {jira}
                 {agenda}
                 {si3}
                 </div>

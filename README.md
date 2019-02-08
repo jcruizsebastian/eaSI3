@@ -5,8 +5,8 @@
 ## Desarrollo
 
 ### HITO 1 - Imputación:
-* Mostrar calendario para elegir semana.
-* Cacheo de los proyectos en SI3.
+* ID Si3
+* Estilos bootstrap
 * Añadir Logging.
 * Permitir almacenar usuario y contraseña en cada local.
 
