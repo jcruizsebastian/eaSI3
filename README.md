@@ -5,8 +5,6 @@
 ## Desarrollo
 
 ### HITO 1 - Imputación:
-* ID Si3
-* Estilos bootstrap
 * Añadir Logging.
 * Permitir almacenar usuario y contraseña en cada local.
 

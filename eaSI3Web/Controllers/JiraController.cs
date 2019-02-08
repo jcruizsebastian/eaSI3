@@ -67,8 +67,8 @@ namespace eaSI3Web.Controllers
             {
                 if (int.Parse(selectedWeek) == week.numberWeek)
                 {
-                     startOfWeek = week.startOfWeek;
-                     endOfWeek = week.endOfWeek;
+                    startOfWeek = week.startOfWeek.AddDays(-1);
+                    endOfWeek = week.endOfWeek;
                 }
             }
             

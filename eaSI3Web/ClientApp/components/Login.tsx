@@ -74,7 +74,8 @@ export class Login extends React.Component<LoginProps, UserCrendentials> {
                     <label htmlFor="tbPass" className="text">Contraseña :</label>
                     <input type="password" id="tbPass" className="form-control" name="password" placeholder="Introduzca su contraseña" onChange={this.handleChangePassword} />
                     <label>Elija semana de trabajo :</label>
-                    <select className="calendar" onChange={this.handleChangeWeek}>
+                  
+                    <select className="custom-select" onChange={this.handleChangeWeek}>
                         {
                             this.props.calendar.weeks.map(week =>
                                 <option value={week.numberWeek} key={week.numberWeek} selected={(week.numberWeek == this.props.calendar.weeks.length) ? true : false} >
@@ -82,6 +83,7 @@ export class Login extends React.Component<LoginProps, UserCrendentials> {
                                 </option>)
                         }
                     </select>
+                     
                     <hr></hr>
                     <input disabled={this.props.isDisabled()} type="submit" className="btn btn-primary" value="Enviar" />
                 </form>

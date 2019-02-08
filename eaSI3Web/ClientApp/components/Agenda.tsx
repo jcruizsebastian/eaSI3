@@ -9,7 +9,7 @@ import ReactLoading from "react-loading";
 
 
 interface JiraIssues {
-    issueSi3: string;
+    issueSI3Code: string;
     issueCode: string;
     issueKey: string;
     titulo: string;
@@ -67,8 +67,9 @@ export class Agenda extends React.Component<    WeekJiraIssuesProps, AgendaState
         
         return <div>
             
-            <table className="table table-condensed table-bordered">
-                <thead>
+            <table className="table .table-responsive">
+                <caption>Lista de tareas Jira</caption>
+                <thead className="thead-dark">
                     <tr>
                         <th>Fecha</th>
                         <th>ID</th>
@@ -90,11 +91,12 @@ export class Agenda extends React.Component<    WeekJiraIssuesProps, AgendaState
                                     {Weekissue.issues.map(issue =>
                                         <div className="agenda-events-id" key={issue.issueCode}>
                                             <a target="_blank" href={this.state.link.concat(issue.issueKey)}>{issue.issueKey}</a>
+                                            <label className="issue-si3">({issue.issueSI3Code})</label>
                                         </div>
                                     )}
                                    
-                                 </td>
-                                
+                                </td>
+                             
                                 <td className="agenda-events">
                                     {Weekissue.issues.map(issue =>
                                         <div className="agenda-events-title" key={issue.titulo}>

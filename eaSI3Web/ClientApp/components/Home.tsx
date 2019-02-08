@@ -20,7 +20,7 @@ interface WeekJiraIssues {
 }
 
 interface JiraIssues {
-    issueSi3: string;
+    issueSI3Code: string;
     issueCode: string;
     issueKey: string;
     titulo: string;
