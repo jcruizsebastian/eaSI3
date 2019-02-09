@@ -30,10 +30,12 @@ namespace SI3Connector
             request.Headers.Add("accept-encoding", "gzip, deflate");
             request.Headers.Add("Accept-Language", "es-ES,es;q=0.5");
 
-            if(x_www_form_url_encoded != null)
+            //TODO: Comprobar si en este algoritmo lo marcado con //* es realmente necesario
+            if (x_www_form_url_encoded != null)
             {
-                if (x_www_form_url_encoded.ContainsKey("modificaval"))
-                {
+
+                if (x_www_form_url_encoded.ContainsKey("modificaval"))//*
+                {//*
                     StringBuilder sb = new StringBuilder();
                     foreach (var value in x_www_form_url_encoded)
                         sb.Append($"{value.Key}={value.Value}&");
@@ -41,12 +43,11 @@ namespace SI3Connector
                     sb.Remove(sb.Length -1, 1);
 
                     request.Content = new StringContent(sb.ToString(), Encoding.UTF8, "application/x-www-form-urlencoded");
-                }
-                else
-                    request.Content = new FormUrlEncodedContent(x_www_form_url_encoded);
+                }//*
+                else//*
+                    request.Content = new FormUrlEncodedContent(x_www_form_url_encoded);//*
             }
                 
-
             using (var result = await httpClient.SendAsync(request))
             {
                 return await result.Content.ReadAsStringAsync();

@@ -28,7 +28,7 @@ namespace JiraConnector
             var response = client.Execute<T>(request);
 
             if (response.StatusCode == System.Net.HttpStatusCode.Forbidden)
-                throw new InvalidCredentialException("Usuario y/o contraseña incorrectos.");
+                throw new InvalidCredentialException("Usuario y/o contraseña de JIRA incorrectos.");
 
             if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
                 throw new UnauthorizedAccessException($"Máximo número de intetos de acceso a la API de JIRA excedido. Ingrese nuevamente a través de {jiraURL}.");
