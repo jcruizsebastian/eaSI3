@@ -6,7 +6,7 @@
 
 ### HITO 1 - Imputación:
 * Añadir Logging.
-* Permitir almacenar usuario y contraseña en cada local.
+* Manual de uso easi3
 
 ### HITO 2 - Creación de _issues_
 * Crear tareas...

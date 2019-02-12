@@ -12,6 +12,7 @@ interface UserCredentials {
     loadingJira: boolean;
     calendar: Calendar;
     calendarLoaded: boolean;
+    selectedWeek?: string;
 }
 
 interface WeekJiraIssues {
@@ -64,7 +65,7 @@ export class Home extends React.Component<RouteComponentProps<{}>,UserCredential
         this.isDisabledBtnSi3 = this.isDisabledBtnSi3.bind(this);
         this.calculateTotalHours = this.calculateTotalHours.bind(this);
         this.getWeekofYear = this.getWeekofYear.bind(this);
-        
+        this.handleChangeWeek = this.handleChangeWeek.bind(this);
 
         this.state = {
             Weekissues: [], loadedJira: false, loadingJira: false, calendar: { weeks: [] }, calendarLoaded: false
@@ -100,19 +101,21 @@ export class Home extends React.Component<RouteComponentProps<{}>,UserCredential
         fetch('api/Jira/Weeks')
             .then(response => response.json() as Promise<Calendar>)
             .then(data => {
-                this.setState({ calendar: data, calendarLoaded: true});  
+                this.setState({ calendar: data, calendarLoaded: true, selectedWeek: data.weeks.length.toString() });  
             });
         
     }
-    
-    private onLoginJira(e: { preventDefault: () => void; }, user: string, password: string, selectedWeek: string) {
 
+    private onLoginJira(e: { preventDefault: () => void; }, user: string, password: string, checked: boolean) {
 
         user = user.replace(" ", " ").trim();
         e.preventDefault();
+        
+        if (checked) { localStorage.setItem("userJira", user); localStorage.setItem("passwordJira", password); }
+
         this.setState({ loadingJira: true });
 
-        fetch('api/Jira/worklog?username=' + user + '&password=' + password + '&selectedWeek=' + selectedWeek)
+        fetch('api/Jira/worklog?username=' + user + '&password=' + password + '&selectedWeek=' + this.state.selectedWeek)
            
              .then(response => response.json() as Promise<WeekJiraIssuesResponse>)
              .then(data => {
@@ -131,13 +134,14 @@ export class Home extends React.Component<RouteComponentProps<{}>,UserCredential
    
     }
 
-    
-    private onLoginSi3(e: { preventDefault: () => void; }, user: string, password: string) {
+
+    private onLoginSi3(e: { preventDefault: () => void; }, user: string, password: string, checked: boolean) {
 
         user = user.replace("'", " ").trim();
-
         e.preventDefault();
-        
+
+        if (checked) { localStorage.setItem("userSi3", user); localStorage.setItem("passwordSi3", password); }
+
             fetch('api/SI3/register?username=' + user + '&password=' + password, {
                 method: 'post',
                 body: JSON.stringify(this.state.Weekissues),
@@ -200,17 +204,39 @@ export class Home extends React.Component<RouteComponentProps<{}>,UserCredential
         return total;
     }
 
+    public handleChangeWeek(event: React.FormEvent<HTMLSelectElement>) {
+        this.setState({ selectedWeek: event.currentTarget.value });
+
+    }
+
     public render() {
         
        
         let agenda = <p><em>Sin datos</em></p>;
         let si3;
         let jira;
-        if (this.state.calendarLoaded) { jira = <Login onLogin={this.onLoginJira} isDisabled={this.isDisabledBtnJira} calendar={this.state.calendar} /> }
+        let calendar;
+
+        if (this.state.calendarLoaded) {
+            jira = <Login onLogin={this.onLoginJira} isDisabled={this.isDisabledBtnJira} 
+                userProps={localStorage.getItem("userJira") as string} passwordProps={localStorage.getItem("passwordJira") as string} />
+            calendar =<div>
+                <label>Elija semana de trabajo :</label>
+                <select className="custom-select" onChange={this.handleChangeWeek}>
+                    {
+                        this.state.calendar.weeks.map(week =>
+                            <option value={week.numberWeek} key={week.numberWeek} selected={(week.numberWeek == this.state.calendar.weeks.length) ? true : false} >
+                                {week.description}
+                            </option>)
+                    }
+                </select>
+            </div>
+        }
         if (this.state.loadedJira) {
 
             agenda = this.renderAgenda(this.state.Weekissues);
-            si3 = <div> <h3>Ingrese credenciales de SI3</h3> <Login onLogin={this.onLoginSi3} isDisabled={this.isDisabledBtnSi3} calendar={this.state.calendar} /> </div>;
+            si3 = <div> <h3>Ingrese credenciales de SI3</h3> <Login onLogin={this.onLoginSi3} isDisabled={this.isDisabledBtnSi3} 
+                userProps={localStorage.getItem("userSi3") as string} passwordProps={localStorage.getItem("passwordSi3") as string}/> </div>;
         }
 
         if (this.state.loadingJira)
@@ -222,10 +248,12 @@ export class Home extends React.Component<RouteComponentProps<{}>,UserCredential
 
             <div>
                 <div>
+                    {calendar}
                     <h3>Ingrese credenciales de Jira</h3>
                     {jira}
-                {agenda}
-                {si3}
+
+                    {agenda}
+                    {si3}
                 </div>
             </div>
         )

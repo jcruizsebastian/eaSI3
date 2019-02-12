@@ -2,28 +2,21 @@
 import * as React from 'react';
 import 'isomorphic-fetch';
 import 'current-week-number';
+import { Checkbox } from 'react-inputs-validation';
 
 interface UserCrendentials {
     user: string;
     password: string;
-    selectedWeek: string;
+    checked: boolean;
 }
 interface LoginProps {
     onLogin: Function;
     isDisabled: Function;
-    calendar: Calendar;
+    //calendar: Calendar;
+    userProps: string;
+    passwordProps: string
 }
 
-interface CalendarWeeks {
-    numberWeek: number;
-    description: string;
-    starOfWeek: Date;
-    endOfWeek: Date;
-}
-
-interface Calendar {
-    weeks: CalendarWeeks[];
-}
 
 export class Login extends React.Component<LoginProps, UserCrendentials> {
    
@@ -36,9 +29,12 @@ export class Login extends React.Component<LoginProps, UserCrendentials> {
         this.handleSubmitLogin = this.handleSubmitLogin.bind(this);
         this.handleChangeUser = this.handleChangeUser.bind(this);
         this.handleChangePassword = this.handleChangePassword.bind(this);
-        this.handleChangeWeek = this.handleChangeWeek.bind(this);
+        this.handleChangeCheckBox = this.handleChangeCheckBox.bind(this);
 
-        this.state = { user: "", password: "", selectedWeek: this.props.calendar.weeks.length.toString() }
+        this.state = {
+            user: localStorage.getItem("userJira") as string, password: localStorage.getItem("passwordJira") as string,
+            checked: false
+        }
     }
    
 
@@ -51,39 +47,33 @@ export class Login extends React.Component<LoginProps, UserCrendentials> {
     }
 
     public handleSubmitLogin(e: { preventDefault: () => void; }) {
+        this.props.onLogin(e, this.state.user, this.state.password, this.state.checked);
+       }
+   
+  
 
-        this.props.onLogin(e, this.state.user, this.state.password, this.state.selectedWeek);
+    public handleChangeCheckBox(event: React.FormEvent<HTMLInputElement>) {
+        this.setState({ checked: event.currentTarget.checked });
     }
 
-    public handleChangeWeek(event: React.FormEvent<HTMLSelectElement>) {
-        this.setState({ selectedWeek: event.currentTarget.value });
-        
-    }
-
-    
-    
+  
     render()
     {
+       
         return (
             <div className="form-group">
                 <form className="dataForm" onSubmit={this.handleSubmitLogin}>
                     
                     <hr></hr>
                     <label htmlFor="tbUser" className="text">Nombre de usuario :</label>
-                    <input type="text" id="tbUser" className="form-control" name="user" placeholder="Introduzca su nombre de usuario"  onChange={this.handleChangeUser} />
+                    <input type="text" id="tbUser" className="form-control" name="user" placeholder="Introduzca su nombre de usuario" onChange={this.handleChangeUser} defaultValue={this.props.userProps} />
                     <label htmlFor="tbPass" className="text">Contraseña :</label>
-                    <input type="password" id="tbPass" className="form-control" name="password" placeholder="Introduzca su contraseña" onChange={this.handleChangePassword} />
-                    <label>Elija semana de trabajo :</label>
-                  
-                    <select className="custom-select" onChange={this.handleChangeWeek}>
-                        {
-                            this.props.calendar.weeks.map(week =>
-                                <option value={week.numberWeek} key={week.numberWeek} selected={(week.numberWeek == this.props.calendar.weeks.length) ? true : false} >
-                                    {week.description}
-                                </option>)
-                        }
-                    </select>
-                     
+                    <input type="password" id="tbPass" className="form-control" name="password" placeholder="Introduzca su contraseña" onChange={this.handleChangePassword} defaultValue={this.props.passwordProps} />
+
+                    <div>
+                        <input type="checkbox" id="checkbox" onChange={this.handleChangeCheckBox} ></input>
+                        <label>Recordar usuario y contraseña</label>
+                    </div>
                     <hr></hr>
                     <input disabled={this.props.isDisabled()} type="submit" className="btn btn-primary" value="Enviar" />
                 </form>
