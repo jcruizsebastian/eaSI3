@@ -148,12 +148,12 @@ export class Home extends React.Component<RouteComponentProps<{}>,UserCredential
             })
                 .then(response => response.json() as Promise<JiraResponse>)    
                 .then(data => {
-                    if (data.message.length != 0)
+                    if (data.message)
                     {
                         alert(data.message);
                     }
                     else
-                        alert("Horas imputadas en Jira");
+                        alert("Horas imputadas en SI3");
                 });
         
         
