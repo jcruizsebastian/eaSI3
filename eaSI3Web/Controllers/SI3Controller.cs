@@ -6,12 +6,18 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using static eaSI3Web.Controllers.JiraController;
+using Microsoft.Extensions.Logging;
 
 namespace eaSI3Web.Controllers
 {
     [Route("api/[controller]")]
     public class SI3Controller : Controller
     {
+        private readonly ILogger<SI3Controller> _logger;
+        public SI3Controller(ILogger<SI3Controller> logger) {
+            _logger = logger;
+        }
+
         [HttpPost("[action]")]
         public string Register([FromQuery]string username, [FromQuery]string password, [FromBody]IEnumerable<WeekJiraIssues> model)
         {
@@ -19,13 +25,14 @@ namespace eaSI3Web.Controllers
             {
                 NormalizarHoras(model);
 
+                _logger.LogInformation("Usuario " + username + " hizo clic en el botón de Enviar Si3 ");
                 SI3Service SI3Service = new SI3Service(username, password);
 
                 Dictionary<string, Dictionary<DayOfWeek, int>> weekWork = new Dictionary<string, Dictionary<DayOfWeek, int>>();
 
                 foreach (var dateIssue in model)
                 {
-                    Console.WriteLine("estoy dentro");
+                   
                     foreach (var issue in dateIssue.Issues)
                     {
                         int timeToInt = (int)issue.Tiempo; //SI3 no permite horas parciales, solo horas enteras.
@@ -63,9 +70,11 @@ namespace eaSI3Web.Controllers
             }
             catch (Exception e)
             {
+                _logger.LogError("Usuario : " + username + " Error : " + e.Message);
                 return e.Message;
-            }
 
+            }
+            _logger.LogInformation("Usuario : " + username + ", horas imputadas en Si3 correctamente");
             return string.Empty;
         }
 

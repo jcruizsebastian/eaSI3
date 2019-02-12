@@ -1,6 +1,7 @@
 ﻿using IssueConveter;
 using IssueConveter.Model;
 using Jira;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,10 +11,12 @@ namespace JiraConnector
     public class JiraWorkLogService
     {
         private JiraHttpRequest jiraHttpRequest { get; set; }
-
-        public JiraWorkLogService(string username, string password)
+        private readonly ILogger _logger;
+        public JiraWorkLogService(string username, string password, ILogger logger)
         {
-            jiraHttpRequest = new JiraHttpRequest(username, password);
+            _logger = logger;
+
+            jiraHttpRequest = new JiraHttpRequest(username, password, logger);
         }
 
         public List<WorkLog> GetWorklog(DateTime startDate, DateTime endDate, string username)

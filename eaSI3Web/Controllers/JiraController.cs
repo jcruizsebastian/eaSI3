@@ -1,6 +1,7 @@
 using IssueConveter.Model;
 using JiraConnector;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -13,10 +14,19 @@ namespace eaSI3Web.Controllers
     [Route("api/[controller]")]
     public class JiraController : Controller
     {
-       static Calendar calendar = new Calendar();
+
+        private readonly ILogger<JiraController> _logger;
+        public JiraController(ILogger<JiraController> logger)
+        {
+            _logger = logger;
+        }
+
+        static Calendar calendar = new Calendar();
 
         [HttpGet("[action]")]
         public Calendar Weeks() {
+
+            
 
             calendar.Weeks = new List<Calendar.CalendarWeeks>();
             
@@ -53,6 +63,7 @@ namespace eaSI3Web.Controllers
                 intDay += aSumar+1;
             }
 
+            
             return calendar;
         }
 
@@ -62,6 +73,7 @@ namespace eaSI3Web.Controllers
         {
             DateTime startOfWeek = DateTime.Now;
             DateTime endOfWeek= DateTime.Now;
+            _logger.LogInformation("Usuario " + username + " => clic en el botón de Enviar Jira, Semana elegida : " + selectedWeek);
 
             foreach (var week in calendar.Weeks)
             {
@@ -72,7 +84,7 @@ namespace eaSI3Web.Controllers
                 }
             }
             
-            JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(username, password);
+            JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(username, password, _logger);
             var currentWorklog = new List<WorkLog>();
             try
             {
@@ -85,7 +97,7 @@ namespace eaSI3Web.Controllers
                 weekJiraIssuesListError.WeekJiraIssues = weekJiraIssues;
                 weekJiraIssuesListError.NotOk = true;
                 weekJiraIssuesListError.Message = e.Message;
-
+                _logger.LogError("Usuario : " + username + " Semana Elegida : " + selectedWeek + "Error : " +e.Message);
                 return weekJiraIssuesListError;
             }
             
@@ -93,7 +105,7 @@ namespace eaSI3Web.Controllers
             weekJiraIssuesList.WeekJiraIssues = Convert(currentWorklog);
             weekJiraIssuesList.NotOk = false;
             weekJiraIssuesList.Message = "Todo bien, todo correcto";
-
+            _logger.LogInformation("Worklog devuelto satisfactoriamente a " + username);
             return weekJiraIssuesList;
         }
 

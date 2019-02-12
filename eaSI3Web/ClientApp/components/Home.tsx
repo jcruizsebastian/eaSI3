@@ -168,7 +168,7 @@ export class Home extends React.Component<RouteComponentProps<{}>,UserCredential
     }
 
     private isDisabledBtnSi3() {
-
+        
         let total = 0;
         let tiempo: number;
 

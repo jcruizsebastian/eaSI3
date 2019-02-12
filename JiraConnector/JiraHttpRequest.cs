@@ -1,4 +1,5 @@
-﻿using RestSharp;
+﻿using Microsoft.Extensions.Logging;
+using RestSharp;
 using System;
 using System.Security.Authentication;
 
@@ -10,11 +11,12 @@ namespace JiraConnector
 
         private string _username { get; set; }
         private string _password { get; set; }
-
-        public JiraHttpRequest(string username, string password)
+        private readonly ILogger _logger;
+        public JiraHttpRequest(string username, string password, ILogger logger)
         {
             _username = username;
             _password = password;
+            _logger = logger;
         }
 
         public IRestResponse<T> DoJiraRequest<T>(string queryStringRequest) where T : new()

@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="NLog.Web.AspNetCore" Version="4.8.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Jira\Jira.csproj" />
     <ProjectReference Include="..\SI3\SI3.csproj" />
   </ItemGroup>

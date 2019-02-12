@@ -5,9 +5,6 @@ import 'isomorphic-fetch';
 import ReactLoading from "react-loading";
 
 
-
-
-
 interface JiraIssues {
     issueSI3Code: string;
     issueCode: string;
@@ -16,7 +13,6 @@ interface JiraIssues {
     tiempo: number;
     tiempoCorregido: number;
 }
-
 
 interface WeekJiraIssues {
     fecha: Date;
@@ -34,12 +30,12 @@ interface AgendaState {
     link: String;
     error: boolean;
 }
-export class Agenda extends React.Component<    WeekJiraIssuesProps, AgendaState> {
+export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
 
     constructor(props: WeekJiraIssuesProps) {
         super(props);
 
-  
+
         this.timeReassignment = this.timeReassignment.bind(this);
         this.state = { weekissues: this.props.weekissues, link: "https://jira.openfinance.es/browse/", error: false };
     }
@@ -48,12 +44,12 @@ export class Agenda extends React.Component<    WeekJiraIssuesProps, AgendaState
 
         let day = event.currentTarget.id.split('|')[1];
         let issueId = event.currentTarget.id.split('|')[0];
-        
+
         for (var dayIssue of this.state.weekissues) {
             if (new Date(dayIssue.fecha.toString()).getDate().toString() == day) {
                 for (var issue of dayIssue.issues) {
                     if (issue.issueKey == issueId)
-                        issue.tiempo = Number (event.currentTarget.value);
+                        issue.tiempo = Number(event.currentTarget.value);
                 }
             }
         }
@@ -62,11 +58,11 @@ export class Agenda extends React.Component<    WeekJiraIssuesProps, AgendaState
     }
 
     public render() {
-        
+
         let total: number = this.props.calculateTotalHours();
-        
+
         return <div>
-            
+
             <table className="table .table-responsive">
                 <caption>Lista de tareas Jira</caption>
                 <thead className="thead-dark">
@@ -86,7 +82,7 @@ export class Agenda extends React.Component<    WeekJiraIssuesProps, AgendaState
                                 <td className="agenda-date active">
                                     <div className="shortdate text-muted" > {new Date(Weekissue.fecha.toString()).toLocaleDateString()}</div>
                                 </td>
-                                
+
                                 <td className="agenda-events" >
                                     {Weekissue.issues.map(issue =>
                                         <div className="agenda-events-id" key={issue.issueCode}>
@@ -94,9 +90,9 @@ export class Agenda extends React.Component<    WeekJiraIssuesProps, AgendaState
                                             <label className="issue-si3">({issue.issueSI3Code})</label>
                                         </div>
                                     )}
-                                   
+
                                 </td>
-                             
+
                                 <td className="agenda-events">
                                     {Weekissue.issues.map(issue =>
                                         <div className="agenda-events-title" key={issue.titulo}>
@@ -105,20 +101,20 @@ export class Agenda extends React.Component<    WeekJiraIssuesProps, AgendaState
                                     )}
                                 </td>
 
-                                
+
                                 <td className="agenda-events">
                                     {Weekissue.issues.map(issue =>
                                         <div className="agenda-events-hours" key={issue.issueKey}>
                                             <input type="text" id={issue.issueKey + '|' + new Date(Weekissue.fecha.toString()).getDate()} name="tbTiempoCorregido" value={issue.tiempoCorregido}
                                                 placeholder={String(issue.tiempo)} onChange={this.timeReassignment} className={(Number(issue.tiempo) % 1 != 0) ? "invalid" : "valid"} />
-                                           
+
                                         </div>
                                     )}
                                 </td>
-                              
+
                             </tr>
-                            
-                        ) 
+
+                        )
                     }
 
                     <tr>
@@ -130,7 +126,7 @@ export class Agenda extends React.Component<    WeekJiraIssuesProps, AgendaState
                 </tbody>
             </table>
             <br />
-            
+
         </div>
 
 
