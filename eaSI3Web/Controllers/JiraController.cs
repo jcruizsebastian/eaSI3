@@ -64,7 +64,6 @@ namespace eaSI3Web.Controllers
             return calendar;
         }
 
-
         [HttpGet("[action]")]
         public WeekJiraIssuesResponse Worklog(string username, string password, string selectedWeek)   
         {

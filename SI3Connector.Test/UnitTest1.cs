@@ -104,7 +104,7 @@ namespace SI3Connector.Test
         [TestMethod]
         public void testNewIssue()
         {
-            NewIssue newissue = new NewIssue()
+            Issue newissue = new Issue()
             {
                 title = "Prueba automatica title",
                 cause = "Prueba automatica causa",
@@ -112,7 +112,7 @@ namespace SI3Connector.Test
                 phase = Phases.Maintenance,
                 priority = Prioridades.Medium,
                 tipo = Tipos.Compatibility,
-                type = NewIssue.Types.improv,
+                type = Issue.Types.improv,
                 user = "187",
                 product="64",
                 component = "591"

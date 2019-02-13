@@ -1,6 +1,6 @@
 ﻿namespace SI3.Issues
 {
-    public class NewIssue
+    public class Issue
     {
         public string product { get; set; }
         public string component { get; set; }

@@ -20,6 +20,88 @@ namespace eaSI3Web.Controllers
             _logger = logger;
         }
 
+        public class Issue
+        {
+            public string product { get; set; }
+            public string component { get; set; }
+            public string module = "0";
+            public string title { get; set; }
+            public string cause { get; set; }
+            public string user { get; set; }
+            public string type { get; set; }
+            public string tipo { get; set; }
+            public string phase { get; set; }
+            public string level { get; set; }
+            public string priority { get; set; }
+        }
+
+        public class Producto
+        {
+            public class Componente
+            {
+                public class Modulo
+                {
+                    public string code { get; set; }
+                    public string name { get; set; }
+                }
+
+                public List<Modulo> modulos { get; set; }
+                public string code { get; set; }
+                public string name { get; set; }
+            }
+
+            public List<Componente> componentes { get; set; }
+            public string code { get; set; }
+            public string name { get; set; }
+        }
+
+        public static List<Producto> products { get; set; }
+
+        [HttpGet("[action]")]
+        public List<Producto> Products([FromQuery]string username, [FromQuery]string password)
+        {
+            if (products != null)
+                return products;
+
+            products = new List<Producto>();
+
+            SI3Service SI3Service = new SI3Service(username, password);
+            var productos = SI3Service.GetProducts();
+            foreach(var product in productos)
+            {                
+                List<Producto.Componente> components = new List<Producto.Componente>();
+
+                var componentes = SI3Service.GetComponents(product.Value);
+                foreach(var componente in componentes)
+                {
+                    List<Producto.Componente.Modulo> modules = new List<Producto.Componente.Modulo>();
+
+                    var modulos = SI3Service.GetModules(componente.Value);
+
+                    foreach (var modulo in modulos)
+                    {
+                        modules.Add(new Producto.Componente.Modulo() { name = modulo.Key, code = modulo.Value});
+                    }
+
+                    components.Add(new Producto.Componente() { name = componente.Key, code = componente.Value, modulos = modules });
+                }
+
+                products.Add(new Producto() { name = product.Key, code = product.Value, componentes = components });
+            }
+
+            return products;
+        }
+
+
+        [HttpPost("[action]")]
+        public string LinkIssue([FromQuery]string username, [FromQuery]string password, [FromBody]Issue issue)
+        {
+
+
+
+            return string.Empty;
+        }
+
         [HttpPost("[action]")]
         public string Register([FromQuery]string username, [FromQuery]string password, [FromQuery]string selectedWeek,[FromQuery]int totalHours,[FromBody]IEnumerable<WeekJiraIssues> model)
         {

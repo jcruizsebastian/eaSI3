@@ -120,7 +120,7 @@ namespace SI3Connector
             usercode = request.Result.Split("code!='")[1].Split("'")[0];
         }
 
-        public string NewIssue(NewIssue newIssueData)
+        public string NewIssue(Issue newIssueData)
         {
             Login();
             var x_www_form_url_encoded = new Dictionary<string, string>();
