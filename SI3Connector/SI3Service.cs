@@ -117,7 +117,7 @@ namespace SI3Connector
                     throw new Exception($"Proyect {milestoneProjectCode} no encontrado.");
                 }
 
-                if (milestone.Status != "A") //TODO: Comprobar con que letra encaja
+                if (milestone.Status != "I")
                 {
                     throw new Exception($"Es imposible imputar en el proyecto {milestoneProjectCode} pues no está abierto.");
                 }
