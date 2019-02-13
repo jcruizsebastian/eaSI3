@@ -21,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SI3Connector", "SI3Connecto
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueConveter", "IssueConveter\IssueConveter.csproj", "{53379D54-EB69-446E-A728-18B82BB38220}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SI3Connector.Test", "SI3Connector.Test\SI3Connector.Test.csproj", "{FC57DB4C-624D-4F9F-81F9-3F363678B8C1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SI3Connector.Test", "SI3Connector.Test\SI3Connector.Test.csproj", "{FC57DB4C-624D-4F9F-81F9-3F363678B8C1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

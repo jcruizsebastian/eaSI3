@@ -13,6 +13,7 @@ interface UserCredentials {
     calendar: Calendar;
     calendarLoaded: boolean;
     selectedWeek?: string;
+    totalHours: number;
 }
 
 interface WeekJiraIssues {
@@ -68,7 +69,7 @@ export class Home extends React.Component<RouteComponentProps<{}>,UserCredential
         this.handleChangeWeek = this.handleChangeWeek.bind(this);
 
         this.state = {
-            Weekissues: [], loadedJira: false, loadingJira: false, calendar: { weeks: [] }, calendarLoaded: false
+            Weekissues: [], loadedJira: false, loadingJira: false, calendar: { weeks: [] }, calendarLoaded: false, totalHours: 0
         };
 
         
@@ -136,13 +137,13 @@ export class Home extends React.Component<RouteComponentProps<{}>,UserCredential
 
 
     private onLoginSi3(e: { preventDefault: () => void; }, user: string, password: string, checked: boolean) {
-
+        
         user = user.replace("'", " ").trim();
         e.preventDefault();
 
         if (checked) { localStorage.setItem("userSi3", user); localStorage.setItem("passwordSi3", password); }
 
-            fetch('api/SI3/register?username=' + user + '&password=' + password, {
+        fetch('api/SI3/register?username=' + user + '&password=' + password + '&selectedWeek=' + this.state.selectedWeek + '&totalHours' + this.state.totalHours, {
                 method: 'post',
                 body: JSON.stringify(this.state.Weekissues),
                 headers: {
@@ -182,7 +183,7 @@ export class Home extends React.Component<RouteComponentProps<{}>,UserCredential
                 }
             }
         }
-        
+        this.setState({ totalHours: total });
         if (total <= 40) { return false; }
             else { return true; }
         
@@ -234,7 +235,7 @@ export class Home extends React.Component<RouteComponentProps<{}>,UserCredential
         }
         if (this.state.loadedJira) {
 
-            agenda = this.renderAgenda(this.state.Weekissues);
+            agenda = <Agenda weekissues={this.state.Weekissues} /*onAgendaModified={this.agendaModified} calculateTotalHours={this.calculateTotalHours}*/ />
             si3 = <div> <h3>Ingrese credenciales de SI3</h3> <Login onLogin={this.onLoginSi3} isDisabled={this.isDisabledBtnSi3} 
                 userProps={localStorage.getItem("userSi3") as string} passwordProps={localStorage.getItem("passwordSi3") as string}/> </div>;
         }
@@ -253,7 +254,7 @@ export class Home extends React.Component<RouteComponentProps<{}>,UserCredential
                     {jira}
 
                     {agenda}
-                    {si3}
+                    
                 </div>
             </div>
         )

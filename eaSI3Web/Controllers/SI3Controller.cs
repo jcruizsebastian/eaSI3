@@ -19,8 +19,10 @@ namespace eaSI3Web.Controllers
         }
 
         [HttpPost("[action]")]
-        public string Register([FromQuery]string username, [FromQuery]string password, [FromBody]IEnumerable<WeekJiraIssues> model)
+        public string Register([FromQuery]string username, [FromQuery]string password, [FromQuery]string selectedWeek,[FromQuery]int totalHours,[FromBody]IEnumerable<WeekJiraIssues> model)
         {
+            int error = 0;
+
             try
             {
                 NormalizarHoras(model);
@@ -32,12 +34,12 @@ namespace eaSI3Web.Controllers
 
                 foreach (var dateIssue in model)
                 {
-                   
+
                     foreach (var issue in dateIssue.Issues)
                     {
                         int timeToInt = (int)issue.Tiempo; //SI3 no permite horas parciales, solo horas enteras.
-
                         int idNumber;
+
                         if (Int32.TryParse(issue.IssueSI3Code, out idNumber))
                         {
                             SI3Service.AddIssueWork(issue.IssueSI3Code, dateIssue.Fecha, timeToInt);
@@ -71,9 +73,14 @@ namespace eaSI3Web.Controllers
             catch (Exception e)
             {
                 _logger.LogError("Usuario : " + username + " Error : " + e.Message);
+                error = 1;
                 return e.Message;
 
             }
+            finally {
+                new BDPrueba(username,selectedWeek,DateTime.Now.ToShortTimeString(),totalHours,error).Conexion();
+            }
+
             _logger.LogInformation("Usuario : " + username + ", horas imputadas en Si3 correctamente");
             return string.Empty;
         }

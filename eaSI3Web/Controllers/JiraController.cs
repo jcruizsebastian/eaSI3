@@ -14,7 +14,7 @@ namespace eaSI3Web.Controllers
     [Route("api/[controller]")]
     public class JiraController : Controller
     {
-
+             
         private readonly ILogger<JiraController> _logger;
         public JiraController(ILogger<JiraController> logger)
         {
@@ -25,11 +25,8 @@ namespace eaSI3Web.Controllers
 
         [HttpGet("[action]")]
         public Calendar Weeks() {
-
-            
-
+           
             calendar.Weeks = new List<Calendar.CalendarWeeks>();
-            
             int weekOfYear = CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(DateTime.Now, CalendarWeekRule.FirstDay, DayOfWeek.Monday);
 
             int intDay = 1;
