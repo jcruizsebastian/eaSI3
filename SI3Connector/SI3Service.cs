@@ -120,6 +120,53 @@ namespace SI3Connector
             usercode = request.Result.Split("code!='")[1].Split("'")[0];
         }
 
+        public string NewIssue(NewIssue newIssueData)
+        {
+            Login();
+            var x_www_form_url_encoded = new Dictionary<string, string>();
+            x_www_form_url_encoded.Clear();
+            x_www_form_url_encoded.Add("product", newIssueData.product);
+            x_www_form_url_encoded.Add("component", newIssueData.component);
+            x_www_form_url_encoded.Add("dversionXX", newIssueData.dversionXX);
+            x_www_form_url_encoded.Add("dversionYY", newIssueData.dversionYY);
+            x_www_form_url_encoded.Add("dversion", newIssueData.dversion);
+            x_www_form_url_encoded.Add("module", newIssueData.module);
+            x_www_form_url_encoded.Add("countrycode", newIssueData.countrycode);
+            x_www_form_url_encoded.Add("os", newIssueData.os);
+            x_www_form_url_encoded.Add("type", ((int)newIssueData.type).ToString());
+            x_www_form_url_encoded.Add("types", ((int)newIssueData.tipo).ToString());
+            x_www_form_url_encoded.Add("phase", ((int)newIssueData.phase).ToString());
+            x_www_form_url_encoded.Add("prior", ((int)newIssueData.priority).ToString());
+            x_www_form_url_encoded.Add("level", ((int)newIssueData.level).ToString());
+            x_www_form_url_encoded.Add("title", newIssueData.title);
+            x_www_form_url_encoded.Add("cause", newIssueData.cause);
+
+            var request = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/its/asp/CreateIssue.asp"), x_www_form_url_encoded);
+            request.Wait();
+
+            var idSi3 = request.Result.Split("viewToEdit('")[1].Split("'")[0];
+
+            Login();
+
+            x_www_form_url_encoded.Clear();
+            x_www_form_url_encoded.Add("isid", idSi3);
+            x_www_form_url_encoded.Add("asign", newIssueData.user);
+
+            var request2 = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/its/asp/saveIssue.asp"), x_www_form_url_encoded);
+            request2.Wait();
+
+            Login();
+
+            x_www_form_url_encoded.Clear();
+            x_www_form_url_encoded.Add("isid", idSi3);
+            x_www_form_url_encoded.Add("actions", newIssueData.actions);
+
+            var request3 = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/its/asp/saveIssue.asp"), x_www_form_url_encoded);
+            request3.Wait();
+
+            return idSi3;
+        }
+
         public string AddIssueWork(string issueid, DateTime date, int time)
         {
             Login();

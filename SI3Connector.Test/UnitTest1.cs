@@ -1,4 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using SI3.Issues;
 using System;
 using System.Collections.Generic;
 
@@ -98,6 +99,28 @@ namespace SI3Connector.Test
         {
             SI3Service service = new SI3Service("ofjcruiz", "_*_d1d4ct1c");
             var a = service.GetUsers();
+        }
+
+        [TestMethod]
+        public void testNewIssue()
+        {
+            NewIssue newissue = new NewIssue()
+            {
+                title = "Prueba automatica title",
+                cause = "Prueba automatica causa",
+                level = SeverityLevels.Important,
+                phase = Phases.Maintenance,
+                priority = Prioridades.Medium,
+                tipo = Tipos.Compatibility,
+                type = NewIssue.Types.improv,
+                user = "187",
+                product="64",
+                component = "591"
+               
+            };
+
+            SI3Service service = new SI3Service("ofjcruiz", "_*_d1d4ct1c");
+            var a = service.NewIssue(newissue);
         }
     }
 }
