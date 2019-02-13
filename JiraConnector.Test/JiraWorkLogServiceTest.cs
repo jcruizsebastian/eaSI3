@@ -16,7 +16,7 @@ namespace JiraConnector.Test
             username = "jcruiz";
             password = "_*_d1d4ct1c97";
 
-            jiraWorkLogService = new JiraWorkLogService(username, password);
+            jiraWorkLogService = new JiraWorkLogService(username, password, null);
         }
 
         [TestMethod]

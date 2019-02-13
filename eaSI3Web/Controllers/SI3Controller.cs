@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using static eaSI3Web.Controllers.JiraController;
 using Microsoft.Extensions.Logging;
+using System.Text;
+using SI3Connector.Exceptions;
 
 namespace eaSI3Web.Controllers
 {
@@ -25,10 +27,14 @@ namespace eaSI3Web.Controllers
 
             try
             {
-                NormalizarHoras(model);
-
                 _logger.LogInformation("Usuario " + username + " hizo clic en el botón de Enviar Si3 ");
                 SI3Service SI3Service = new SI3Service(username, password);
+
+                var validacion = ValidarImputación(SI3Service, model);
+                if (!string.IsNullOrEmpty(validacion))
+                    throw new SI3Exception(validacion);
+
+                NormalizarHoras(model);                
 
                 Dictionary<string, Dictionary<DayOfWeek, int>> weekWork = new Dictionary<string, Dictionary<DayOfWeek, int>>();
 
@@ -70,6 +76,13 @@ namespace eaSI3Web.Controllers
                     SI3Service.AddProjectWork(week.Key, week.Value);
                 }
             }
+            catch (SI3Exception e)
+            {
+                _logger.LogError("Usuario : " + username + " Error : " + e.Message);
+                error = 1;
+                return e.Message;
+
+            }
             catch (Exception e)
             {
                 _logger.LogError("Usuario : " + username + " Error : " + e.Message);
@@ -83,6 +96,29 @@ namespace eaSI3Web.Controllers
 
             _logger.LogInformation("Usuario : " + username + ", horas imputadas en Si3 correctamente");
             return string.Empty;
+        }
+
+        private string ValidarImputación(SI3Service sI3Service, IEnumerable<WeekJiraIssues> model)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            var issuesIds = model.SelectMany(x => x.Issues).Select(y => y.IssueSI3Code);
+
+            foreach (var issueid in issuesIds)
+            {
+                if (double.TryParse(issueid, out var a))
+                {
+                    if (!sI3Service.IsIssueOpened(issueid))
+                        sb.AppendLine($"La issue con id {issueid} no existe o está cerrada.");
+                }
+                else
+                {
+                    if (!sI3Service.IsProjectOpened(issueid))
+                        sb.AppendLine($"El proyecto con id {issueid} no existe o está cerrado.");
+                }
+            }
+
+            return sb.ToString();
         }
 
         public void NormalizarHoras(IEnumerable<WeekJiraIssues> tareasSinNormalizar)

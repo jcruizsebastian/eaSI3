@@ -1,5 +1,6 @@
 ﻿using HtmlAgilityPack;
 using SI3.Projects;
+using SI3Connector.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -57,6 +58,18 @@ namespace SI3Connector
             return request.Result;
         }
 
+        public bool IsIssueOpened(string issueid)
+        {
+            Login();
+            var x_www_form_url_encoded = new Dictionary<string, string>();
+            x_www_form_url_encoded.Clear();
+
+            var request = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/its/asp/viewIssue.asp?cod={issueid}"), x_www_form_url_encoded);
+            request.Wait();
+
+            return request.Result.Contains("Open&nbsp;&nbsp");
+        }
+
         public string AddProjectWork(string issueid, Dictionary<DayOfWeek, int> weekWork)
         {
             var projectCode = GetMilestone(issueid).Code;
@@ -83,6 +96,19 @@ namespace SI3Connector
             return request.Result;
         }
 
+        public bool IsProjectOpened(string issueid)
+        {
+            try
+            {
+                GetMilestone(issueid);
+            }catch(SI3Exception si3Exception)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         internal Milestone GetMilestone(string milestoneProjectCode)
         {
             var projectCode = milestoneProjectCode.Split(",")[0].Replace("-", "");
@@ -101,7 +127,7 @@ namespace SI3Connector
             request.Wait();
             var result = request.Result;
 
-            return GetMilestone(milestoneProjectCode, projectCode, result);
+            return GetMilestone(milestoneProjectCode, milestoneCode, result);
         }
 
         private static Milestone GetMilestone(string milestoneProjectCode, string projectCode, string result)
@@ -114,12 +140,12 @@ namespace SI3Connector
 
                 if (milestone == null)
                 {
-                    throw new Exception($"Proyect {milestoneProjectCode} no encontrado.");
+                    throw new SI3Exception($"Proyect {milestoneProjectCode} no encontrado.");
                 }
 
                 if (milestone.Status != "I")
                 {
-                    throw new Exception($"Es imposible imputar en el proyecto {milestoneProjectCode} pues no está abierto.");
+                    throw new SI3Exception($"Es imposible imputar en el proyecto {milestoneProjectCode} pues no está abierto.");
                 }
 
                 return milestone;
@@ -144,7 +170,7 @@ namespace SI3Connector
             }
 
             if (string.IsNullOrEmpty(documentMilestoneCode))
-                throw new Exception($"No se encontró el projecto con código {project}");
+                throw new SI3Exception($"No se encontró el projecto con código {project}");
 
             return documentMilestoneCode;
         }

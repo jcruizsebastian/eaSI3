@@ -58,5 +58,18 @@ namespace SI3Connector.Test
             var a = service.GetMilestone("O-180,H-10");
         }
 
+        [TestMethod]
+        public void testIsIssueOpened()
+        {
+            SI3Service service = new SI3Service("ofjcruiz", "_*_d1d4ct1c");
+            var a = service.IsIssueOpened("44383");
+        }
+
+        [TestMethod]
+        public void testIsProjectOpened()
+        {
+            SI3Service service = new SI3Service("ofjcruiz", "_*_d1d4ct1c");
+            var a = service.IsProjectOpened("O-180,H-10");
+        }
     }
 }
