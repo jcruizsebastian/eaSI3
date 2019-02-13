@@ -1,4 +1,5 @@
 ﻿using HtmlAgilityPack;
+using SI3.Issues;
 using SI3.Projects;
 using SI3Connector.Exceptions;
 using System;
@@ -25,7 +26,83 @@ namespace SI3Connector
             SI3HttpRequest = new SI3HttpRequest();
         }
 
-        //TODO: Sacar método para comprobar que existen la issues y los proyectos y que están abiertos. 
+        private static Dictionary<string, string> products { get; set; }
+        public Dictionary<string, string> GetProducts()
+        {
+            if (products != null)
+                return products;
+
+            Login();
+
+            var request = SI3HttpRequest.Post(new Uri("http://si3.infobolsa.es/Si3/its/asp/ProductosActivosXML.asp"), null);
+            request.Wait();
+
+            var productos = GetGeneric<Productos>(request.Result);
+
+            products = productos.producto.ToDictionary(x => x.Nombre, y => y.Codigo);
+
+            return products;
+        }
+
+        private static Dictionary<string, Dictionary<string, string>> components { get; set; }
+        public Dictionary<string, string> GetComponents(string producto)
+        {
+            if (components != null && components.ContainsKey(producto))
+                return components[producto];
+
+            if(components == null)
+                components = new Dictionary<string, Dictionary<string, string>>();
+
+            Login();
+
+            var request = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/its/asp/ComponentesXML.asp?cod={producto}"), null);
+            request.Wait();
+
+            var componentes = GetGeneric<Componentes>(request.Result);
+
+            components[producto] = componentes.componente.ToDictionary(x => x.Nombre, y => y.Codigo);
+
+            return components[producto];
+        }
+
+        private static Dictionary<string, Dictionary<string, string>> modules { get; set; }
+        public Dictionary<string, string> GetModules(string component)
+        {
+            if (modules != null && modules.ContainsKey(component))
+                return modules[component];
+
+            if (modules == null)
+                modules = new Dictionary<string, Dictionary<string, string>>();
+
+            Login();
+
+            var request = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/its/asp/ModulesXML.asp?cod={component}"), null);
+            request.Wait();
+
+            var modulos = GetGeneric<Modules>(request.Result);
+
+            modules[component] = modulos.modules.ToDictionary(x => x.Nombre, y => y.Codigo);
+
+            return modules[component];
+        }
+
+        private static Dictionary<string, string> users { get; set; }
+        public Dictionary<string, string> GetUsers()
+        {
+            if (users != null)
+                return users;
+
+            Login();
+
+            var request = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/its/asp/usuariosFiltradosXML.asp"), null);
+            request.Wait();
+
+            var usuarios = GetGeneric<Usuarios>(request.Result);
+
+            users = usuarios.usuario.ToDictionary(x => x.Nombre, y => y.Codigo);
+
+            return users;
+        }
 
         private void Login()
         {
@@ -128,6 +205,16 @@ namespace SI3Connector
             var result = request.Result;
 
             return GetMilestone(milestoneProjectCode, milestoneCode, result);
+        }
+
+
+        private static T GetGeneric<T>(string result)
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(T));
+            using (TextReader reader = new StringReader(result.Replace("\r\n<?xml version=\"1.0\" encoding=\"ISO-8859-1\" ?>\r\n", "").Replace("<?xml-stylesheet type=\"text/xsl\" href=\"usuarios.xsl\"?>", "").Replace("<?xml version='1.0'?>", "")))
+            {
+                return (T)serializer.Deserialize(reader);
+            }
         }
 
         private static Milestone GetMilestone(string milestoneProjectCode, string projectCode, string result)

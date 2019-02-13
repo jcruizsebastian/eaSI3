@@ -71,5 +71,33 @@ namespace SI3Connector.Test
             SI3Service service = new SI3Service("ofjcruiz", "_*_d1d4ct1c");
             var a = service.IsProjectOpened("O-180,H-10");
         }
+
+        [TestMethod]
+        public void testGetProductos()
+        {
+            SI3Service service = new SI3Service("ofjcruiz", "_*_d1d4ct1c");
+            var a = service.GetProducts();
+        }
+
+        [TestMethod]
+        public void testGetComponents()
+        {
+            SI3Service service = new SI3Service("ofjcruiz", "_*_d1d4ct1c");
+            var a = service.GetComponents("66");
+        }
+
+        [TestMethod]
+        public void testGetModules()
+        {
+            SI3Service service = new SI3Service("ofjcruiz", "_*_d1d4ct1c");
+            var a = service.GetModules("449");
+        }
+
+        [TestMethod]
+        public void testGetUsuarios()
+        {
+            SI3Service service = new SI3Service("ofjcruiz", "_*_d1d4ct1c");
+            var a = service.GetUsers();
+        }
     }
 }
