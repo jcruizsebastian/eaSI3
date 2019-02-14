@@ -23,32 +23,32 @@ interface WeekJiraIssues {
 
 interface WeekJiraIssuesProps {
     weekissues: WeekJiraIssues[];
-    //onAgendaModified: Function;
+    onAgendaModified: Function;
     //calculateTotalHours: Function;
 }
-interface AgendaState {
+export interface AgendaState {
     weekissues: WeekJiraIssues[];
     link: String;
-    error: boolean;
+    changes: boolean;
 }
+
 export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
 
     constructor(props: WeekJiraIssuesProps) {
-        super(props);
+        super(props)
 
+        this.timeReassignment = this.timeReassignment.bind(this);
+        this.calculateTotalHours = this.calculateTotalHours.bind(this);
+        this.handleSubmitChanges = this.handleSubmitChanges.bind(this);
 
-        //this.timeReassignment = this.timeReassignment.bind(this);
-        //this.onLoginSi3 = this.onLoginSi3.bind(this);
-        this.isDisabledBtnSi3 = this.isDisabledBtnSi3.bind(this);
-        this.state = { weekissues: this.props.weekissues, link: "https://jira.openfinance.es/browse/", error: false };
+        this.state = { weekissues: this.props.weekissues, link: "https://jira.openfinance.es/browse/", changes: true };
     }
 
-     timeReassignment = (event: React.FormEvent<HTMLInputElement>) => {
+        public timeReassignment(event: React.ChangeEvent<HTMLInputElement>) {
         
         let day = event.currentTarget.id.split('|')[1];
         let issueId = event.currentTarget.id.split('|')[0];
-        console.log("estoy dentro");
-
+        
         for (var dayIssue of this.state.weekissues) {
             if (new Date(dayIssue.fecha.toString()).getDate().toString() == day) {
                 for (var issue of dayIssue.issues) {
@@ -56,71 +56,39 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                         issue.tiempo = Number(event.currentTarget.value);
                         break;
                     }
-
                 }
             }
         }
 
-        //this.props.onAgendaModified(this.state.weekissues);
+        this.forceUpdate(); 
+    }
+    
+
+    public handleSubmitChanges(e: { preventDefault: () => void; }) {
+        alert("¿ Guardar cambios ?");       
+        this.props.onAgendaModified(e);        
     }
 
-    private isDisabledBtnSi3() {
+    private calculateTotalHours() {
 
         let total = 0;
         let tiempo: number;
 
-        let WeekJiraIssues = this.props.weekissues;
+        let WeekJiraIssues = this.state.weekissues;
         for (let weekIssue of WeekJiraIssues) {
             for (let Issue of weekIssue.issues) {
                 tiempo = Number(Issue.tiempo);
                 total += tiempo;
-                if (tiempo % 1 != 0) {
-                    return true;
-                }
             }
         }
-        //this.setState({ totalHours: total });
-
-        if (total <= 40) { return false; }
-        else { return true; }
-
-    }
-
-    /*
-    private onLoginSi3(e: { preventDefault: () => void; }, user: string, password: string, checked: boolean) {
-
-        user = user.replace("'", " ").trim();
-        e.preventDefault();
-
-        if (checked) { localStorage.setItem("userSi3", user); localStorage.setItem("passwordSi3", password); }
-
-        fetch('api/SI3/register?username=' + user + '&password=' + password + '&selectedWeek=' + this.state.selectedWeek + '&totalHours' + this.state.totalHours, {
-            method: 'post',
-            body: JSON.stringify(this.state.Weekissues),
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-        })
-            .then(response => response.json() as Promise<JiraResponse>)
-            .then(data => {
-                if (data.message) {
-                    alert(data.message);
-                }
-                else
-                    alert("Horas imputadas en SI3");
-            });
-
-
-    }
-    */
+        
+        return total;
+    }  
 
     public render() {
-        /*
-        let si3 = <div> <h3>Ingrese credenciales de SI3</h3> <Login onLogin={this.onLoginSi3} isDisabled={this.isDisabledBtnSi3}
-            userProps={localStorage.getItem("userSi3") as string} passwordProps={localStorage.getItem("passwordSi3") as string} /> </div>;
-        */
-        let total: number = this.props.calculateTotalHours();
+
+        let total: number = this.calculateTotalHours();
+
         console.log("entra en el render de agenda")
         return <div>
 
@@ -137,7 +105,7 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                 <tbody>
                     {
 
-                        this.props.weekissues.map(Weekissue =>
+                        this.state.weekissues.map(Weekissue =>
 
                             <tr key={Weekissue.fecha.toString()} >
                                 <td className="agenda-date active">
@@ -156,7 +124,7 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
 
                                 <td className="agenda-events">
                                     {Weekissue.issues.map(issue =>
-                                        <div className="agenda-events-title" key={issue.titulo}>
+                                        <div className="agenda-events-title" key={issue.titulo + issue.issueCode}>
                                             <label className="agenda-events-label" title={issue.titulo}> {issue.titulo}</label>
                                         </div>
                                     )}
@@ -184,6 +152,15 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                         <td></td>
                         <td><label className="agenda-total">Total : {total.toString()}</label></td>
                     </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td><form className="dataForm" onSubmit={this.handleSubmitChanges}>
+                            <input  type="submit" className="btn btn-secondary" value="Confirmar Cambios" />
+                        </form>
+                         </td>
+                    </tr>
                 </tbody>
             </table>
             <br />
@@ -195,4 +172,4 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
 
 }
 
-export default Agenda
+export default Agenda;

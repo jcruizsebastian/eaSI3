@@ -239,7 +239,7 @@ namespace eaSI3Web.Controllers
         {
             StringBuilder sb = new StringBuilder();
 
-            var issuesIds = model.SelectMany(x => x.Issues).Select(y => y.IssueSI3Code);
+            var issuesIds = model.SelectMany(x => x.Issues).Where(z => z.Tiempo > 0).Select(y => y.IssueSI3Code);
 
             foreach (var issueid in issuesIds)
             {
@@ -293,6 +293,9 @@ namespace eaSI3Web.Controllers
                     }
                 }
             }
+
+            if (!sobrante.Any())
+                return;
 
             foreach (var diaConFaltante in diasConHorasDeMenos)
             {

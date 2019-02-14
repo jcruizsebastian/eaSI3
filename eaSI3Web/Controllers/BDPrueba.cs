@@ -36,7 +36,7 @@ namespace eaSI3Web.Controllers
             SqlTransaction tr = conexion.BeginTransaction(IsolationLevel.Serializable);
 
             SqlCommand cmd = new SqlCommand("INSERT INTO DatosEasi3(IdUsuario,Semana,FechaActual,Horas,Error) VALUES(@id, @sem, @f, @h, @e) ", conexion, tr);
-            cmd.Parameters.Add("@i", SqlDbType.VarChar).Value = usuario;
+            cmd.Parameters.Add("@id", SqlDbType.VarChar).Value = usuario;
             cmd.Parameters.Add("@sem", SqlDbType.VarChar).Value = semana;
             cmd.Parameters.Add("@f",SqlDbType.VarChar).Value = fechaActual;
             cmd.Parameters.Add("@h",SqlDbType.Int).Value = horas;
