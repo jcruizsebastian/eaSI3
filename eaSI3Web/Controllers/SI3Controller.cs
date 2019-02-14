@@ -9,6 +9,9 @@ using static eaSI3Web.Controllers.JiraController;
 using Microsoft.Extensions.Logging;
 using System.Text;
 using SI3Connector.Exceptions;
+using System.Xml;
+using System.Xml.Serialization;
+using System.IO;
 
 namespace eaSI3Web.Controllers
 {
@@ -35,10 +38,13 @@ namespace eaSI3Web.Controllers
             public string priority { get; set; }
         }
 
+        [Serializable]
         public class Producto
         {
+            [Serializable]
             public class Componente
             {
+                [Serializable]
                 public class Modulo
                 {
                     public string code { get; set; }
@@ -62,6 +68,16 @@ namespace eaSI3Web.Controllers
         {
             if (products != null)
                 return products;
+
+            try
+            {
+                products = DeSerializeObject<List<Producto>>("productosSerializados.xml");
+                return products;
+            }
+            catch (Exception e)
+            {
+                //esto de que esté vacío es temporal
+            }
 
             products = new List<Producto>();
 
@@ -89,7 +105,46 @@ namespace eaSI3Web.Controllers
                 products.Add(new Producto() { name = product.Key, code = product.Value, componentes = components });
             }
 
+
             return products;
+        }
+
+
+        /// <summary>
+        /// Deserializes an xml file into an object list
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        public T DeSerializeObject<T>(string fileName)
+        {
+            if (string.IsNullOrEmpty(fileName)) { return default(T); }
+
+            T objectOut = default(T);
+
+            try
+            {
+                XmlDocument xmlDocument = new XmlDocument();
+                xmlDocument.Load(fileName);
+                string xmlString = xmlDocument.OuterXml;
+
+                using (StringReader read = new StringReader(xmlString))
+                {
+                    Type outType = typeof(T);
+
+                    XmlSerializer serializer = new XmlSerializer(outType);
+                    using (XmlReader reader = new XmlTextReader(read))
+                    {
+                        objectOut = (T)serializer.Deserialize(reader);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                //Log exception here
+            }
+
+            return objectOut;
         }
 
 

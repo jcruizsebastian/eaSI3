@@ -1,0 +1,1115 @@
+<?xml version="1.0"?>
+<ArrayOfProducto xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Producto>
+    <componentes>
+      <Componente>
+        <modulos />
+        <code>585</code>
+        <name>360 CorA</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>635</code>
+        <name>ACapital</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>407</code>
+        <name>Ad hoc</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>553</code>
+        <name>AG EAFI</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>588</code>
+        <name>Ágora EAFI</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>408</code>
+        <name>Agroinmobiliaria</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>615</code>
+        <name>Altarius Capital</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>625</code>
+        <name>Altum</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>639</code>
+        <name>Ángel Ochoa</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>554</code>
+        <name>ARGENTA</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>406</code>
+        <name>Ariete</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>555</code>
+        <name>ARQUIA</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>630</code>
+        <name>Aspain11</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>556</code>
+        <name>ATRIA EdV</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>557</code>
+        <name>AUREO</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>558</code>
+        <name>AZNAR PATRIMONIOS</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>613</code>
+        <name>Batiste</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>584</code>
+        <name>Blue Ocean</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>559</code>
+        <name>BRIGHT GATE</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>560</code>
+        <name>BUY&amp;HOLD</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>561</code>
+        <name>C2 ASESORES</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>410</code>
+        <name>Capital Value</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>411</code>
+        <name>CFO</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>641</code>
+        <name>Coalpha Partners EAFI</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>604</code>
+        <name>Collins Patrimonios</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>562</code>
+        <name>CONSILIO – ALPHAPLUS</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>642</code>
+        <name>Consulae EAFI</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>647</code>
+        <name>Danel Capital</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>563</code>
+        <name>DARÍO</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>564</code>
+        <name>DIDENDUM</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>603</code>
+        <name>Dosa</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>565</code>
+        <name>DPM</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>409</code>
+        <name>Ecomt</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>419</code>
+        <name>Esferalia</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>582</code>
+        <name>Ethical</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>566</code>
+        <name>ETICA</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>621</code>
+        <name>Eurocapital</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>567</code>
+        <name>EXTRA VALOR</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>420</code>
+        <name>Fco. Javier</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>568</code>
+        <name>FJ CONCEPCIÓN</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>586</code>
+        <name>Forcada</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>627</code>
+        <name>G Capital</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>624</code>
+        <name>Gesem</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>616</code>
+        <name>Gesline</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>650</code>
+        <name>Gestcap Asesores EAFI</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>569</code>
+        <name>GLOVERSIA</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>612</code>
+        <name>Grupo Vadia</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>570</code>
+        <name>HALTIA</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>571</code>
+        <name>HoF</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>421</code>
+        <name>Iadvise</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>572</code>
+        <name>ICapital</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>626</code>
+        <name>In On</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>652</code>
+        <name>Indosuez</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>422</code>
+        <name>Inversis - Pwa</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>573</code>
+        <name>Javier Sedano</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>574</code>
+        <name>JDS</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>631</code>
+        <name>LB Consulting</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>575</code>
+        <name>LEX</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>646</code>
+        <name>Meridian 370</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>423</code>
+        <name>Miramar</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>620</code>
+        <name>Nao Asesores</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>576</code>
+        <name>NERVIÓN</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>587</code>
+        <name>Optimal Markets</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>424</code>
+        <name>Pedro Díez</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>649</code>
+        <name>Pedro Valenzuela</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>577</code>
+        <name>PHARUM CAPITAL</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>578</code>
+        <name>PLANARTUS</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>667</code>
+        <name>Prospect</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>579</code>
+        <name>SÁSSOLA</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>425</code>
+        <name>Skipper</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>648</code>
+        <name>Smart Gestión Global EAFI S.L.</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>426</code>
+        <name>Sotoeafi</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>580</code>
+        <name>SUMMA</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>427</code>
+        <name>Troy</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>428</code>
+        <name>Valor Optimo</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>614</code>
+        <name>Valores</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>583</code>
+        <name>Welzia</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>605</code>
+        <name>Youfirst</name>
+      </Componente>
+    </componentes>
+    <code>66</code>
+    <name>Cientes EAFIs</name>
+  </Producto>
+  <Producto>
+    <componentes>
+      <Componente>
+        <modulos />
+        <code>622</code>
+        <name>Abanca GDC</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>429</code>
+        <name>Abanca WP</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>599</code>
+        <name>Acobo</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>453</code>
+        <name>Alantra</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>597</code>
+        <name>Aldesa</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>632</code>
+        <name>Arquia</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>645</code>
+        <name>Audentia</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>526</code>
+        <name>AXA</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>439</code>
+        <name>Banca Cívica - Caja Sol</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>440</code>
+        <name>Banca Cívica - CAN</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>515</code>
+        <name>Banca March</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>623</code>
+        <name>Banca March GDC</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>433</code>
+        <name>Banco Caja España</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>384</code>
+        <name>Banco Estado</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>385</code>
+        <name>Banco Mediolanum</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>386</code>
+        <name>Banco Pastor</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>513</code>
+        <name>Banco Popular</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>514</code>
+        <name>Banco Popular BP</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>382</code>
+        <name>Bankia-Bancaja</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>383</code>
+        <name>Bankia-Caja Rioja</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>387</code>
+        <name>Bankinter</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>388</code>
+        <name>Bankoa</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>596</code>
+        <name>Banorte</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>487</code>
+        <name>BBVA - SaaS</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>638</code>
+        <name>BCT</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>389</code>
+        <name>Bestinver</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>634</code>
+        <name>BICE</name>
+      </Componente>
+      <Componente>
+        <modulos>
+          <Modulo>
+            <code>842</code>
+            <name>OpenWorkplace</name>
+          </Modulo>
+        </modulos>
+        <code>499</code>
+        <name>BMN</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>390</code>
+        <name>BNP Asset Management</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>391</code>
+        <name>BNP España</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>598</code>
+        <name>BNV - Bolsa Nacional de Valores</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>392</code>
+        <name>CAI</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>393</code>
+        <name>Caixa Catalunya</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>430</code>
+        <name>Caixa Penedes</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>431</code>
+        <name>Caja Badajoz</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>432</code>
+        <name>Caja Circulo</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>434</code>
+        <name>Caja Granada</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>435</code>
+        <name>Caja Ingenieros</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>437</code>
+        <name>Caja Laboral</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>436</code>
+        <name>Caja Laboral Empresas</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>438</code>
+        <name>Caja Murcia</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>441</code>
+        <name>Cajamar</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>443</code>
+        <name>Calyon</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>545</code>
+        <name>CCM</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>636</code>
+        <name>Cobas</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>527</code>
+        <name>Cooperativo Carteras Modelo</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>445</code>
+        <name>Cooperativo Riesgos</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>444</code>
+        <name>Cooperativo SAC</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>591</code>
+        <name>Corredores</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>446</code>
+        <name>Dexia</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>629</code>
+        <name>EBN</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>447</code>
+        <name>Fidentiis</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>448</code>
+        <name>Fineco</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>601</code>
+        <name>Gaesco</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>633</code>
+        <name>HSBC</name>
+      </Componente>
+      <Componente>
+        <modulos>
+          <Modulo>
+            <code>785</code>
+            <name>Alertas</name>
+          </Modulo>
+          <Modulo>
+            <code>781</code>
+            <name>Asesoramiento</name>
+          </Modulo>
+          <Modulo>
+            <code>787</code>
+            <name>Catálogo</name>
+          </Modulo>
+          <Modulo>
+            <code>786</code>
+            <name>Herramientas</name>
+          </Modulo>
+          <Modulo>
+            <code>779</code>
+            <name>Informe de seguimiento</name>
+          </Modulo>
+          <Modulo>
+            <code>780</code>
+            <name>Informe de situación</name>
+          </Modulo>
+          <Modulo>
+            <code>782</code>
+            <name>Orientación</name>
+          </Modulo>
+        </modulos>
+        <code>449</code>
+        <name>Ibercaja</name>
+      </Componente>
+      <Componente>
+        <modulos>
+          <Modulo>
+            <code>788</code>
+            <name>App IOS iPad</name>
+          </Modulo>
+          <Modulo>
+            <code>789</code>
+            <name>App IOS Preventa</name>
+          </Modulo>
+        </modulos>
+        <code>471</code>
+        <name>Infobolsa</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>450</code>
+        <name>Inversis</name>
+      </Componente>
+      <Componente>
+        <modulos>
+          <Modulo>
+            <code>841</code>
+            <name>Gestión discrecional</name>
+          </Modulo>
+          <Modulo>
+            <code>862</code>
+            <name>Sebra</name>
+          </Modulo>
+        </modulos>
+        <code>498</code>
+        <name>Itaú</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>442</code>
+        <name>Liberbank</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>451</code>
+        <name>Lloyds</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>628</code>
+        <name>Mapfre</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>640</code>
+        <name>Mapfre Onsite</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>524</code>
+        <name>Mifel</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>452</code>
+        <name>Mirabaud</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>454</code>
+        <name>Orienta</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>455</code>
+        <name>OX Norge</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>465</code>
+        <name>Preventa</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>475</code>
+        <name>Private Wealth Advisor (PWA)</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>456</code>
+        <name>Renta 4</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>457</code>
+        <name>Riva y García</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>458</code>
+        <name>Sa Nostra</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>459</code>
+        <name>Schroeders</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>460</code>
+        <name>Skandia</name>
+      </Componente>
+      <Componente>
+        <modulos>
+          <Modulo>
+            <code>863</code>
+            <name>Gestion Discrecional</name>
+          </Modulo>
+          <Modulo>
+            <code>864</code>
+            <name>Sebra</name>
+          </Modulo>
+        </modulos>
+        <code>548</code>
+        <name>Sura</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>461</code>
+        <name>Tressis</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>462</code>
+        <name>Unnim</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>525</code>
+        <name>Vector</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>486</code>
+        <name>VidaCaixa</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>463</code>
+        <name>Zurich</name>
+      </Componente>
+    </componentes>
+    <code>64</code>
+    <name>Clientes Openworkplace</name>
+  </Producto>
+  <Producto>
+    <componentes>
+      <Componente>
+        <modulos />
+        <code>467</code>
+        <name>Actividades de gestión</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>466</code>
+        <name>Reuniones internas</name>
+      </Componente>
+    </componentes>
+    <code>69</code>
+    <name>Coordinaci�n y gesti�n</name>
+  </Producto>
+  <Producto>
+    <componentes>
+      <Componente>
+        <modulos />
+        <code>468</code>
+        <name>Asistencia a cursos</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>469</code>
+        <name>Autoformación</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>470</code>
+        <name>Prospeción tecnológica</name>
+      </Componente>
+    </componentes>
+    <code>70</code>
+    <name>Formaci�n e investigaci�n</name>
+  </Producto>
+  <Producto>
+    <componentes />
+    <code>68</code>
+    <name>Infraestructura Openfinance</name>
+  </Producto>
+  <Producto>
+    <componentes>
+      <Componente>
+        <modulos />
+        <code>602</code>
+        <name>Administrador de Productos</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>600</code>
+        <name>API</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>413</code>
+        <name>EAFIs</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>415</code>
+        <name>Financial Planning</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>417</code>
+        <name>Openaccounts</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>377</code>
+        <name>Openadvice</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>590</code>
+        <name>OpenCRM</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>651</code>
+        <name>Opengestoras</name>
+      </Componente>
+      <Componente>
+        <modulos>
+          <Modulo>
+            <code>791</code>
+            <name>App iPad Openworkplace</name>
+          </Modulo>
+          <Modulo>
+            <code>790</code>
+            <name>App iPhone Openworkplace</name>
+          </Modulo>
+        </modulos>
+        <code>414</code>
+        <name>Openmobile</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>412</code>
+        <name>Openmonitor</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>416</code>
+        <name>Openportfolio</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>378</code>
+        <name>Openreporting</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>418</code>
+        <name>Openweb</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>611</code>
+        <name>SQL Server</name>
+      </Componente>
+    </componentes>
+    <code>63</code>
+    <name>Openworkplace product</name>
+  </Producto>
+  <Producto>
+    <componentes>
+      <Componente>
+        <modulos />
+        <code>474</code>
+        <name>Enfermedad</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>472</code>
+        <name>Permiso autorizado</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>473</code>
+        <name>Vacaciones</name>
+      </Componente>
+    </componentes>
+    <code>71</code>
+    <name>Permisos y vacaciones</name>
+  </Producto>
+  <Producto>
+    <componentes>
+      <Componente>
+        <modulos />
+        <code>637</code>
+        <name>Argentina</name>
+      </Componente>
+      <Componente>
+        <modulos>
+          <Modulo>
+            <code>843</code>
+            <name>Bancoestado</name>
+          </Modulo>
+          <Modulo>
+            <code>844</code>
+            <name>Module Name</name>
+          </Modulo>
+        </modulos>
+        <code>502</code>
+        <name>Chile</name>
+      </Componente>
+      <Componente>
+        <modulos>
+          <Modulo>
+            <code>851</code>
+            <name>Alianza Fiduciaria</name>
+          </Modulo>
+          <Modulo>
+            <code>850</code>
+            <name>Alianza Valores</name>
+          </Modulo>
+          <Modulo>
+            <code>848</code>
+            <name>Bancolombia</name>
+          </Modulo>
+          <Modulo>
+            <code>846</code>
+            <name>Corredores Asociados</name>
+          </Modulo>
+          <Modulo>
+            <code>847</code>
+            <name>Correval-BCP</name>
+          </Modulo>
+          <Modulo>
+            <code>845</code>
+            <name>Davivienda</name>
+          </Modulo>
+          <Modulo>
+            <code>849</code>
+            <name>Global Securities Colombia</name>
+          </Modulo>
+          <Modulo>
+            <code>852</code>
+            <name>Skandia Colombia</name>
+          </Modulo>
+        </modulos>
+        <code>500</code>
+        <name>Colombia</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>595</code>
+        <name>Costa Rica</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>501</code>
+        <name>España</name>
+      </Componente>
+      <Componente>
+        <modulos>
+          <Modulo>
+            <code>859</code>
+            <name>Actinver</name>
+          </Modulo>
+          <Modulo>
+            <code>860</code>
+            <name>Banorte</name>
+          </Modulo>
+          <Modulo>
+            <code>861</code>
+            <name>HSBC</name>
+          </Modulo>
+        </modulos>
+        <code>503</code>
+        <name>Mexico</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>504</code>
+        <name>Panamá</name>
+      </Componente>
+      <Componente>
+        <modulos />
+        <code>617</code>
+        <name>Perú</name>
+      </Componente>
+    </componentes>
+    <code>67</code>
+    <name>Preventa</name>
+  </Producto>
+</ArrayOfProducto>

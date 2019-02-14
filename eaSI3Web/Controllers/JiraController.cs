@@ -105,6 +105,17 @@ namespace eaSI3Web.Controllers
             return weekJiraIssuesList;
         }
 
+        [HttpGet("[action]")]
+        public Issue Issue(string username, string password, string jiraKey)
+        {
+            JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(username, password, _logger);
+
+            var jiraIssue = jiraWorkLogService.GetIssue(jiraKey);
+
+            return jiraIssue;
+
+        }
+
         public static IEnumerable<WeekJiraIssues> Convert(List<WorkLog> worklog)
         {
             List<WeekJiraIssues> weekJiraIssues = new List<WeekJiraIssues>();
