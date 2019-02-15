@@ -7,7 +7,7 @@ import { Checkbox } from 'react-inputs-validation';
 
 interface LoginProps {
     onLogin: Function;
-    isDisabled: Function;
+    isDisabled: boolean;
     //calendar: Calendar;
     userProps: string;
     passwordProps: string
@@ -51,7 +51,7 @@ export class Login extends React.Component<LoginProps, {}> {
                         <label>Recordar usuario y contraseña</label>
                     </div>
                     <hr></hr>
-                    <input disabled={this.props.isDisabled()} type="submit" className="btn btn-primary" value="Enviar" />
+                    <input disabled={this.props.isDisabled} type="submit" className="btn btn-primary" value="Enviar" />
                 </form>
             </div>
         )

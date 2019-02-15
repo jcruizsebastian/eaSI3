@@ -12,6 +12,7 @@ using SI3Connector.Exceptions;
 using System.Xml;
 using System.Xml.Serialization;
 using System.IO;
+using Dapper;
 
 namespace eaSI3Web.Controllers
 {
@@ -166,6 +167,10 @@ namespace eaSI3Web.Controllers
             {
                 _logger.LogInformation("Usuario " + username + " hizo clic en el botón de Enviar Si3 ");
                 SI3Service SI3Service = new SI3Service(username, password);
+
+                foreach (var week in model.ToList()) {
+                    week.Issues.RemoveAll(x => x.Tiempo == 0);
+                }
 
                 var validacion = ValidarImputación(SI3Service, model);
                 if (!string.IsNullOrEmpty(validacion))

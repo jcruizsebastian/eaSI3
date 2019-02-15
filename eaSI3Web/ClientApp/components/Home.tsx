@@ -16,6 +16,7 @@ interface UserCredentials {
     calendarLoaded: boolean;
     selectedWeek?: string;
     totalHours: number;
+    todoOk: boolean;
 }
 
 interface WeekJiraIssues {
@@ -64,14 +65,14 @@ export class Home extends React.Component<RouteComponentProps<{}>,UserCredential
         this.onLoginJira = this.onLoginJira.bind(this);
         this.onLoginSi3 = this.onLoginSi3.bind(this);
         this.confirmLoadedJira = this.confirmLoadedJira.bind(this);
-        this.isDisabledBtnJira = this.isDisabledBtnJira.bind(this);
-        this.isDisabledBtnSi3 = this.isDisabledBtnSi3.bind(this);
+        this.isTodoOk = this.isTodoOk.bind(this);
         
         this.getWeekofYear = this.getWeekofYear.bind(this);
         this.handleChangeWeek = this.handleChangeWeek.bind(this);
 
         this.state = {
-            Weekissues: [], WeekissuesNuevas:[], loadedJira: false, loadingJira: false, calendar: { weeks: [] }, calendarLoaded: false, totalHours: 0
+            Weekissues: [], WeekissuesNuevas: [], loadedJira: false, loadingJira: false, calendar: { weeks: [] }, calendarLoaded: false, totalHours: 0,
+            todoOk: false
         };
 
         
@@ -170,37 +171,14 @@ export class Home extends React.Component<RouteComponentProps<{}>,UserCredential
         
     }
 
-    private isDisabledBtnJira() {
-       return false;
-    }
 
-    private isDisabledBtnSi3() {
-
-        /*
-        let total = 0;
-        let tiempo: number;
-
-        let WeekJiraIssues = this.state.Weekissues;
-        for (let weekIssue of WeekJiraIssues) {
-            for (let Issue of weekIssue.issues) {
-                tiempo = Number(Issue.tiempo);
-                total += tiempo;
-                if (tiempo % 1 != 0) {
-                    return true;
-                }
-            }
-        }
-        this.setState({ totalHours: total });
-        if (total <= 40) { return false; }
-            else { return true; }*/
-
-        return false;
-    }
 
     public handleChangeWeek(event: React.FormEvent<HTMLSelectElement>) {
         this.setState({ selectedWeek: event.currentTarget.value });
 
     }
+
+    public isTodoOk(val: boolean) { this.setState({ todoOk: val }); }
 
     public render() {
         console.log("Entra en render de Home");
@@ -211,7 +189,7 @@ export class Home extends React.Component<RouteComponentProps<{}>,UserCredential
         let calendar;
 
         if (this.state.calendarLoaded) {
-            jira = <Login onLogin={this.onLoginJira} isDisabled={this.isDisabledBtnJira} 
+            jira = <Login onLogin={this.onLoginJira} isDisabled={false} 
                 userProps={localStorage.getItem("userJira") as string} passwordProps={localStorage.getItem("passwordJira") as string} />
             calendar =<div>
                 <label>Elija semana de trabajo :</label>
@@ -227,9 +205,9 @@ export class Home extends React.Component<RouteComponentProps<{}>,UserCredential
         }
         if (this.state.loadedJira) {
 
-            agenda = <Agenda weekissues={this.state.Weekissues} ref="agenda1"/>
+            agenda = <Agenda weekissues={this.state.Weekissues} ref="agenda1" isTodoOk={this.isTodoOk} />
 
-            si3 = <div> <h3>Ingrese credenciales de SI3</h3> <Login onLogin={this.onLoginSi3} isDisabled={this.isDisabledBtnSi3} 
+            si3 = <div> <h3>Ingrese credenciales de SI3</h3> <Login onLogin={this.onLoginSi3} isDisabled={this.state.todoOk} 
                 userProps={localStorage.getItem("userSi3") as string} passwordProps={localStorage.getItem("passwordSi3") as string}/> </div>;
         }
 

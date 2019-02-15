@@ -23,6 +23,7 @@ interface WeekJiraIssues {
 
 interface WeekJiraIssuesProps {
     weekissues: WeekJiraIssues[];
+    isTodoOk: Function;
 }
 export interface AgendaState {
     weekissues: WeekJiraIssues[];
@@ -34,6 +35,7 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
     constructor(props: WeekJiraIssuesProps) {
         super(props)
 
+        this.isDisabledBtnSi3 = this.isDisabledBtnSi3.bind(this);
         this.timeReassignment = this.timeReassignment.bind(this);
         this.calculateTotalHours = this.calculateTotalHours.bind(this);
 
@@ -41,6 +43,7 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
     }
 
         public timeReassignment(event: React.ChangeEvent<HTMLInputElement>) {
+
         
         let day = event.currentTarget.id.split('|')[1];
         let issueId = event.currentTarget.id.split('|')[0];
@@ -53,12 +56,37 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                         break;
                     }
                 }
+            }   
             }
-        }
+
+            var todoOk = this.isDisabledBtnSi3();
+            this.props.isTodoOk(todoOk);
 
         this.forceUpdate(); 
     }
-    
+
+    private isDisabledBtnSi3() {
+        
+        let total = 0;
+        let tiempo: number;
+
+        let WeekJiraIssues = this.state.weekissues;
+        for (let weekIssue of WeekJiraIssues) {
+            for (let Issue of weekIssue.issues) {
+                tiempo = Number(Issue.tiempo);
+                total += tiempo;
+                if (tiempo % 1 != 0) {
+                    return true;
+                }
+            }
+        }
+        
+        if (total <= 40) { return false; }
+        else { return true; }
+
+
+    }
+
     private calculateTotalHours() {
 
         let total = 0;
