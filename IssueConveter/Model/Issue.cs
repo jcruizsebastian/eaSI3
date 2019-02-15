@@ -10,5 +10,7 @@ namespace IssueConveter.Model
         public string Creator { get; set; }
         public int Priority { get; set; }
         public string Issuetype { get; set; }
+        public string si3ID { get; set; }
+        public string IssueId { get; set; }
     }
 }

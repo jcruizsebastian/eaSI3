@@ -23,13 +23,10 @@ interface WeekJiraIssues {
 
 interface WeekJiraIssuesProps {
     weekissues: WeekJiraIssues[];
-    onAgendaModified: Function;
-    //calculateTotalHours: Function;
 }
 export interface AgendaState {
     weekissues: WeekJiraIssues[];
     link: String;
-    changes: boolean;
 }
 
 export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
@@ -39,9 +36,8 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
 
         this.timeReassignment = this.timeReassignment.bind(this);
         this.calculateTotalHours = this.calculateTotalHours.bind(this);
-        this.handleSubmitChanges = this.handleSubmitChanges.bind(this);
 
-        this.state = { weekissues: this.props.weekissues, link: "https://jira.openfinance.es/browse/", changes: true };
+        this.state = { weekissues: this.props.weekissues, link: "https://jira.openfinance.es/browse/"};
     }
 
         public timeReassignment(event: React.ChangeEvent<HTMLInputElement>) {
@@ -63,12 +59,6 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
         this.forceUpdate(); 
     }
     
-
-    public handleSubmitChanges(e: { preventDefault: () => void; }) {
-        alert("¿ Guardar cambios ?");       
-        this.props.onAgendaModified(e);        
-    }
-
     private calculateTotalHours() {
 
         let total = 0;
@@ -81,7 +71,7 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                 total += tiempo;
             }
         }
-        
+
         return total;
     }  
 
@@ -135,7 +125,8 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                                     {Weekissue.issues.map(issue =>
                                         <div className="agenda-events-hours" key={issue.issueKey}>
                                             <input type="text" id={issue.issueKey + '|' + new Date(Weekissue.fecha.toString()).getDate()} name="tbTiempoCorregido" value={issue.tiempoCorregido}
-                                                placeholder={String(issue.tiempo)} onChange={this.timeReassignment} className={(Number(issue.tiempo) % 1 != 0) ? "invalid" : "valid"} />
+                                                placeholder={String(issue.tiempo)} onChange={this.timeReassignment} className={(Number(issue.tiempo) % 1 != 0) ? "invalid" : "valid"}
+                                                autoComplete="off" />
 
                                         </div>
                                     )}
@@ -151,15 +142,6 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                         <td></td>
                         <td></td>
                         <td><label className="agenda-total">Total : {total.toString()}</label></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td><form className="dataForm" onSubmit={this.handleSubmitChanges}>
-                            <input  type="submit" className="btn btn-secondary" value="Confirmar Cambios" />
-                        </form>
-                         </td>
                     </tr>
                 </tbody>
             </table>

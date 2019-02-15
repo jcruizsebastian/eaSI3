@@ -34,14 +34,23 @@ namespace JiraConnector
 
             foreach (var log in workLog)
             {
-                log.si3ID = response.Data.Issues.First(x => x.id == log.IssueId)?.fields?.customfield_10300?.ToString().Trim();
                 var issue = GetIssue(log.IssueId);
                 log.Summary = issue.Summary;
                 log.Key = issue.Key;
+
+                log.si3ID = response.Data.Issues.First(x => x.id == log.IssueId)?.fields?.customfield_10300?.ToString().Trim();
+                if (string.IsNullOrEmpty(log.si3ID))
+                {
+                    string epicJiraKey = response.Data.Issues.First(y => y.id == log.IssueId)?.fields?.customfield_10006?.ToString().Trim();
+                    if(!string.IsNullOrEmpty(epicJiraKey))
+                    {
+                        var worklogIssueEpica = GetIssue(epicJiraKey);
+                        log.si3ID = worklogIssueEpica.si3ID;
+                    }
+                }
             }
-
+            
             workLog.RemoveAll(x => string.IsNullOrEmpty(x.si3ID));
-
             return workLog;
         }
 

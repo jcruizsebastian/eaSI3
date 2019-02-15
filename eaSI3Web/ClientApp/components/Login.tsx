@@ -20,9 +20,6 @@ export class Login extends React.Component<LoginProps, {}> {
         super(props);
         
         this.handleSubmitLogin = this.handleSubmitLogin.bind(this);
-        //this.handleChangeUser = this.handleChangeUser.bind(this);
-        //this.handleChangePassword = this.handleChangePassword.bind(this);
-        this.handleChangeCheckBox = this.handleChangeCheckBox.bind(this);
 
         this.state = {
             user: localStorage.getItem("userJira") as string, password: localStorage.getItem("passwordJira") as string,
@@ -30,24 +27,10 @@ export class Login extends React.Component<LoginProps, {}> {
         }
     }
 
-    //public handleChangeUser(event: React.FormEvent<HTMLInputElement>) {
-    //    console.log("Entra en handleChangeUser de Login");
-    //    this.setState({ user: event.currentTarget.value });
-    //}
-
-    //public handleChangePassword(event: React.FormEvent<HTMLInputElement>) {
-    //    console.log("Entra en handleChangePassword de Login");
-    //    this.setState({ password: event.currentTarget.value });
-    //}
 
     public handleSubmitLogin(e: { preventDefault: () => void; }) {
         console.log("Entra en handleSubmitLogin de Login");
         this.props.onLogin(e, (this.refs["tbUser"] as HTMLInputElement).value, (this.refs["tbPass"] as HTMLInputElement).value, (this.refs["tbCheck"] as HTMLInputElement).checked);
-    }
-
-    public handleChangeCheckBox(event: React.FormEvent<HTMLInputElement>) {
-        console.log("Entra en handleChangeCheckBox de Login");
-        this.setState({ checked: event.currentTarget.checked });
     }
 
     render() {
@@ -59,9 +42,9 @@ export class Login extends React.Component<LoginProps, {}> {
 
                     <hr></hr>
                     <label htmlFor="tbUser" className="text">Nombre de usuario :</label>
-                    <input type="text" id="tbUser" className="form-control" name="user" ref="tbUser" placeholder="Introduzca su nombre de usuario" defaultValue={this.props.userProps} />
+                    <input type="text" id="tbUser" className="form-control" name="user" ref="tbUser" placeholder="Introduzca su nombre de usuario" defaultValue={this.props.userProps} autoComplete = "off"/>
                     <label htmlFor="tbPass" className="text">Contraseña :</label>
-                    <input type="password" id="tbPass" className="form-control" name="password" ref="tbPass" placeholder="Introduzca su contraseña" defaultValue={this.props.passwordProps} />
+                    <input type="password" id="tbPass" className="form-control" name="password" ref="tbPass" placeholder="Introduzca su contraseña" defaultValue={this.props.passwordProps} autoComplete="off" />
 
                     <div>
                         <input type="checkbox" id="checkbox" ref="tbCheck"></input>
