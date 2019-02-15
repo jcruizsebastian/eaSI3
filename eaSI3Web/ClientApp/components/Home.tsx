@@ -149,7 +149,7 @@ export class Home extends React.Component<RouteComponentProps<{}>,UserCredential
             }
         }
 
-        fetch('api/SI3/register?username=' + user + '&password=' + password + '&selectedWeek=' + this.state.selectedWeek + '&totalHours' + total, {
+        fetch('api/SI3/register?username=' + user + '&password=' + password + '&selectedWeek=' + this.state.selectedWeek + '&totalHours=' + total, {
             method: 'post',
             body: JSON.stringify(agenda.state.weekissues),
                 headers: {
