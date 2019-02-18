@@ -1,7 +1,6 @@
 ﻿import '../css/login.css';
 import * as React from 'react';
 import 'isomorphic-fetch';
-import 'current-week-number';
 import { Checkbox } from 'react-inputs-validation';
 
 

@@ -19,11 +19,11 @@ export class NavMenu extends React.Component<{}, {}> {
                     <ul className='nav navbar-nav'>
                         <li>
                             <NavLink to={ '/' } exact activeClassName='active'>
-                                <span className='glyphicon glyphicon-home'></span> Home
+                                <span className='glyphicon glyphicon-home'></span> Imputar Horas
                             </NavLink>
                             
-                            <NavLink to={'/'} exact activeClassName='active'>
-                                <span className='glyphicon glyphicon-plus'></span> Create Issue
+                            <NavLink to={'/vincular'} exact activeClassName='active'>
+                                <span className='glyphicon glyphicon-plus'></span> Vincular Tarea
                             </NavLink>
                             
                         </li>

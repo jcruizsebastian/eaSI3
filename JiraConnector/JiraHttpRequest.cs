@@ -29,10 +29,10 @@ namespace JiraConnector
 
             var response = client.Execute<T>(request);
 
-            if (response.StatusCode == System.Net.HttpStatusCode.Forbidden)
+            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
                 throw new InvalidCredentialException("Usuario y/o contraseña de JIRA incorrectos.");
 
-            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            if (response.StatusCode == System.Net.HttpStatusCode.Forbidden)
                 throw new UnauthorizedAccessException($"Máximo número de intetos de acceso a la API de JIRA excedido. Ingrese nuevamente a través de {jiraURL}.");
 
             if (response == null || response.Data == null)

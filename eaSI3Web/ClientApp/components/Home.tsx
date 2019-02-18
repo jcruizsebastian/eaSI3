@@ -5,18 +5,19 @@ import ReactLoading from "react-loading";
 import Agenda from './Agenda';
 import { AgendaState } from './Agenda';
 import Login from './Login';
+import Loader from 'react-loader-advanced';
+
 //import { Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
 
 interface UserCredentials {
     Weekissues: WeekJiraIssues[];
-    WeekissuesNuevas: WeekJiraIssues[];
     loadedJira: boolean;
     loadingJira: boolean;
     calendar: Calendar;
     calendarLoaded: boolean;
     selectedWeek?: string;
-    totalHours: number;
     todoOk: boolean;
+    loading: boolean;
 }
 
 interface WeekJiraIssues {
@@ -55,32 +56,24 @@ interface Calendar {
 }
 export class Home extends React.Component<RouteComponentProps<{}>,UserCredentials> {
 
-    
-
     constructor(props: RouteComponentProps<{}>) {
         super(props);
-        
-        
-
+                
         this.onLoginJira = this.onLoginJira.bind(this);
         this.onLoginSi3 = this.onLoginSi3.bind(this);
         this.confirmLoadedJira = this.confirmLoadedJira.bind(this);
-        this.isTodoOk = this.isTodoOk.bind(this);
-        
+        this.isTodoOk = this.isTodoOk.bind(this);       
         this.getWeekofYear = this.getWeekofYear.bind(this);
         this.handleChangeWeek = this.handleChangeWeek.bind(this);
 
         this.state = {
-            Weekissues: [], WeekissuesNuevas: [], loadedJira: false, loadingJira: false, calendar: { weeks: [] }, calendarLoaded: false, totalHours: 0,
-            todoOk: false
+            Weekissues: [], loadedJira: false, loadingJira: false, calendar: { weeks: [] }, calendarLoaded: false, todoOk: false, loading: false
         };
 
         
     }
    
     componentDidMount() { this.getWeekofYear(); }
-
-  
 
     private confirmLoadedJira() {
         this.setState({
@@ -108,23 +101,23 @@ export class Home extends React.Component<RouteComponentProps<{}>,UserCredential
         
         if (checked) { localStorage.setItem("userJira", user); localStorage.setItem("passwordJira", password); }
 
-        this.setState({ loadingJira: true });
+        this.setState({ loadingJira: true , loading: true});
 
         fetch('api/Jira/worklog?username=' + user + '&password=' + password + '&selectedWeek=' + this.state.selectedWeek)
            
              .then(response => response.json() as Promise<WeekJiraIssuesResponse>)
              .then(data => {
                    if (data.notOk) {
-                        alert(data.message);
-                        this.setState({ loadingJira: false, loadedJira: false });
+                       alert(data.message);
+                       this.setState({ loadingJira: false, loadedJira: false, loading: false });
                    }
                    else if (data.weekJiraIssues.length == 0) {
                         alert("No hay tareas en Jira");
-                        this.setState({ loadingJira: false, loadedJira: false });
+                       this.setState({ loadingJira: false, loadedJira: false, loading: false});
 
                    }
                    else
-                        this.setState({ Weekissues: data.weekJiraIssues }, this.confirmLoadedJira);
+                       this.setState({ Weekissues: data.weekJiraIssues, loading: false }, this.confirmLoadedJira);
                     });
    
     }
@@ -134,19 +127,16 @@ export class Home extends React.Component<RouteComponentProps<{}>,UserCredential
         
         user = user.replace("'", " ").trim();
         e.preventDefault();
-
+        this.setState({ loading: true });
         let agenda = (this.refs["agenda1"] as React.Component<{}, AgendaState>);
         
         if (checked) { localStorage.setItem("userSi3", user); localStorage.setItem("passwordSi3", password); }
 
         let total = 0;
-        let tiempo: number;
-
         let WeekJiraIssues = agenda.state.weekissues;
         for (let weekIssue of WeekJiraIssues) {
             for (let Issue of weekIssue.issues) {
-                tiempo = Number(Issue.tiempo);
-                total += tiempo;
+                total += Number(Issue.tiempo);
             }
         }
 
@@ -157,15 +147,16 @@ export class Home extends React.Component<RouteComponentProps<{}>,UserCredential
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
-            })
-                .then(response => response.json() as Promise<JiraResponse>)    
-                .then(data => {
-                    if (data.message)
-                    {
-                        alert(data.message);
+        })
+            .then(response => response.json() as Promise<String>)    
+            .then(data => {
+                if (data.length > 0) {
+                        alert(data);
+                        this.setState({ loading: false });
                     }
-                    else
+                    else {
                         alert("Horas imputadas en SI3");
+                        this.setState({ loading: false });}
                 });
         
         
@@ -205,28 +196,30 @@ export class Home extends React.Component<RouteComponentProps<{}>,UserCredential
         }
         if (this.state.loadedJira) {
 
-            agenda = <Agenda weekissues={this.state.Weekissues} ref="agenda1" isTodoOk={this.isTodoOk} />
+            agenda = <Agenda weekissues={this.state.Weekissues} ref="agenda1" isTodoOk={this.isTodoOk}/>
 
             si3 = <div> <h3>Ingrese credenciales de SI3</h3> <Login onLogin={this.onLoginSi3} isDisabled={this.state.todoOk} 
-                userProps={localStorage.getItem("userSi3") as string} passwordProps={localStorage.getItem("passwordSi3") as string}/> </div>;
+                userProps={localStorage.getItem("userSi3") as string} passwordProps={localStorage.getItem("passwordSi3") as string} /> </div>;
+          
         }
 
-        if (this.state.loadingJira)
-            agenda = <ReactLoading color='#000' type='cylon' />
 
-        
+        const spinner = <span><ReactLoading color='#fff' type='spin' className="spinner" height={128} width={128}  /></span>
 
         return (
-
+            
+            
             <div>
-                <div>
-                    {calendar}
-                    <h3>Ingrese credenciales de Jira</h3>
-                    {jira}
-                    {agenda}
-                    {si3}
-                </div>
+                
+                {calendar}
+                <h3>Ingrese credenciales de Jira</h3>
+                {jira}   
+                {agenda}   
+                {si3}
+                <Loader show={this.state.loading} message={spinner} hideContentOnLoad={false} className={(this.state.loading==true) ? "overlay": "overlay-1"} />
             </div>
+                
+            
         )
                     
     }
