@@ -9,7 +9,7 @@
 
     public enum Phases
     {
-        Developement = 1,
+        Development = 1,
         User = 2,
         Production = 3,
         Maintenance = 4

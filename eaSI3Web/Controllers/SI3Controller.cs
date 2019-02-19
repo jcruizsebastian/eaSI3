@@ -13,6 +13,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using System.IO;
 using Dapper;
+using SI3.Issues;
 
 namespace eaSI3Web.Controllers
 {
@@ -23,7 +24,18 @@ namespace eaSI3Web.Controllers
         public SI3Controller(ILogger<SI3Controller> logger) {
             _logger = logger;
         }
+        public class BodyIssue {
+            public string JiraKey { get; set; }
+            public string Titulo { get; set; }
+            public string Prioridad { get; set; }
+            public string Tipo { get; set; }
+            public string Responsable { get; set; }
+            public string Producto { get; set; }
+            public string Componente { get; set; }
+            public string Modulo { get; set; }
 
+
+        }
         public class Issue
         {
             public string product { get; set; }
@@ -150,14 +162,115 @@ namespace eaSI3Web.Controllers
 
 
         [HttpPost("[action]")]
-        public string LinkIssue([FromQuery]string username, [FromQuery]string password, [FromBody]Issue issue)
-        {
+        public string Linkissue([FromQuery]string username, [FromQuery]string password,[FromBody]BodyIssue data ) {
 
+            SI3Service SI3Service = new SI3Service(username,password);
+            
+            SI3.Issues.Issue issue = new SI3.Issues.Issue();
+            //issue.user = SI3Service.GetUsers().First(user => user.Key == $"of{data.Responsable}").Value;
+            issue.product = data.Producto;
+            issue.component = data.Componente;
+            if (data.Modulo != "default") { issue.module = data.Modulo; }
+            issue.title = data.JiraKey;
+            issue.cause = data.Titulo;
+            
+            switch (data.Prioridad) {
+                case "Trivial":
+                case "Menor":
+                    issue.level = SeverityLevels.Minor;
+                    break;
+                case "Mayor":
+                    issue.level = SeverityLevels.Important;
+                    break;
+                case "Crítica":
+                case "Bloqueadora":
+                    issue.level = SeverityLevels.Critical;
+                    break;
+            }
 
+            switch (data.Prioridad) {
+                case "Trivial":
+                    issue.priority = Prioridades.Low;
+                    break;
+                case "Menor":
+                case "Mayor":
+                    issue.priority = Prioridades.Medium;
+                    break;
+                case "Crítica":
+                    issue.priority = Prioridades.High;
+                    break;
+                case "Bloqueadora":
+                    issue.priority = Prioridades.Urgent;
+                    break;
+            }
 
+            switch (data.Tipo) {
+                case "Asistencia":
+                case "Preventa":
+                    issue.phase = Phases.Production;
+                    break;
+                case "Desarrollo":
+                case "Historia":
+                case "Épica":
+                case "Pruebas":
+                case "Especificación":
+                    issue.phase = Phases.Development;
+                    break;
+                case "Formación":
+                case "Gestión":
+                case "Sistemas":
+                    issue.phase = Phases.User;
+                    break;
+                case "Corrección":
+                case "Bolsa de horas":
+                    issue.phase = Phases.Maintenance;
+                    break;
+            }
+          
+            switch (data.Tipo) {
+                case "Mantenimiento":
+                    issue.tipo = Tipos.Data_Maintenance;
+                    break;
+                case "Asistencia":
+                    issue.tipo = Tipos.Asistencia;
+                    break;
+                case "Bolsa de Horas":
+                    issue.tipo = Tipos.Bolsa_de_horas;
+                    break;
+                case "Corrección":
+                    issue.tipo = Tipos.Defecto;
+                    break;
+                case "Especificación":
+                    issue.tipo = Tipos.Especificacion;
+                    break;
+                case "Formación":
+                    issue.tipo = Tipos.Help_and_Documentation;
+                    break;
+                case "Gestión":
+                    issue.tipo = Tipos.Gestion;
+                    break;
+                case "Desarrollo":
+                    issue.tipo = Tipos.Mejora;
+                    break;
+                case "Preventa":
+                    issue.tipo = Tipos.Help_and_Documentation;
+                        break;
+                case "Pruebas":
+                    issue.tipo = Tipos.Pruebas;
+                    break;
+                case "Sistemas":
+                    issue.tipo = Tipos.Security;
+                    break;
+                case "Épica":
+                    issue.tipo = Tipos.Mejora;
+                    break;
+            }
+
+            if (data.Tipo == "Corrección") { issue.type = SI3.Issues.Issue.Types.error; } else { issue.type = SI3.Issues.Issue.Types.improv; }
+
+            var idSi3 = SI3Service.NewIssue(issue);
             return string.Empty;
         }
-
         [HttpPost("[action]")]
         public string Register([FromQuery]string username, [FromQuery]string password, [FromQuery]string selectedWeek,[FromQuery]int totalHours,[FromBody]IEnumerable<WeekJiraIssues> model)
         {

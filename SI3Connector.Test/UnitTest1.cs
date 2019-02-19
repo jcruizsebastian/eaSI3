@@ -106,17 +106,16 @@ namespace SI3Connector.Test
         {
             Issue newissue = new Issue()
             {
-                title = "Prueba automatica title",
-                cause = "Prueba automatica causa",
-                level = SeverityLevels.Important,
-                phase = Phases.Maintenance,
-                priority = Prioridades.Medium,
-                tipo = Tipos.Compatibility,
-                type = Issue.Types.improv,
+                title = "Prueba automatica title",//jira key
+                cause = "Prueba automatica causa",//titulo de tarea
+                level = SeverityLevels.Important, //Cuando la prioridad de jira sea 1 o 2 Minor, 3, Important y 4 y 5 Critical
+                phase = Phases.Maintenance, //Cuando el tipo de jira sea Asistencia, preventa entonces Production, cuando sea Desarrollo, Historia, Epica, Pruebas, o Especificacion entonces Development, cuando sea Formación, Gestion, Sistemas entonces user, cuando sea Corrección o Bolsa de horas entonces Mantenimiento
+                priority = Prioridades.Medium, //Cuando la prioridad de jira sea 1 Low, 2 y 3 Medium, 4 High  y 5 Urgent
+                tipo = Tipos.Compatibility, //Cuando sea Manteniemiento => Data_Maintenance, asistencia => Asistencia, Bolsa de hroas => bolsa de horas, Correccion => Defecto, Especificacion => Especificaicon, Formacion => Help_and_Documentation, Gestion => Gestion, Desarollo => Mejora, Preventa =>  Help_and_Documentation, Pruebas => Pruebas , Sistemas => Security, Epica => Mejora
+                type = Issue.Types.improv, //Cuando el tipo de jira sea Correción, enviar error, sino enviar improv
                 user = "187",
                 product="64",
-                component = "591"
-               
+                component = "591"               
             };
 
             SI3Service service = new SI3Service("ofjcruiz", "_*_d1d4ct1c");
