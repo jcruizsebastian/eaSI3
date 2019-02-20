@@ -73,5 +73,17 @@ namespace JiraConnector.Test
             //Act
             jiraWorkLogService.UpdateIssue(jiraKey, body);
         }
+
+        [TestMethod]
+        public void TestBadUpdateIssue()
+        {
+            //Arrage
+            string idSI3 = "1111";
+            string jiraKey = "CORPORT-401";
+            string body = JsonConvert.SerializeObject(new { fields = new { campoinventadoinexistente = idSI3 } });
+
+            //Assert
+            Assert.ThrowsException<InvalidOperationException>(() => jiraWorkLogService.UpdateIssue(jiraKey, body));
+        }
     }
 }

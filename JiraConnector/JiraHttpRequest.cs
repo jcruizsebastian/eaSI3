@@ -41,7 +41,7 @@ namespace JiraConnector
             if (response.StatusCode == System.Net.HttpStatusCode.Forbidden)
                 throw new UnauthorizedAccessException($"Máximo número de intetos de acceso a la API de JIRA excedido. Ingrese nuevamente a través de {jiraURL}.");
 
-            if (response == null || response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            if (response == null || !(response.StatusCode == System.Net.HttpStatusCode.OK || response.StatusCode == System.Net.HttpStatusCode.NoContent))
                 throw new InvalidOperationException("Error with jira API request: " + queryStringRequest);
 
             return response;
