@@ -30,5 +30,17 @@ namespace JiraConnector.Test
             //Assert
 
         }
+
+        [TestMethod]
+        public void TestUpdateIssue()
+        {
+            //Arrage
+
+            //Act
+            jiraWorkLogService.UpdateSI3CustomField("CORPORT-401", "2343");
+
+            //Assert
+
+        }
     }
 }

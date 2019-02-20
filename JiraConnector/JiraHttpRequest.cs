@@ -19,11 +19,17 @@ namespace JiraConnector
             _logger = logger;
         }
 
-        public IRestResponse<T> DoJiraRequest<T>(string queryStringRequest) where T : new()
+        public IRestResponse<T> DoJiraRequest<T>(string queryStringRequest, Method method, string bodyJson = null) where T : new()
         {
-            var request = new RestRequest(queryStringRequest, Method.GET);
+            var request = new RestRequest(queryStringRequest, method);
 
             request.AddHeader("Authorization", string.Format("Basic {0}", Base64Encode($"{_username}:{_password}")));
+            
+            if(!string.IsNullOrEmpty(bodyJson))
+            {
+                request.AddParameter("application/json", bodyJson, ParameterType.RequestBody);
+                request.RequestFormat = DataFormat.Json;
+            }
 
             var client = new RestClient(jiraURL);
 
@@ -35,7 +41,7 @@ namespace JiraConnector
             if (response.StatusCode == System.Net.HttpStatusCode.Forbidden)
                 throw new UnauthorizedAccessException($"Máximo número de intetos de acceso a la API de JIRA excedido. Ingrese nuevamente a través de {jiraURL}.");
 
-            if (response == null || response.Data == null)
+            if (response == null  || response.StatusCode == System.Net.HttpStatusCode.BadRequest)
                 throw new InvalidOperationException("Error with jira API request: " + queryStringRequest);
 
             return response;

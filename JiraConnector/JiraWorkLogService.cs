@@ -2,6 +2,8 @@
 using IssueConveter.Model;
 using Jira;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +25,7 @@ namespace JiraConnector
         {
             try
             {
-                jiraHttpRequest.DoJiraRequest<JiraIssue>(JiraURIRepository.LOGIN(username));
+                jiraHttpRequest.DoJiraRequest<JiraIssue>(JiraURIRepository.LOGIN(username), Method.GET);
             }
             catch (Exception e)
             {
@@ -32,9 +34,16 @@ namespace JiraConnector
             return true;
         }
 
+        public void UpdateSI3CustomField(string issueKey, string idSI3)
+        {
+            string body = JsonConvert.SerializeObject(new { fields = new { customfield_10300 = idSI3 } });
+
+            var response = jiraHttpRequest.DoJiraRequest<ListIssues>(JiraURIRepository.UPDATE_ISSUE(issueKey), Method.PUT, body);
+        }
+
         public List<WorkLog> GetWorklog(DateTime startDate, DateTime endDate, string username)
         {
-            var response = jiraHttpRequest.DoJiraRequest<ListIssues>(JiraURIRepository.GET_WORKLOG(startDate, endDate, username));
+            var response = jiraHttpRequest.DoJiraRequest<ListIssues>(JiraURIRepository.GET_WORKLOG(startDate, endDate, username), Method.GET);
 
             List<WorkLog> workLog = new List<WorkLog>();
 
@@ -69,14 +78,14 @@ namespace JiraConnector
 
         public List<WorkLog> GetIssueWorklog(string issueKey)
         {
-            var response = jiraHttpRequest.DoJiraRequest<JiraWorkLog>(JiraURIRepository.GET_ISSUE_LOG(issueKey));
+            var response = jiraHttpRequest.DoJiraRequest<JiraWorkLog>(JiraURIRepository.GET_ISSUE_LOG(issueKey), Method.GET);
 
             return JiraConverter.ConvertWorklog(response.Data);
         }
 
         public Issue GetIssue(string issueKey)
         {
-            var response = jiraHttpRequest.DoJiraRequest<JiraIssue>(JiraURIRepository.GET_ISSUE(issueKey));
+            var response = jiraHttpRequest.DoJiraRequest<JiraIssue>(JiraURIRepository.GET_ISSUE(issueKey), Method.GET);
 
             return JiraConverter.ConvertIssue(response.Data);
         }
