@@ -6,6 +6,7 @@ import Agenda from './Agenda';
 import { AgendaState } from './Agenda';
 import Login from './Login';
 import Loader from 'react-loader-advanced';
+import { Layout } from './Layout';
 
 //import { Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
 
@@ -95,7 +96,7 @@ export class Home extends React.Component<RouteComponentProps<{}>,UserCredential
     }
 
     private onLoginJira(e: { preventDefault: () => void; }, user: string, password: string, checked: boolean) {
-
+        /*
         user = user.replace(" ", " ").trim();
         e.preventDefault();
         
@@ -118,10 +119,29 @@ export class Home extends React.Component<RouteComponentProps<{}>,UserCredential
                    }
                    else
                        this.setState({ Weekissues: data.weekJiraIssues, loading: false }, this.confirmLoadedJira);
-                    });
-   
+                    });*/
+        e.preventDefault();
+        document.cookie = "";
+        <Layout/>
+        
     }
 
+    //función para sacar las cookies, cname => userJira, passJira ... etc.
+    public getCookie(cname:String) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
 
     private onLoginSi3(e: { preventDefault: () => void; }, user: string, password: string, checked: boolean) {
         
@@ -184,10 +204,10 @@ export class Home extends React.Component<RouteComponentProps<{}>,UserCredential
                 userProps={localStorage.getItem("userJira") as string} passwordProps={localStorage.getItem("passwordJira") as string} />
             calendar =<div>
                 <label>Elija semana de trabajo :</label>
-                <select className="custom-select" onChange={this.handleChangeWeek}>
+                <select className="custom-select" onChange={this.handleChangeWeek} value={this.state.calendar.weeks.length}>
                     {
                         this.state.calendar.weeks.map(week =>
-                            <option value={week.numberWeek} key={week.numberWeek} selected={(week.numberWeek == this.state.calendar.weeks.length) ? true : false} >
+                            <option value={week.numberWeek} key={week.numberWeek} >
                                 {week.description}
                             </option>)
                     }

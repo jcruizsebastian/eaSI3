@@ -104,7 +104,7 @@ namespace SI3Connector
             return users;
         }
 
-        private void Login()
+        public void Login()
         {
             var x_www_form_url_encoded = new Dictionary<string, string>();
             x_www_form_url_encoded.Add("user", username);

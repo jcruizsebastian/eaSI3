@@ -36,6 +36,11 @@ namespace eaSI3Web.Controllers
 
 
         }
+        public class User
+        {
+            public string nombre { get; set; }
+            public string codigo { get; set; }
+        }
         public class Issue
         {
             public string product { get; set; }
@@ -160,6 +165,37 @@ namespace eaSI3Web.Controllers
             return objectOut;
         }
 
+        [HttpGet("[action]")]
+        public List<User> Users() {
+            SI3Service SI3Service = new SI3Service("ofjcruiz", "_*_d1d4ct1c");
+            List<User> users = new List<User>();
+            foreach (var userDic in SI3Service.GetUsers()) {
+                User user = new User
+                {
+                    nombre = userDic.Key,
+                    codigo = userDic.Value
+                    
+                };
+                users.Add(user);
+            }
+            return users.OrderBy(x => x.nombre).ToList();
+        }
+
+        [HttpGet("[action]")]
+        public string ValidateLogin(string username, string password)
+        {
+            try
+            {
+                SI3Service si3Service = new SI3Service(username, password);
+                si3Service.Login();
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
+
+            return string.Empty;
+        }
 
         [HttpPost("[action]")]
         public string Linkissue([FromQuery]string username, [FromQuery]string password,[FromBody]BodyIssue data ) {
@@ -186,6 +222,9 @@ namespace eaSI3Web.Controllers
                 case "Bloqueadora":
                     issue.level = SeverityLevels.Critical;
                     break;
+                default:
+                    issue.level = SeverityLevels.Minor;
+                    break;
             }
 
             switch (data.Prioridad) {
@@ -202,6 +241,9 @@ namespace eaSI3Web.Controllers
                 case "Bloqueadora":
                     issue.priority = Prioridades.Urgent;
                     break;
+                default:
+                    issue.priority = Prioridades.Medium;
+                    break;
             }
 
             switch (data.Tipo) {
@@ -210,19 +252,31 @@ namespace eaSI3Web.Controllers
                     issue.phase = Phases.Production;
                     break;
                 case "Desarrollo":
+                case "Tarea":
                 case "Historia":
                 case "Épica":
                 case "Pruebas":
                 case "Especificación":
+                case "Análisis":
+                case "Workpack":
+                case "Calidad":
+                case "Change Request":
                     issue.phase = Phases.Development;
                     break;
                 case "Formación":
+                case "Riesgo":
+                case "Vacaciones":
+                case "Interno":
                 case "Gestión":
                 case "Sistemas":
+                case "Permisos":
                     issue.phase = Phases.User;
                     break;
                 case "Corrección":
                 case "Bolsa de horas":
+                    issue.phase = Phases.Maintenance;
+                    break;
+                default:
                     issue.phase = Phases.Maintenance;
                     break;
             }
@@ -241,15 +295,21 @@ namespace eaSI3Web.Controllers
                     issue.tipo = Tipos.Defecto;
                     break;
                 case "Especificación":
+                case "Análisis":
                     issue.tipo = Tipos.Especificacion;
                     break;
                 case "Formación":
                     issue.tipo = Tipos.Help_and_Documentation;
                     break;
                 case "Gestión":
+                case "Vacaciones":
                     issue.tipo = Tipos.Gestion;
                     break;
                 case "Desarrollo":
+                case "Tarea":
+                case "Workpack":
+                case "Calidad":
+                case "Change Request":
                     issue.tipo = Tipos.Mejora;
                     break;
                 case "Preventa":
@@ -259,17 +319,21 @@ namespace eaSI3Web.Controllers
                     issue.tipo = Tipos.Pruebas;
                     break;
                 case "Sistemas":
+                case "Interno":
                     issue.tipo = Tipos.Security;
                     break;
                 case "Épica":
+                case "Permisos":
+                    issue.tipo = Tipos.Mejora;
+                    break;
+                default:
                     issue.tipo = Tipos.Mejora;
                     break;
             }
 
             if (data.Tipo == "Corrección") { issue.type = SI3.Issues.Issue.Types.error; } else { issue.type = SI3.Issues.Issue.Types.improv; }
 
-            var idSi3 = SI3Service.NewIssue(issue);
-            return string.Empty;
+            return SI3Service.NewIssue(issue);
         }
         [HttpPost("[action]")]
         public string Register([FromQuery]string username, [FromQuery]string password, [FromQuery]string selectedWeek,[FromQuery]int totalHours,[FromBody]IEnumerable<WeekJiraIssues> model)

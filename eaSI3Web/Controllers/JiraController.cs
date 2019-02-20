@@ -115,6 +115,21 @@ namespace eaSI3Web.Controllers
             return jiraIssue;
 
         }
+        [HttpGet("[action]")]
+        public string ValidateLogin(string username, string password)
+        {
+            try
+            {
+                JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(username, password, _logger);
+                jiraWorkLogService.Validate(username);
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
+
+            return string.Empty;
+        }
 
         public static IEnumerable<WeekJiraIssues> Convert(List<WorkLog> worklog)
         {

@@ -135,7 +135,7 @@ export class VincularTarea extends React.Component<RouteComponentProps<{}>, Vinc
                 'Content-Type': 'application/json'
             },
         })
-            .then(response => response.json() as Promise<String>)
+            .then(response => response.text() as Promise<String>)
             .then(data => { alert("Tarea vinculada"); this.setState({ loading: false }); });
     }
 

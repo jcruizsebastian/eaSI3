@@ -4,8 +4,14 @@
     background-color: #E2ECEE;
 }
 
+.img {
+    margin:auto;
+    position:center;
+    margin-left:105px;
+    margin-bottom:10px;
+}
 .formulario {
-    border: 1px solid #CED5D7;
+    border: 1px solid #32CD32;
     border-radius: 6px;
     padding: 45px 45px 20px;
     margin-top: 50px;
@@ -22,30 +28,18 @@
         margin-bottom: 15px;
     }
 
-    .formulario input[type='text'], .formulario input[type ='password'] {
+    .formulario input[type='text'], .formulario input[type ='password'], .formulario select {
         padding: 7px 6px;
         width: 294px;
-        border: 1px solid #CED5D7;
+        border: 1px solid #32CD32;
         resize: none;
         box-shadow: 0 0 0 3px #EEF;
         margin: 5px 0;
     }
-.formulario input[type='text']:focus, .formulario input[type ='password']:focus {
+    .formulario input[type='text']:focus, .formulario input[type ='password']:focus {
             outline: none;
             box-shadow: 0 0 0 3px rgb(206, 213, 215);
- }
-
-
-    .formulario input[type='submit'] {
-        border: 1px solid #CED5D7;
-        box-shadow: 0 0 0 3px #EEF;
-        padding: 8px 16px;
-        border-radius: 20px;
-        font-weight: bold;
-        text-shadow: 1px 1px 0px white;
-        background: #e4f1f6;
-        background: -moz-linear-gradient(top,#e4f1f6 0%, #cfe6ef 100%);
-        background: -webkit-linear-gradient(top,#e4f1f6 0%, #cfe6ef 100%);
     }
+
 
     

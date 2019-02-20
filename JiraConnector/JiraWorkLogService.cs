@@ -19,6 +19,19 @@ namespace JiraConnector
             jiraHttpRequest = new JiraHttpRequest(username, password, logger);
         }
 
+        public bool Validate(string username)
+        {
+            try
+            {
+                jiraHttpRequest.DoJiraRequest<JiraIssue>(JiraURIRepository.LOGIN(username));
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+            return true;
+        }
+
         public List<WorkLog> GetWorklog(DateTime startDate, DateTime endDate, string username)
         {
             var response = jiraHttpRequest.DoJiraRequest<ListIssues>(JiraURIRepository.GET_WORKLOG(startDate, endDate, username));
