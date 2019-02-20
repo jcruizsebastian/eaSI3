@@ -1,5 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
 using System;
+using System.Security.Authentication;
 
 namespace JiraConnector.Test
 {
@@ -16,31 +18,60 @@ namespace JiraConnector.Test
             username = "jcruiz";
             password = "_*_d1d4ct1c97";
 
-            jiraWorkLogService = new JiraWorkLogService(username, password, null);
+            jiraWorkLogService = new JiraWorkLogService(username, password);
         }
 
         [TestMethod]
         public void TestGetCurrentWorklog()
         {
-            //Arrage
-
             //Act
             var worklog = jiraWorkLogService.GetWorklog(new DateTime(2019, 01, 01), new DateTime(2019, 01, 07), username);
 
             //Assert
+            Assert.IsNotNull(worklog, "No se recibió issue alguna");
+        }
 
+        [TestMethod]
+        public void TestGetIssue()
+        {
+            //Arrage
+            string jiraIssueKey = "CORPORT-401";
+
+            //Act
+            var issue = jiraWorkLogService.GetIssue(jiraIssueKey);
+
+            //Assert
+            Assert.IsNotNull(issue, $"No se recibió información de la issue {jiraIssueKey}");
+        }
+
+        [TestMethod]
+        public void TestLogin()
+        {
+            //Assert
+            jiraWorkLogService = new JiraWorkLogService(username, password);
+        }
+
+        [TestMethod]
+        public void TestBadLogin()
+        {
+            //Arrange
+            string badusername = "anyuser";
+            string badpassword = "anypass";
+
+            //Assert
+            Assert.ThrowsException<InvalidCredentialException>(() => new JiraWorkLogService(badusername, badpassword));
         }
 
         [TestMethod]
         public void TestUpdateIssue()
         {
             //Arrage
+            string idSI3 = "1111";
+            string jiraKey = "CORPORT-401";
+            string body = JsonConvert.SerializeObject(new { fields = new { customfield_10300 = idSI3 } });
 
             //Act
-            jiraWorkLogService.UpdateSI3CustomField("CORPORT-401", "2343");
-
-            //Assert
-
+            jiraWorkLogService.UpdateIssue(jiraKey, body);
         }
     }
 }

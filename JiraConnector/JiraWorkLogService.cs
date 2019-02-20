@@ -1,8 +1,6 @@
 ﻿using IssueConveter;
 using IssueConveter.Model;
 using Jira;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Collections.Generic;
@@ -13,32 +11,18 @@ namespace JiraConnector
     public class JiraWorkLogService
     {
         private JiraHttpRequest jiraHttpRequest { get; set; }
-        private readonly ILogger _logger;
-        public JiraWorkLogService(string username, string password, ILogger logger)
-        {
-            _logger = logger;
 
-            jiraHttpRequest = new JiraHttpRequest(username, password, logger);
+        public JiraWorkLogService(string username, string password)
+        {
+            jiraHttpRequest = new JiraHttpRequest(username, password);
+
+            //Probamos que se hace login correctamente con las credenciales recibidas
+            jiraHttpRequest.DoJiraRequest<JiraIssue>(JiraURIRepository.LOGIN(username), Method.GET);
         }
 
-        public bool Validate(string username)
+        public void UpdateIssue(string issueKey, string jsonBody)
         {
-            try
-            {
-                jiraHttpRequest.DoJiraRequest<JiraIssue>(JiraURIRepository.LOGIN(username), Method.GET);
-            }
-            catch (Exception e)
-            {
-                throw;
-            }
-            return true;
-        }
-
-        public void UpdateSI3CustomField(string issueKey, string idSI3)
-        {
-            string body = JsonConvert.SerializeObject(new { fields = new { customfield_10300 = idSI3 } });
-
-            var response = jiraHttpRequest.DoJiraRequest<IssuesList>(JiraURIRepository.UPDATE_ISSUE(issueKey), Method.PUT, body);
+            var response = jiraHttpRequest.DoJiraRequest<IssuesList>(JiraURIRepository.UPDATE_ISSUE(issueKey), Method.PUT, jsonBody);
         }
 
         public List<WorkLog> GetWorklog(DateTime startDate, DateTime endDate, string username)
@@ -64,15 +48,15 @@ namespace JiraConnector
                 if (string.IsNullOrEmpty(log.si3ID))
                 {
                     string epicJiraKey = response.Data.Issues.First(y => y.id == log.IssueId)?.fields?.customfield_10006?.ToString().Trim();
-                    if(!string.IsNullOrEmpty(epicJiraKey))
+                    if (!string.IsNullOrEmpty(epicJiraKey))
                     {
                         var worklogIssueEpica = GetIssue(epicJiraKey);
                         log.si3ID = worklogIssueEpica.si3ID;
                     }
                 }
             }
-            
-            workLog.RemoveAll(x => string.IsNullOrEmpty(x.si3ID));
+
+            //workLog.RemoveAll(x => string.IsNullOrEmpty(x.si3ID));
             return workLog;
         }
 

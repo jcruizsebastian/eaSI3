@@ -2,11 +2,9 @@ using IssueConveter.Model;
 using JiraConnector;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 
 namespace eaSI3Web.Controllers
@@ -80,7 +78,7 @@ namespace eaSI3Web.Controllers
                 }
             }
             
-            JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(username, password, _logger);
+            JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(username, password);
             var currentWorklog = new List<WorkLog>();
             try
             {
@@ -108,7 +106,7 @@ namespace eaSI3Web.Controllers
         [HttpGet("[action]")]
         public Issue Issue(string username, string password, string jiraKey)
         {
-            JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(username, password, _logger);
+            JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(username, password);
 
             var jiraIssue = jiraWorkLogService.GetIssue(jiraKey);
 
@@ -120,8 +118,7 @@ namespace eaSI3Web.Controllers
         {
             try
             {
-                JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(username, password, _logger);
-                jiraWorkLogService.Validate(username);
+                JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(username, password);
             }
             catch (Exception e)
             {

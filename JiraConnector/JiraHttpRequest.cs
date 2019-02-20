@@ -1,5 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
-using RestSharp;
+﻿using RestSharp;
+using RestSharp.Authenticators;
 using System;
 using System.Security.Authentication;
 
@@ -7,31 +7,31 @@ namespace JiraConnector
 {
     public class JiraHttpRequest
     {
-        private const string jiraURL = "https://jira.openfinance.es/"; //TODO: Esto se debería poder configurar por si finalmente lo usan en infobolsa.
+        private const string jiraURL = "https://jira.openfinance.es/";
 
-        private string _username { get; set; }
+        private string _userName { get; set; }
         private string _password { get; set; }
-        private readonly ILogger _logger;
-        public JiraHttpRequest(string username, string password, ILogger logger)
+
+        public JiraHttpRequest(string userName, string password)
         {
-            _username = username;
+            _userName = userName;
             _password = password;
-            _logger = logger;
         }
 
         public IRestResponse<T> DoJiraRequest<T>(string queryStringRequest, Method method, string bodyJson = null) where T : new()
         {
             var request = new RestRequest(queryStringRequest, method);
 
-            request.AddHeader("Authorization", string.Format("Basic {0}", Base64Encode($"{_username}:{_password}")));
-            
-            if(!string.IsNullOrEmpty(bodyJson))
+            if (!string.IsNullOrEmpty(bodyJson))
             {
                 request.AddParameter("application/json", bodyJson, ParameterType.RequestBody);
                 request.RequestFormat = DataFormat.Json;
             }
 
-            var client = new RestClient(jiraURL);
+            var client = new RestClient(jiraURL)
+            {
+                Authenticator = new HttpBasicAuthenticator(_userName, _password)
+            };
 
             var response = client.Execute<T>(request);
 
@@ -41,7 +41,7 @@ namespace JiraConnector
             if (response.StatusCode == System.Net.HttpStatusCode.Forbidden)
                 throw new UnauthorizedAccessException($"Máximo número de intetos de acceso a la API de JIRA excedido. Ingrese nuevamente a través de {jiraURL}.");
 
-            if (response == null  || response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            if (response == null || response.StatusCode == System.Net.HttpStatusCode.BadRequest)
                 throw new InvalidOperationException("Error with jira API request: " + queryStringRequest);
 
             return response;
