@@ -2,7 +2,7 @@
 
 namespace Jira
 {
-    public class ListIssues
+    public class IssuesList
     {
         public List<JiraIssue> Issues { get; set; }
     }

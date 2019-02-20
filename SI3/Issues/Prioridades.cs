@@ -1,15 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Xml.Serialization;
-
-namespace SI3.Issues
+﻿namespace SI3.Issues
 {
-    //[XmlRoot("phases")]
-    //public class Phases
-    //{
-    //    [XmlElement("phase")]
-    //    public List<Phase> phase { get; set; }
-    //}
-
     public enum Prioridades
     {
         Low = 1,

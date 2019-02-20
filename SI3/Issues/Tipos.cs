@@ -1,12 +1,5 @@
 ﻿namespace SI3.Issues
 {
-    //[XmlRoot("tipos")]
-    //public class Tipos
-    //{
-    //    [XmlElement("tipo")]
-    //    public List<Tipo> tipo { get; set; }
-    //}
-
     public enum Tipos
     {
         Data_Maintenance = 9,

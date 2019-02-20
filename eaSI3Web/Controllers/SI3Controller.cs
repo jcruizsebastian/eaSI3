@@ -331,7 +331,7 @@ namespace eaSI3Web.Controllers
                     break;
             }
 
-            if (data.Tipo == "Corrección") { issue.type = SI3.Issues.Issue.Types.error; } else { issue.type = SI3.Issues.Issue.Types.improv; }
+            if (data.Tipo == "Corrección") { issue.type = Types.error; } else { issue.type = Types.improv; }
 
             return SI3Service.NewIssue(issue);
         }

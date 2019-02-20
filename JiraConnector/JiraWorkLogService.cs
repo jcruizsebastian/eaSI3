@@ -38,12 +38,12 @@ namespace JiraConnector
         {
             string body = JsonConvert.SerializeObject(new { fields = new { customfield_10300 = idSI3 } });
 
-            var response = jiraHttpRequest.DoJiraRequest<ListIssues>(JiraURIRepository.UPDATE_ISSUE(issueKey), Method.PUT, body);
+            var response = jiraHttpRequest.DoJiraRequest<IssuesList>(JiraURIRepository.UPDATE_ISSUE(issueKey), Method.PUT, body);
         }
 
         public List<WorkLog> GetWorklog(DateTime startDate, DateTime endDate, string username)
         {
-            var response = jiraHttpRequest.DoJiraRequest<ListIssues>(JiraURIRepository.GET_WORKLOG(startDate, endDate, username), Method.GET);
+            var response = jiraHttpRequest.DoJiraRequest<IssuesList>(JiraURIRepository.GET_WORKLOG(startDate, endDate, username), Method.GET);
 
             List<WorkLog> workLog = new List<WorkLog>();
 

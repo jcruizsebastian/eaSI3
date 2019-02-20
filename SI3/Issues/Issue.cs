@@ -14,14 +14,6 @@
         public readonly string countrycode = "0";
         public readonly string os = "0";
         public readonly string actions = "OP";
-
-        //Este va en texto plano
-        public enum Types
-        {
-            improv, //enhancement
-            error //defect
-        }
-
         public Types type { get; set; }
         public Tipos tipo { get; set; }
         public Phases phase { get; set; }

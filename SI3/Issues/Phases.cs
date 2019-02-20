@@ -1,12 +1,5 @@
 ﻿namespace SI3.Issues
 {
-    //[XmlRoot("prioridades")]
-    //public class Prioridades
-    //{
-    //    [XmlElement("prioridad")]
-    //    public List<Prioridad> prioridad { get; set; }
-    //}
-
     public enum Phases
     {
         Development = 1,

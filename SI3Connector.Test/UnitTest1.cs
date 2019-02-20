@@ -112,7 +112,7 @@ namespace SI3Connector.Test
                 phase = Phases.Maintenance, //Cuando el tipo de jira sea Asistencia, preventa entonces Production, cuando sea Desarrollo, Historia, Epica, Pruebas, o Especificacion entonces Development, cuando sea Formación, Gestion, Sistemas entonces user, cuando sea Corrección o Bolsa de horas entonces Mantenimiento
                 priority = Prioridades.Medium, //Cuando la prioridad de jira sea 1 Low, 2 y 3 Medium, 4 High  y 5 Urgent
                 tipo = Tipos.Compatibility, //Cuando sea Manteniemiento => Data_Maintenance, asistencia => Asistencia, Bolsa de hroas => bolsa de horas, Correccion => Defecto, Especificacion => Especificaicon, Formacion => Help_and_Documentation, Gestion => Gestion, Desarollo => Mejora, Preventa =>  Help_and_Documentation, Pruebas => Pruebas , Sistemas => Security, Epica => Mejora
-                type = Issue.Types.improv, //Cuando el tipo de jira sea Correción, enviar error, sino enviar improv
+                type = Types.improv, //Cuando el tipo de jira sea Correción, enviar error, sino enviar improv
                 user = "187",
                 product="64",
                 component = "591"               
