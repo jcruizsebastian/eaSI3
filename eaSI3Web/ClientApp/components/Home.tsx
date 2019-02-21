@@ -66,6 +66,7 @@ export class Home extends React.Component<RouteComponentProps<{}>,UserCredential
         this.isTodoOk = this.isTodoOk.bind(this);       
         this.getWeekofYear = this.getWeekofYear.bind(this);
         this.handleChangeWeek = this.handleChangeWeek.bind(this);
+        this.getCookie = this.getCookie.bind(this);
 
         this.state = {
             Weekissues: [], loadedJira: false, loadingJira: false, calendar: { weeks: [] }, calendarLoaded: false, todoOk: false, loading: false
@@ -95,16 +96,16 @@ export class Home extends React.Component<RouteComponentProps<{}>,UserCredential
         
     }
 
-    private onLoginJira(e: { preventDefault: () => void; }, user: string, password: string, checked: boolean) {
-        /*
-        user = user.replace(" ", " ").trim();
+    private onLoginJira(e: { preventDefault: () => void; }) {
+        
+        //user = user.replace(" ", " ").trim();
         e.preventDefault();
         
-        if (checked) { localStorage.setItem("userJira", user); localStorage.setItem("passwordJira", password); }
+        //if (checked) { localStorage.setItem("userJira", user); localStorage.setItem("passwordJira", password); }
 
         this.setState({ loadingJira: true , loading: true});
 
-        fetch('api/Jira/worklog?username=' + user + '&password=' + password + '&selectedWeek=' + this.state.selectedWeek)
+        fetch('api/Jira/worklog?username=' + this.getCookie("userJira") + '&password=' + this.getCookie("passJira") + '&selectedWeek=' + this.state.selectedWeek)
            
              .then(response => response.json() as Promise<WeekJiraIssuesResponse>)
              .then(data => {
@@ -119,10 +120,8 @@ export class Home extends React.Component<RouteComponentProps<{}>,UserCredential
                    }
                    else
                        this.setState({ Weekissues: data.weekJiraIssues, loading: false }, this.confirmLoadedJira);
-                    });*/
-        e.preventDefault();
-        document.cookie = "";
-        <Layout/>
+                    });
+
         
     }
 
@@ -194,17 +193,17 @@ export class Home extends React.Component<RouteComponentProps<{}>,UserCredential
     public render() {
         console.log("Entra en render de Home");
        
-        let agenda = <p><em>Sin datos</em></p>;
+        let agenda;
         let si3;
         let jira;
         let calendar;
 
         if (this.state.calendarLoaded) {
-            jira = <Login onLogin={this.onLoginJira} isDisabled={false} 
-                userProps={localStorage.getItem("userJira") as string} passwordProps={localStorage.getItem("passwordJira") as string} />
-            calendar =<div>
+            jira = <input type="button" value="Obtener issues" className="btn btn-primary" onClick={this.onLoginJira} />
+
+            calendar = <div>
                 <label>Elija semana de trabajo :</label>
-                <select className="custom-select" onChange={this.handleChangeWeek} value={this.state.calendar.weeks.length}>
+                <select className="custom-select" onChange={this.handleChangeWeek} /*value={this.state.calendar.weeks.length}*/>
                     {
                         this.state.calendar.weeks.map(week =>
                             <option value={week.numberWeek} key={week.numberWeek} >
@@ -218,8 +217,7 @@ export class Home extends React.Component<RouteComponentProps<{}>,UserCredential
 
             agenda = <Agenda weekissues={this.state.Weekissues} ref="agenda1" isTodoOk={this.isTodoOk}/>
 
-            si3 = <div> <h3>Ingrese credenciales de SI3</h3> <Login onLogin={this.onLoginSi3} isDisabled={this.state.todoOk} 
-                userProps={localStorage.getItem("userSi3") as string} passwordProps={localStorage.getItem("passwordSi3") as string} /> </div>;
+            si3 = <div> <input type="button" id= "btnSi3" value="Imputar tareas en Si3" className="btn btn-primary" disabled={this.state.todoOk} /></div>;
           
         }
 
@@ -230,9 +228,8 @@ export class Home extends React.Component<RouteComponentProps<{}>,UserCredential
             
             
             <div>
-                
+               
                 {calendar}
-                <h3>Ingrese credenciales de Jira</h3>
                 {jira}   
                 {agenda}   
                 {si3}

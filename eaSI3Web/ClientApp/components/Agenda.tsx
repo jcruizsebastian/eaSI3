@@ -42,6 +42,10 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
         this.state = { weekissues: this.props.weekissues, link: "https://jira.openfinance.es/browse/"};
     }
 
+    componentDidMount() {
+        var todoOk = this.isDisabledBtnSi3();
+        this.props.isTodoOk(todoOk);
+    }
         public timeReassignment(event: React.ChangeEvent<HTMLInputElement>) {
 
         

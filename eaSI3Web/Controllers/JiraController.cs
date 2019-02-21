@@ -2,6 +2,7 @@ using IssueConveter.Model;
 using JiraConnector;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -127,7 +128,14 @@ namespace eaSI3Web.Controllers
 
             return string.Empty;
         }
+        [HttpGet("[action]")]
+        public void UpdateIssueSi3CustomField(string username, string password, string issueKey, string jirakey) {
 
+            JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(username, password);
+            string body = JsonConvert.SerializeObject(new { fields = new { customfield_10300 = issueKey } });
+            jiraWorkLogService.UpdateIssue(jirakey, body);
+
+        }
         public static IEnumerable<WeekJiraIssues> Convert(List<WorkLog> worklog)
         {
             List<WeekJiraIssues> weekJiraIssues = new List<WeekJiraIssues>();

@@ -33,7 +33,7 @@ namespace eaSI3Web.Controllers
             public string Producto { get; set; }
             public string Componente { get; set; }
             public string Modulo { get; set; }
-
+            public string CodUserSi3 { get; set; }
 
         }
         public class User
@@ -203,7 +203,7 @@ namespace eaSI3Web.Controllers
             SI3Service SI3Service = new SI3Service(username,password);
             
             SI3.Issues.Issue issue = new SI3.Issues.Issue();
-            //issue.user = SI3Service.GetUsers().First(user => user.Key == $"of{data.Responsable}").Value;
+            issue.user = data.CodUserSi3;
             issue.product = data.Producto;
             issue.component = data.Componente;
             if (data.Modulo != "default") { issue.module = data.Modulo; }
@@ -232,9 +232,9 @@ namespace eaSI3Web.Controllers
                     issue.priority = Prioridades.Low;
                     break;
                 case "Menor":
-                case "Mayor":
                     issue.priority = Prioridades.Medium;
                     break;
+                case "Mayor":
                 case "Crítica":
                     issue.priority = Prioridades.High;
                     break;

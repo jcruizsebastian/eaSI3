@@ -81,9 +81,10 @@ export class LoginGeneral extends React.Component<LoginProps, LoginState> {
     public ValidateLogin() {
         var userJira = (this.refs["tbUserJira"] as HTMLInputElement).value;
         var passJira = (this.refs["tbPassJira"] as HTMLInputElement).value;
-        var codUserSi3 = (this.refs["tbCodUserSi3"] as HTMLInputElement).value;
+        var codUserSi3 = (this.refs["tbCodUserSi3"] as HTMLSelectElement).value;
         var userSi3 = (this.refs["tbUserSi3"] as HTMLInputElement).value;
         var passSi3 = (this.refs["tbPassSi3"] as HTMLInputElement).value;
+        var name = (((this.refs["tbCodUserSi3"] as HTMLSelectElement).children.item((this.refs["tbCodUserSi3"] as HTMLSelectElement).selectedIndex)) as HTMLOptionElement).innerText;
 
         if (this.state.userJiraLoaded && this.state.userSi3Loaded && codUserSi3 != "default") {
 
@@ -93,10 +94,11 @@ export class LoginGeneral extends React.Component<LoginProps, LoginState> {
 
             document.cookie = "userJira=" + userJira + "; expires=" + expiration_date;
             document.cookie = "passJira=" + passJira + "; expires=" + expiration_date;
-            document.cookie = "codUserJira=" + codUserSi3 + "; expires=" + expiration_date;
+            document.cookie = "codUserSi3=" + codUserSi3 + "; expires=" + expiration_date;
             document.cookie = "userSi3=" + userSi3 + "; expires=" + expiration_date;
             document.cookie = "passSi3=" + passSi3 + "; expires=" + expiration_date;
-            this.props.onLogin();
+            
+            this.props.onLogin(name);
 
         } else { this.setState({ loading: false }); alert("Crendenciales incorrectas"); }
     }

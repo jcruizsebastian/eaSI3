@@ -100,3 +100,16 @@
     width: 100%;
     height: 100%;
 }
+#logout {
+    float:right;
+    margin-top: 7px;
+}
+#name {
+    color: white;
+    float: right;
+    margin-top:15px;
+    margin-right:20px;
+}
+#btnSi3 {
+    margin-bottom: 50px;
+}

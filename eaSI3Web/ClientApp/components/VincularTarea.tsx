@@ -77,32 +77,33 @@ export class VincularTarea extends React.Component<RouteComponentProps<{}>, Vinc
         fetch('api/Si3/products?username=' + user + '&password=' + password)
             .then(response => response.json() as Promise<Products[]>)
             .then(data => {
-                this.setState({ products: data, loadedData: true, loading: false });
+                this.setState({ products: data, loadedData: true});
+                fetch('api/Jira/issue?username=' + userJira + '&password=' + passJira + '&jiraKey=' + keyJira)
+                    .then(response => response.json() as Promise<Issue>)
+                    .then(data => {
+                        var prioridad_: string = "";
+                        switch (data.priority) {
+                            case 1:
+                                prioridad_ = "Trivial";
+                                break;
+                            case 2:
+                                prioridad_ = "Menor";
+                                break;
+                            case 3:
+                                prioridad_ = "Mayor";
+                                break;
+                            case 4:
+                                prioridad_ = "Crítica";
+                                break;
+                            case 5:
+                                prioridad_ = "Bloqueadora";
+                                break
+                        }
+                        this.setState({ loadedDataJira: true, titulo: data.summary, prioridad: prioridad_, tipo: data.issuetype, responsable: data.assignee, loading: false });
+                    });
             });
 
-        fetch('api/Jira/issue?username=' + userJira + '&password=' + passJira + '&jiraKey=' + keyJira)
-            .then(response => response.json() as Promise<Issue>)
-            .then(data => {
-                var prioridad_: string ="";
-                switch (data.priority) {
-                    case 1:
-                        prioridad_ = "Trivial";
-                        break;
-                    case 2:
-                        prioridad_ = "Menor";
-                        break;
-                    case 3:
-                        prioridad_ = "Mayor";
-                        break;
-                    case 4:
-                        prioridad_ = "Crítica";
-                        break;
-                    case 5:
-                        prioridad_ = "Bloqueadora";
-                        break
-                }
-                this.setState({ loadedDataJira: true, titulo: data.summary, prioridad: prioridad_, tipo: data.issuetype, responsable: data.assignee, loading: false });
-            });
+        
     }
 
     public handleChangeProducts(event: React.FormEvent<HTMLSelectElement>) {
@@ -119,16 +120,19 @@ export class VincularTarea extends React.Component<RouteComponentProps<{}>, Vinc
     }
     
     public vincular() {
+        var userJira: string = "jcruiz";
+        var passJira: string = "_*_d1d4ct1c97";
         var user: string = "ofjcruiz";
         var password: string = "_*_d1d4ct1c";
         this.setState({ loading: true });
+        var cod = this.getCookie("codUserSi3");
 
         fetch('api/Si3/Linkissue?username=' + user + '&password=' + password, {
             method: 'post',
             body: JSON.stringify({
                 JiraKey: (this.refs["tbKeyJira"] as HTMLInputElement).value, Titulo: this.state.titulo, Prioridad: this.state.prioridad,
                 Tipo: this.state.tipo, Producto: this.state.productSelected, Componente: this.state.componentSelected, Modulo: this.state.moduleSelected,
-                Responsable: this.state.responsable
+                Responsable: this.state.responsable, CodUserSi3: cod
             }),
             headers: {
                 'Accept': 'application/json',
@@ -136,10 +140,31 @@ export class VincularTarea extends React.Component<RouteComponentProps<{}>, Vinc
             },
         })
             .then(response => response.text() as Promise<String>)
-            .then(data => { alert("Tarea vinculada"); this.setState({ loading: false }); });
+            .then(data => {
+                var issueKey = data.split("\"")[1];
+                fetch('api/Jira/updateissuesi3customfield?username=' + userJira + '&password=' + passJira + '&issueKey=' + issueKey + '&jirakey=' + (this.refs["tbKeyJira"] as HTMLInputElement).value)
+                    .then(data => { alert("Tarea vinculada"); this.setState({ loading: false }); })
+
+                
+            });
     }
 
-   
+    //función para sacar las cookies, cname => userJira, passJira ... etc.
+    public getCookie(cname: String) {
+        var name = cname + "=";
+        var decodedCookie = decodeURIComponent(document.cookie);
+        var ca = decodedCookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }
 
     public renderInformación() {
         return (

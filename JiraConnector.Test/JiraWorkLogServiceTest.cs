@@ -66,7 +66,7 @@ namespace JiraConnector.Test
         public void TestUpdateIssue()
         {
             //Arrage
-            string idSI3 = "1111";
+            string idSI3 = "65655";
             string jiraKey = "CORPORT-401";
             string body = JsonConvert.SerializeObject(new { fields = new { customfield_10300 = idSI3 } });
 
