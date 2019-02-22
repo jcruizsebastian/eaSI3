@@ -139,7 +139,7 @@ export class VincularTarea extends React.Component<RouteComponentProps<{}>, Vinc
             .then(response => response.text() as Promise<String>)
             .then(data => {
                 var issueKey = data.split("\"")[1];
-                fetch('api/Jira/updateissuesi3customfield?username=' + this.getCookie("userJira") + '&password=' + this.getCookie("passSi3") + '&issueKey=' + issueKey + '&jirakey=' + (this.refs["tbKeyJira"] as HTMLInputElement).value)
+                fetch('api/Jira/updateissuesi3customfield?username=' + this.getCookie("userJira") + '&password=' + this.getCookie("passJira") + '&issueKey=' + issueKey + '&jirakey=' + (this.refs["tbKeyJira"] as HTMLInputElement).value)
                     .then(data => { alert("Tarea vinculada"); this.setState({ loading: false }); })
 
                 

@@ -24,6 +24,7 @@ export class Layout extends React.Component<LayoutProps, LayoutState> {
         this.getCookie = this.getCookie.bind(this);
         this.logout = this.logout.bind(this);
         this.validate = this.validate.bind(this);
+        this.setCookie = this.setCookie.bind(this);
 
         this.state = { logged: false, cookiesOk: false, name: "", loaded: false };
     }
