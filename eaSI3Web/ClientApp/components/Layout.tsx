@@ -29,7 +29,6 @@ export class Layout extends React.Component<LayoutProps, LayoutState> {
     }
     async componentDidMount() {
          await this.validate(); 
-         this.setState({loaded: true});
     }
     
     //función para sacar las cookies, cname => userJira, passJira ... etc.
@@ -66,11 +65,11 @@ export class Layout extends React.Component<LayoutProps, LayoutState> {
                     fetch('api/Si3/validateLogin?username=' + userSi3 + '&password=' + passSi3)
                         .then(response => response.text() as Promise<String>)
                         .then(data => {
-                            if (data.length == 0) { this.setState({  cookiesOk: true}); }
-                            else { this.setState({ cookiesOk: false}); }
+                            if (data.length == 0) { this.setState({  cookiesOk: true, loaded: true }); }
+                            else { this.setState({ cookiesOk: false, loaded: true}); }
                         });
                 } else {
-                    this.setState({ cookiesOk: false });
+                    this.setState({ cookiesOk: false, loaded: true });
                 }
             });
         
@@ -136,7 +135,7 @@ export class Layout extends React.Component<LayoutProps, LayoutState> {
                     </div>
 
                 </div>
-            } else { console.log("cookies not ok");}
+            } else { home = <LoginGeneral onLogin={this.onLogin} />}
         }
         const spinner = <span><ReactLoading color='#fff' type='spin' className="spinner" height={128} width={128} /></span>
         return <div className='container-fluid' >

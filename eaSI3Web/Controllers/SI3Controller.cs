@@ -207,7 +207,7 @@ namespace eaSI3Web.Controllers
             issue.product = data.Producto;
             issue.component = data.Componente;
             if (data.Modulo != "default") { issue.module = data.Modulo; }
-            issue.title = data.JiraKey;
+            issue.title = data.JiraKey.ToUpper();
             issue.cause = data.Titulo;
             
             switch (data.Prioridad) {
@@ -346,8 +346,11 @@ namespace eaSI3Web.Controllers
                 SI3Service SI3Service = new SI3Service(username, password);
 
                 foreach (var week in model.ToList()) {
-                    week.Issues.RemoveAll(x => x.Tiempo == 0);
+                    week.Issues.RemoveAll(x => x.Tiempo == 0 || string.IsNullOrEmpty(x.IssueSI3Code));
                 }
+
+                if (!model.SelectMany(x => x.Issues).Any())
+                    throw new Exception("No existen tareas con id de SI a imputar.");
 
                 var validacion = ValidarImputación(SI3Service, model);
                 if (!string.IsNullOrEmpty(validacion))
@@ -410,7 +413,7 @@ namespace eaSI3Web.Controllers
 
             }
             finally {
-                new BDPrueba(username,selectedWeek,DateTime.Now.ToShortTimeString(),totalHours,error).Conexion();
+                new BDPrueba(username,selectedWeek,DateTime.Now.ToShortDateString(),totalHours,error).Conexion();
             }
 
             _logger.LogInformation("Usuario : " + username + ", horas imputadas en Si3 correctamente");

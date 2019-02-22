@@ -1,9 +1,10 @@
 ﻿import * as React from "react";
-import { RouteComponentProps } from "react-router";
+import { RouteComponentProps, Route } from "react-router";
 import '../css/vincularTarea.css';
 import Loader from "react-loader-advanced";
 import ReactLoading from "react-loading";
 import { LoginGeneral } from "./LoginGeneral";
+import { NavLink } from "react-router-dom";
 
 interface Modules {
     code: string;
@@ -67,6 +68,7 @@ export class VincularTarea extends React.Component<RouteComponentProps<{}>, Vinc
 
     public handleSubmit(e: { preventDefault: () => void; }) {
         var keyJira: string = (this.refs["tbKeyJira"] as HTMLInputElement).value;
+        
         e.preventDefault();
         this.setState({ loading: true});
         var userJira: string = "jcruiz";
@@ -221,6 +223,9 @@ export class VincularTarea extends React.Component<RouteComponentProps<{}>, Vinc
     }
 
     public render() {
+
+        
+
         let informacion;
         if (this.state.loadedData && this.state.loadedDataJira) {
              informacion = this.renderInformación();

@@ -26,6 +26,11 @@ interface WeekJiraIssues {
     issues: JiraIssues[];
 }
 
+interface WeekJiraIssuesProps {
+    weekissues: WeekJiraIssues[];
+    isTodoOk: Function;
+}
+
 interface JiraIssues {
     issueSI3Code: string;
     issueCode: string;
@@ -142,14 +147,14 @@ export class Home extends React.Component<RouteComponentProps<{}>,UserCredential
     return "";
 }
 
-    private onLoginSi3(e: { preventDefault: () => void; }, user: string, password: string, checked: boolean) {
+    private onLoginSi3(e: { preventDefault: () => void; }) {
         
-        user = user.replace("'", " ").trim();
+        //user = user.replace("'", " ").trim();
         e.preventDefault();
         this.setState({ loading: true });
-        let agenda = (this.refs["agenda1"] as React.Component<{}, AgendaState>);
+        let agenda = (this.refs["agenda1"] as React.Component<WeekJiraIssuesProps, AgendaState>);
         
-        if (checked) { localStorage.setItem("userSi3", user); localStorage.setItem("passwordSi3", password); }
+        //if (checked) { localStorage.setItem("userSi3", user); localStorage.setItem("passwordSi3", password); }
 
         let total = 0;
         let WeekJiraIssues = agenda.state.weekissues;
@@ -159,9 +164,9 @@ export class Home extends React.Component<RouteComponentProps<{}>,UserCredential
             }
         }
 
-        fetch('api/SI3/register?username=' + user + '&password=' + password + '&selectedWeek=' + this.state.selectedWeek + '&totalHours=' + total, {
+        fetch('api/SI3/register?username=' + this.getCookie("userSi3") + '&password=' + this.getCookie("passSi3") + '&selectedWeek=' + this.state.selectedWeek + '&totalHours=' + total, {
             method: 'post',
-            body: JSON.stringify(agenda.state.weekissues),
+            body: JSON.stringify(agenda.props.weekissues),
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
@@ -191,7 +196,7 @@ export class Home extends React.Component<RouteComponentProps<{}>,UserCredential
     public isTodoOk(val: boolean) { this.setState({ todoOk: val }); }
 
     public render() {
-        console.log("Entra en render de Home");
+
        
         let agenda;
         let si3;
@@ -203,7 +208,7 @@ export class Home extends React.Component<RouteComponentProps<{}>,UserCredential
 
             calendar = <div>
                 <label>Elija semana de trabajo :</label>
-                <select className="custom-select" onChange={this.handleChangeWeek} /*value={this.state.calendar.weeks.length}*/>
+                <select className="custom-select" onChange={this.handleChangeWeek} disabled value={this.state.calendar.weeks.length}>
                     {
                         this.state.calendar.weeks.map(week =>
                             <option value={week.numberWeek} key={week.numberWeek} >
@@ -217,7 +222,7 @@ export class Home extends React.Component<RouteComponentProps<{}>,UserCredential
 
             agenda = <Agenda weekissues={this.state.Weekissues} ref="agenda1" isTodoOk={this.isTodoOk}/>
 
-            si3 = <div> <input type="button" id= "btnSi3" value="Imputar tareas en Si3" className="btn btn-primary" disabled={this.state.todoOk} /></div>;
+            si3 = <div> <input type="button" id="btnSi3" value="Imputar tareas en Si3" className="btn btn-primary" disabled={this.state.todoOk} onClick={this.onLoginSi3} /></div>;
           
         }
 
