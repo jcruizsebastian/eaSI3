@@ -71,37 +71,35 @@ export class VincularTarea extends React.Component<RouteComponentProps<{}>, Vinc
         
         e.preventDefault();
         this.setState({ loading: true});
-        var userJira: string = "jcruiz";
-        var passJira: string = "_*_d1d4ct1c97";
-        var user: string = "ofjcruiz";
-        var password: string = "_*_d1d4ct1c";
 
-        fetch('api/Si3/products?username=' + user + '&password=' + password)
+        fetch('api/Si3/products?username=' + this.getCookie("userSi3") + '&password=' + this.getCookie("passSi3"))
             .then(response => response.json() as Promise<Products[]>)
             .then(data => {
                 this.setState({ products: data, loadedData: true});
-                fetch('api/Jira/issue?username=' + userJira + '&password=' + passJira + '&jiraKey=' + keyJira)
+                fetch('api/Jira/issue?username=' + this.getCookie("userJira") + '&password=' + this.getCookie("passJira") + '&jiraKey=' + keyJira)
                     .then(response => response.json() as Promise<Issue>)
                     .then(data => {
-                        var prioridad_: string = "";
-                        switch (data.priority) {
-                            case 1:
-                                prioridad_ = "Trivial";
-                                break;
-                            case 2:
-                                prioridad_ = "Menor";
-                                break;
-                            case 3:
-                                prioridad_ = "Mayor";
-                                break;
-                            case 4:
-                                prioridad_ = "Crítica";
-                                break;
-                            case 5:
-                                prioridad_ = "Bloqueadora";
-                                break
-                        }
-                        this.setState({ loadedDataJira: true, titulo: data.summary, prioridad: prioridad_, tipo: data.issuetype, responsable: data.assignee, loading: false });
+                        if (data.si3ID == null) {
+                            var prioridad_: string = "";
+                            switch (data.priority) {
+                                case 1:
+                                    prioridad_ = "Trivial";
+                                    break;
+                                case 2:
+                                    prioridad_ = "Menor";
+                                    break;
+                                case 3:
+                                    prioridad_ = "Mayor";
+                                    break;
+                                case 4:
+                                    prioridad_ = "Crítica";
+                                    break;
+                                case 5:
+                                    prioridad_ = "Bloqueadora";
+                                    break
+                            }
+                            this.setState({ loadedDataJira: true, titulo: data.summary, prioridad: prioridad_, tipo: data.issuetype, responsable: data.assignee, loading: false });
+                        } else { alert("Esta tarea ya está vinculada en SI3"); this.setState({ loadedDataJira: false, loading: false }); }
                     });
             });
 
@@ -122,14 +120,11 @@ export class VincularTarea extends React.Component<RouteComponentProps<{}>, Vinc
     }
     
     public vincular() {
-        var userJira: string = "jcruiz";
-        var passJira: string = "_*_d1d4ct1c97";
-        var user: string = "ofjcruiz";
-        var password: string = "_*_d1d4ct1c";
+ 
         this.setState({ loading: true });
         var cod = this.getCookie("codUserSi3");
 
-        fetch('api/Si3/Linkissue?username=' + user + '&password=' + password, {
+        fetch('api/Si3/Linkissue?username=' + this.getCookie("userSi3") + '&password=' + this.getCookie("passSi3"), {
             method: 'post',
             body: JSON.stringify({
                 JiraKey: (this.refs["tbKeyJira"] as HTMLInputElement).value, Titulo: this.state.titulo, Prioridad: this.state.prioridad,
@@ -144,7 +139,7 @@ export class VincularTarea extends React.Component<RouteComponentProps<{}>, Vinc
             .then(response => response.text() as Promise<String>)
             .then(data => {
                 var issueKey = data.split("\"")[1];
-                fetch('api/Jira/updateissuesi3customfield?username=' + userJira + '&password=' + passJira + '&issueKey=' + issueKey + '&jirakey=' + (this.refs["tbKeyJira"] as HTMLInputElement).value)
+                fetch('api/Jira/updateissuesi3customfield?username=' + this.getCookie("userJira") + '&password=' + this.getCookie("passSi3") + '&issueKey=' + issueKey + '&jirakey=' + (this.refs["tbKeyJira"] as HTMLInputElement).value)
                     .then(data => { alert("Tarea vinculada"); this.setState({ loading: false }); })
 
                 
