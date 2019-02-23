@@ -23,8 +23,7 @@ namespace eaSI3Web.Controllers
         static Calendar calendar = new Calendar();
 
         [HttpGet("[action]")]
-        public Calendar Weeks() {
-           
+        public ActionResult<Calendar> Weeks() {
             calendar.Weeks = new List<Calendar.CalendarWeeks>();
             int weekOfYear = CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(DateTime.Now, CalendarWeekRule.FirstDay, DayOfWeek.Monday);
 
@@ -115,8 +114,9 @@ namespace eaSI3Web.Controllers
 
         }
         [HttpGet("[action]")]
-        public string ValidateLogin(string username, string password)
+        public ActionResult<string> ValidateLogin(string username, string password)
         {
+            return StatusCode(500, "Error: nmo o nonono");
             try
             {
                 JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(username, password);

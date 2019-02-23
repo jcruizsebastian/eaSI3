@@ -58,8 +58,20 @@ export class Layout extends React.Component<LayoutProps, LayoutState> {
 
          this.setState({ loaded: false });
 
-          fetch('api/Jira/validateLogin?username=' + userJira + '&password=' + passJira)
-            .then(response => response.text() as Promise<String>)
+         fetch('api/Jira/validateLogin?username=' + userJira + '&password=' + passJira)
+             .then(
+             response => {
+                 if (!response.ok)
+                     return response.text() as Promise<String>;
+
+                 return response.text() as Promise<String>
+             })
+             .then(data => {
+                 if (data.match("caca"))
+                     throw new Error(data.toString());
+                 else
+                     return data;
+             })
             .then(data => {
                 if (data.length == 0) {
 
@@ -71,8 +83,10 @@ export class Layout extends React.Component<LayoutProps, LayoutState> {
                         });
                 } else {
                     this.setState({ cookiesOk: false, loaded: true });
-                }
-            });
+                 }
+             }).catch(error => {
+                 alert(error);
+             });
         
         
     }
