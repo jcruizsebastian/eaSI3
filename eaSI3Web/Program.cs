@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using eaSI3Web.Models;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using NLog.Web;
@@ -20,7 +22,23 @@ namespace eaSI3Web
             try
             {
                 logger.Debug("init main");
-                BuildWebHost(args).Build().Run();
+                var host = BuildWebHost(args).Build();
+
+                using (var scope = host.Services.CreateScope())
+                {
+                    var services = scope.ServiceProvider;
+                    try
+                    {
+                        var context = services.GetRequiredService<StatisticsContext>();
+                        
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Error(ex, "An error occurred while seeding the database.");
+                    }
+                }
+
+                host.Run();
             }
             catch (Exception ex)
             {

@@ -1,19 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using SI3Connector;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using eaSI3Web.Models;
 using Microsoft.AspNetCore.Mvc;
-using static eaSI3Web.Controllers.JiraController;
 using Microsoft.Extensions.Logging;
-using System.Text;
+using SI3.Issues;
+using SI3Connector;
 using SI3Connector.Exceptions;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
-using System.IO;
-using Dapper;
-using SI3.Issues;
+using static eaSI3Web.Controllers.JiraController;
 
 namespace eaSI3Web.Controllers
 {
@@ -21,9 +19,13 @@ namespace eaSI3Web.Controllers
     public class SI3Controller : Controller
     {
         private readonly ILogger<SI3Controller> _logger;
-        public SI3Controller(ILogger<SI3Controller> logger) {
+        private readonly StatisticsContext _context;
+
+        public SI3Controller(ILogger<SI3Controller> logger, StatisticsContext context) {
             _logger = logger;
+            _context = context;
         }
+
         public class BodyIssue {
             public string JiraKey { get; set; }
             public string Titulo { get; set; }

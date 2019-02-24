@@ -1,3 +1,4 @@
+using eaSI3Web.Models;
 using IssueConveter.Model;
 using JiraConnector;
 using Microsoft.AspNetCore.Mvc;
@@ -13,11 +14,13 @@ namespace eaSI3Web.Controllers
     [Route("api/[controller]")]
     public class JiraController : Controller
     {
-             
+        private readonly StatisticsContext _context;
+
         private readonly ILogger<JiraController> _logger;
-        public JiraController(ILogger<JiraController> logger)
+        public JiraController(ILogger<JiraController> logger, StatisticsContext context)
         {
             _logger = logger;
+            _context = context;
         }
 
         static Calendar calendar = new Calendar();
@@ -117,6 +120,15 @@ namespace eaSI3Web.Controllers
         [HttpGet("[action]")]
         public string ValidateLogin(string username, string password)
         {
+            var user = from u in _context.Users where u.JiraUserName.Equals(username) select u;
+
+            if (!user.Any())
+                _context.Add(new User() { JiraUserName = username });
+
+            user = from u in _context.Users where u.JiraUserName.Equals(username) select u;
+
+            _context.Add(new Login() { User = (User)user, ConnectionDate = DateTime.Now });
+
             try
             {
                 JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(username, password);
