@@ -9,8 +9,8 @@ using eaSI3Web.Models;
 namespace eaSI3Web.Migrations
 {
     [DbContext(typeof(StatisticsContext))]
-    [Migration("20190224185959_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20190224201252_SI3UserNameAdded")]
+    partial class SI3UserNameAdded
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -61,9 +61,11 @@ namespace eaSI3Web.Migrations
 
                     b.Property<string>("JiraUserName");
 
+                    b.Property<string>("SI3UserName");
+
                     b.HasKey("UserId");
 
-                    b.ToTable("User");
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("eaSI3Web.Models.WorkTracking", b =>

@@ -25,7 +25,7 @@ namespace eaSI3Web.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "User",
+                name: "Users",
                 columns: table => new
                 {
                     UserId = table.Column<int>(nullable: false)
@@ -34,7 +34,7 @@ namespace eaSI3Web.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_User", x => x.UserId);
+                    table.PrimaryKey("PK_Users", x => x.UserId);
                 });
 
             migrationBuilder.CreateTable(
@@ -50,9 +50,9 @@ namespace eaSI3Web.Migrations
                 {
                     table.PrimaryKey("PK_Logins", x => x.LoginId);
                     table.ForeignKey(
-                        name: "FK_Logins_User_UserId",
+                        name: "FK_Logins_Users_UserId",
                         column: x => x.UserId,
-                        principalTable: "User",
+                        principalTable: "Users",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -75,9 +75,9 @@ namespace eaSI3Web.Migrations
                 {
                     table.PrimaryKey("PK_WorkTracking", x => x.WorkTrackingId);
                     table.ForeignKey(
-                        name: "FK_WorkTracking_User_UserId",
+                        name: "FK_WorkTracking_Users_UserId",
                         column: x => x.UserId,
-                        principalTable: "User",
+                        principalTable: "Users",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -105,7 +105,7 @@ namespace eaSI3Web.Migrations
                 name: "WorkTracking");
 
             migrationBuilder.DropTable(
-                name: "User");
+                name: "Users");
         }
     }
 }

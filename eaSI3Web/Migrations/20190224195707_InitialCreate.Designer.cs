@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using eaSI3Web.Models;
 
 namespace eaSI3Web.Migrations
 {
     [DbContext(typeof(StatisticsContext))]
-    partial class StatisticsContextModelSnapshot : ModelSnapshot
+    [Migration("20190224195707_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -58,8 +60,6 @@ namespace eaSI3Web.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("JiraUserName");
-
-                    b.Property<string>("SI3UserName");
 
                     b.HasKey("UserId");
 
