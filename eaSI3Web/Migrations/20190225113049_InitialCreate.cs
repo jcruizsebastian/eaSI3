@@ -8,6 +8,20 @@ namespace eaSI3Web.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Users",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    JiraUserName = table.Column<string>(nullable: true),
+                    SI3UserName = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Users", x => x.UserId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "IssuesCreation",
                 columns: table => new
                 {
@@ -17,24 +31,18 @@ namespace eaSI3Web.Migrations
                     SI3Key = table.Column<string>(nullable: true),
                     CreationDate = table.Column<DateTime>(nullable: false),
                     CreationResult = table.Column<int>(nullable: false),
-                    CreationResultAddtionalInfo = table.Column<string>(nullable: true)
+                    CreationResultAddtionalInfo = table.Column<string>(nullable: true),
+                    UserId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_IssuesCreation", x => x.IssueCreationId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Users",
-                columns: table => new
-                {
-                    UserId = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    JiraUserName = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Users", x => x.UserId);
+                    table.ForeignKey(
+                        name: "FK_IssuesCreation_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -67,7 +75,7 @@ namespace eaSI3Web.Migrations
                     TotalHours = table.Column<int>(nullable: false),
                     Week = table.Column<int>(nullable: false),
                     Year = table.Column<int>(nullable: false),
-                    TrackingDate = table.Column<int>(nullable: false),
+                    TrackingDate = table.Column<DateTime>(nullable: false),
                     TrackResult = table.Column<int>(nullable: false),
                     TrackResultAddtionalInfo = table.Column<string>(nullable: true)
                 },
@@ -83,9 +91,20 @@ namespace eaSI3Web.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_IssuesCreation_UserId",
+                table: "IssuesCreation",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Logins_UserId",
                 table: "Logins",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_JiraUserName_SI3UserName",
+                table: "Users",
+                columns: new[] { "JiraUserName", "SI3UserName" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_WorkTracking_UserId",

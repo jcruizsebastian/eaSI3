@@ -1,4 +1,6 @@
-﻿namespace eaSI3Web.Models
+﻿using System;
+
+namespace eaSI3Web.Models
 {
     public class WorkTracking
     {
@@ -7,8 +9,8 @@
         public int TotalHours { get; set; }
         public int Week { get; set; }
         public int Year { get; set; }
-        public int TrackingDate { get; set; }
-        public int TrackResult { get; set; }
+        public DateTime TrackingDate { get; set; }
+        public TrackResult TrackResult { get; set; }
         public string TrackResultAddtionalInfo { get; set; }
     }
 }

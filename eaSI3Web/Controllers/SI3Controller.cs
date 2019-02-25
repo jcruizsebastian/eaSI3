@@ -1,4 +1,5 @@
-﻿using eaSI3Web.Models;
+﻿using eaSI3Web.Controllers.UsageStatistics;
+using eaSI3Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SI3.Issues;
@@ -186,10 +187,16 @@ namespace eaSI3Web.Controllers
         [HttpGet("[action]")]
         public string ValidateLogin(string username, string password)
         {
+
             try
             {
                 SI3Service si3Service = new SI3Service(username, password);
                 si3Service.Login();
+                if(!string.IsNullOrEmpty(username)) {
+                    BdStatistics bdStatistics = new BdStatistics(_context);
+                    bdStatistics.AddUser(username);
+                    bdStatistics.AddLogin(username);
+                }
             }
             catch (Exception e)
             {
@@ -340,8 +347,7 @@ namespace eaSI3Web.Controllers
         [HttpPost("[action]")]
         public string Register([FromQuery]string username, [FromQuery]string password, [FromQuery]string selectedWeek,[FromQuery]int totalHours,[FromBody]IEnumerable<WeekJiraIssues> model)
         {
-            int error = 0;
-
+            BdStatistics bdStatistics = new BdStatistics(_context);
             try
             {
                 _logger.LogInformation("Usuario " + username + " hizo clic en el botón de Enviar Si3 ");
@@ -403,21 +409,17 @@ namespace eaSI3Web.Controllers
             catch (SI3Exception e)
             {
                 _logger.LogError("Usuario : " + username + " Error : " + e.Message);
-                error = 1;
+                bdStatistics.AddWorkTracking(username, int.Parse(selectedWeek), totalHours, 1, e.Message);
                 return e.Message;
-
             }
             catch (Exception e)
             {
                 _logger.LogError("Usuario : " + username + " Error : " + e.Message);
-                error = 1;
+                bdStatistics.AddWorkTracking(username, int.Parse(selectedWeek), totalHours, 1, e.Message);
                 return e.Message;
-
-            }
-            finally {
-                new BDPrueba(username,selectedWeek,DateTime.Now.ToShortDateString(),totalHours,error).Conexion();
             }
 
+            bdStatistics.AddWorkTracking(username, int.Parse(selectedWeek), totalHours, 0,"Horas imputadas en Si3 correctamente");
             _logger.LogInformation("Usuario : " + username + ", horas imputadas en Si3 correctamente");
             return string.Empty;
         }

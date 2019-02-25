@@ -3,7 +3,7 @@
     public enum CreationResult
     {
         Created,
-        AlreadyCreated,
-        Failed
+        Failed,
+        AlreadyCreated
     }
 }

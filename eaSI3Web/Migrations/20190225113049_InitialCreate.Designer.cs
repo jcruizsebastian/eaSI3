@@ -9,8 +9,8 @@ using eaSI3Web.Models;
 namespace eaSI3Web.Migrations
 {
     [DbContext(typeof(StatisticsContext))]
-    [Migration("20190224201252_SI3UserNameAdded")]
-    partial class SI3UserNameAdded
+    [Migration("20190225113049_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -33,7 +33,11 @@ namespace eaSI3Web.Migrations
 
                     b.Property<string>("SI3Key");
 
+                    b.Property<int?>("UserId");
+
                     b.HasKey("IssueCreationId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("IssuesCreation");
                 });
@@ -65,6 +69,9 @@ namespace eaSI3Web.Migrations
 
                     b.HasKey("UserId");
 
+                    b.HasIndex("JiraUserName", "SI3UserName")
+                        .IsUnique();
+
                     b.ToTable("Users");
                 });
 
@@ -79,7 +86,7 @@ namespace eaSI3Web.Migrations
 
                     b.Property<string>("TrackResultAddtionalInfo");
 
-                    b.Property<int>("TrackingDate");
+                    b.Property<DateTime>("TrackingDate");
 
                     b.Property<int?>("UserId");
 
@@ -92,6 +99,13 @@ namespace eaSI3Web.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("WorkTracking");
+                });
+
+            modelBuilder.Entity("eaSI3Web.Models.IssueCreation", b =>
+                {
+                    b.HasOne("eaSI3Web.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("eaSI3Web.Models.Login", b =>

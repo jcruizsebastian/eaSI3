@@ -10,5 +10,6 @@ namespace eaSI3Web.Models
         public DateTime CreationDate { get; set; }
         public CreationResult CreationResult { get; set; }
         public string CreationResultAddtionalInfo { get; set; }
+        public User User { get; set; }
     }
 }

@@ -14,6 +14,11 @@ namespace eaSI3Web.Models
         {
             optionsBuilder.UseSqlite("Data Source=statistics.db");
         }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<User>()
+                .HasIndex(user => new { user.JiraUserName, user.SI3UserName }).IsUnique();
+        }
 
         public DbSet<User> Users { get; set; }
         public DbSet<Login> Logins { get; set; }

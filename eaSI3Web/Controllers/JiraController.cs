@@ -1,3 +1,4 @@
+using eaSI3Web.Controllers.UsageStatistics;
 using eaSI3Web.Models;
 using IssueConveter.Model;
 using JiraConnector;
@@ -111,8 +112,12 @@ namespace eaSI3Web.Controllers
         public Issue Issue(string username, string password, string jiraKey)
         {
             JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(username, password);
-
             var jiraIssue = jiraWorkLogService.GetIssue(jiraKey);
+
+            if (jiraIssue.si3ID != null) {
+                BdStatistics bdStatistics = new BdStatistics(_context);
+                bdStatistics.AddIssueCreation(username, jiraKey, jiraIssue.si3ID, 2, "Tarea ya vinculada");
+            }
 
             return jiraIssue;
 
@@ -120,23 +125,6 @@ namespace eaSI3Web.Controllers
         [HttpGet("[action]")]
         public string ValidateLogin(string username, string password)
         {
-            if (!string.IsNullOrEmpty(username))
-            {
-
-                var users = from u in _context.Users where u.JiraUserName.Equals(username) select u;
-
-                if (!users.Any())
-                {
-                    _context.Add(new User() { JiraUserName = username });
-                    _context.SaveChanges();
-                }
-
-                users = from u in _context.Users where u.JiraUserName.CompareTo(username) == 0 select u;
-
-                _context.Add(new Login() { User = (User)users.First(), ConnectionDate = DateTime.Now });
-                _context.SaveChanges();
-            }
-
             try
             {
                 JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(username, password);
@@ -151,9 +139,21 @@ namespace eaSI3Web.Controllers
         [HttpGet("[action]")]
         public void UpdateIssueSi3CustomField(string username, string password, string issueKey, string jirakey) {
 
-            JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(username, password);
-            string body = JsonConvert.SerializeObject(new { fields = new { customfield_10300 = issueKey } });
-            jiraWorkLogService.UpdateIssue(jirakey, body);
+            BdStatistics bdStatistics = new BdStatistics(_context);
+
+            try
+            {
+                JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(username, password);
+                string body = JsonConvert.SerializeObject(new { fields = new { customfield_10300 = issueKey } });
+                jiraWorkLogService.UpdateIssue(jirakey, body);
+            }
+            catch (Exception e)
+            {               
+                bdStatistics.AddIssueCreation(username, jirakey, issueKey, 1, e.Message);
+            }
+
+            bdStatistics.AddIssueCreation(username, jirakey, issueKey, 0, "Tarea vinculada correctamente");
+
 
         }
         public static IEnumerable<WeekJiraIssues> Convert(List<WorkLog> worklog)
