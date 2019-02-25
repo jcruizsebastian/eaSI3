@@ -27,8 +27,8 @@ namespace eaSI3Web.Controllers
         static Calendar calendar = new Calendar();
 
         [HttpGet("[action]")]
-        public Calendar Weeks() {
-           
+        public ActionResult<Calendar> Weeks() {
+            
             calendar.Weeks = new List<Calendar.CalendarWeeks>();
             int weekOfYear = CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(DateTime.Now, CalendarWeekRule.FirstDay, DayOfWeek.Monday);
 
@@ -68,8 +68,9 @@ namespace eaSI3Web.Controllers
         }
 
         [HttpGet("[action]")]
-        public WeekJiraIssuesResponse Worklog(string username, string password, string selectedWeek)   
+        public ActionResult<WeekJiraIssuesResponse> Worklog(string username, string password, string selectedWeek)   
         {
+            return StatusCode(401,"Error : prueba");
             DateTime startOfWeek = DateTime.Now;
             DateTime endOfWeek= DateTime.Now;
             _logger.LogInformation("Usuario " + username + " => clic en el botón de Enviar Jira, Semana elegida : " + selectedWeek);
@@ -91,19 +92,12 @@ namespace eaSI3Web.Controllers
             }
             catch (Exception e)
             {
-                List<WeekJiraIssues> weekJiraIssues = new List<WeekJiraIssues>();
-                WeekJiraIssuesResponse weekJiraIssuesListError = new WeekJiraIssuesResponse();
-                weekJiraIssuesListError.WeekJiraIssues = weekJiraIssues;
-                weekJiraIssuesListError.NotOk = true;
-                weekJiraIssuesListError.Message = e.Message;
-                _logger.LogError("Usuario : " + username + " Semana Elegida : " + selectedWeek + "Error : " +e.Message);
-                return weekJiraIssuesListError;
+                _logger.LogError("Usuario : " + username + " Semana Elegida : " + selectedWeek + "Error : " + e.Message);
+                return StatusCode(401, e.Message);
             }
             
             WeekJiraIssuesResponse weekJiraIssuesList = new WeekJiraIssuesResponse();
             weekJiraIssuesList.WeekJiraIssues = Convert(currentWorklog);
-            weekJiraIssuesList.NotOk = false;
-            weekJiraIssuesList.Message = "Todo bien, todo correcto";
             _logger.LogInformation("Worklog devuelto satisfactoriamente a " + username);
             return weekJiraIssuesList;
         }
