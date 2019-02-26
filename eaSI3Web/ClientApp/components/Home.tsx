@@ -101,36 +101,31 @@ export class Home extends React.Component<RouteComponentProps<{}>, UserCredentia
 
     private onLoginJira(e: { preventDefault: () => void; }) {
 
-        //user = user.replace(" ", " ").trim();
         e.preventDefault();
-
-        //if (checked) { localStorage.setItem("userJira", user); localStorage.setItem("passwordJira", password); }
 
         this.setState({ loadingJira: true, loading: true });
 
         fetch('api/Jira/worklog?username=' + this.getCookie("userJira") + '&password=' + this.getCookie("passJira") + '&selectedWeek=' + this.state.selectedWeek)
-
             .then(response => {
                 if (!response.ok) {
-                    //return response.text() as Promise<String>;
-                }
-                return response.json() as Promise<WeekJiraIssuesResponse>
-            })
-            .then(data => {/*
-                if (data.match("Error")) {
-                    throw new Error();
-                }
-                else */if (data.weekJiraIssues.length == 0) {
-                    alert("No hay tareas en Jira");
-                    this.setState({ loadingJira: false, loadedJira: false, loading: false });
+                    (response.text() as Promise<String>).then(data => {
+                        alert(data);
+                        this.setState({ loadingJira: false, loadedJira: false, loading: false });
+                    });
+                } else
+                    (response.json() as Promise<WeekJiraIssuesResponse>).then(data => {
+                        if (data.weekJiraIssues.length == 0) {
+                            alert("No hay tareas en Jira");
+                            this.setState({ loadingJira: false, loadedJira: false, loading: false });
 
-                }
-                else
-                    this.setState({ Weekissues: data.weekJiraIssues, loading: false }, this.confirmLoadedJira);
+                        }
+                        else
+                            this.setState({ Weekissues: data.weekJiraIssues, loading: false }, this.confirmLoadedJira);
+                    })
             })
             .catch(error => {
-                //alert(error);
-                //this.setState({ loadingJira: false, loadedJira: false, loading: false });
+                alert(error);
+                this.setState({ loadingJira: false, loadedJira: false, loading: false });
             });
 
 
@@ -155,13 +150,9 @@ export class Home extends React.Component<RouteComponentProps<{}>, UserCredentia
 
     private onLoginSi3(e: { preventDefault: () => void; }) {
 
-        //user = user.replace("'", " ").trim();
         e.preventDefault();
         this.setState({ loading: true });
         let agenda = (this.refs["agenda1"] as React.Component<WeekJiraIssuesProps, AgendaState>);
-
-        //if (checked) { localStorage.setItem("userSi3", user); localStorage.setItem("passwordSi3", password); }
-
         let total = 0;
         let WeekJiraIssues = agenda.state.weekissues;
         for (let weekIssue of WeekJiraIssues) {
@@ -178,22 +169,15 @@ export class Home extends React.Component<RouteComponentProps<{}>, UserCredentia
                 'Content-Type': 'application/json'
             },
         })
-            .then(response => response.json() as Promise<String>)
-            .then(data => {
-                if (data.length > 0) {
-                    alert(data);
-                    this.setState({ loading: false });
-                }
-                else {
+            .then(response => {
+                if (!response.ok) {
+                    (response.text() as Promise<String>).then(data => { alert(data); this.setState({ loading: false }); });
+                } else {
                     alert("Horas imputadas en SI3");
                     this.setState({ loading: false });
                 }
             });
-
-
-    }
-
-
+    }           
 
     public handleChangeWeek(event: React.FormEvent<HTMLSelectElement>) {
         this.setState({ selectedWeek: event.currentTarget.value });

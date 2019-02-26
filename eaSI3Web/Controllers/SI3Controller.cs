@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Authentication;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
@@ -22,12 +23,14 @@ namespace eaSI3Web.Controllers
         private readonly ILogger<SI3Controller> _logger;
         private readonly StatisticsContext _context;
 
-        public SI3Controller(ILogger<SI3Controller> logger, StatisticsContext context) {
+        public SI3Controller(ILogger<SI3Controller> logger, StatisticsContext context)
+        {
             _logger = logger;
             _context = context;
         }
 
-        public class BodyIssue {
+        public class BodyIssue
+        {
             public string JiraKey { get; set; }
             public string Titulo { get; set; }
             public string Prioridad { get; set; }
@@ -85,7 +88,7 @@ namespace eaSI3Web.Controllers
         public static List<Producto> products { get; set; }
 
         [HttpGet("[action]")]
-        public List<Producto> Products([FromQuery]string username, [FromQuery]string password)
+        public ActionResult<List<Producto>> Products([FromQuery]string username, [FromQuery]string password)
         {
             if (products != null)
                 return products;
@@ -98,34 +101,39 @@ namespace eaSI3Web.Controllers
             catch (Exception e)
             {
                 //esto de que esté vacío es temporal
+                //return StatusCode(500,e.Message);
             }
 
             products = new List<Producto>();
-
-            SI3Service SI3Service = new SI3Service(username, password);
-            var productos = SI3Service.GetProducts();
-            foreach(var product in productos)
-            {                
-                List<Producto.Componente> components = new List<Producto.Componente>();
-
-                var componentes = SI3Service.GetComponents(product.Value);
-                foreach(var componente in componentes)
+            var productos = new Dictionary<String,String>();
+            try
+            {
+                SI3Service SI3Service = new SI3Service(username, password);
+                productos = SI3Service.GetProducts();
+                foreach (var product in productos)
                 {
-                    List<Producto.Componente.Modulo> modules = new List<Producto.Componente.Modulo>();
+                    List<Producto.Componente> components = new List<Producto.Componente>();
 
-                    var modulos = SI3Service.GetModules(componente.Value);
-
-                    foreach (var modulo in modulos)
+                    var componentes = SI3Service.GetComponents(product.Value);
+                    foreach (var componente in componentes)
                     {
-                        modules.Add(new Producto.Componente.Modulo() { name = modulo.Key, code = modulo.Value});
+                        List<Producto.Componente.Modulo> modules = new List<Producto.Componente.Modulo>();
+
+                        var modulos = SI3Service.GetModules(componente.Value);
+
+                        foreach (var modulo in modulos)
+                        {
+                            modules.Add(new Producto.Componente.Modulo() { name = modulo.Key, code = modulo.Value });
+                        }
+
+                        components.Add(new Producto.Componente() { name = componente.Key, code = componente.Value, modulos = modules });
                     }
 
-                    components.Add(new Producto.Componente() { name = componente.Key, code = componente.Value, modulos = modules });
+                    products.Add(new Producto() { name = product.Key, code = product.Value, componentes = components });
                 }
-
-                products.Add(new Producto() { name = product.Key, code = product.Value, componentes = components });
+            } catch (InvalidCredentialException e) {
+                return StatusCode(401, e.Message);
             }
-
 
             return products;
         }
@@ -169,30 +177,41 @@ namespace eaSI3Web.Controllers
         }
 
         [HttpGet("[action]")]
-        public List<User> Users() {
-            SI3Service SI3Service = new SI3Service("ofjcruiz", "_*_d1d4ct1c");
+        public ActionResult<List<User>> Users()
+        {
             List<User> users = new List<User>();
-            foreach (var userDic in SI3Service.GetUsers()) {
-                User user = new User
+            try
+            {
+                SI3Service SI3Service = new SI3Service("ofjcruiz", "_*_d1d4ct1c");
+                foreach (var userDic in SI3Service.GetUsers())
                 {
-                    nombre = userDic.Key,
-                    codigo = userDic.Value
-                    
-                };
-                users.Add(user);
+                    User user = new User
+                    {
+                        nombre = userDic.Key,
+                        codigo = userDic.Value
+
+                    };
+                    users.Add(user);
+                }
             }
+            catch (InvalidCredentialException e)
+            {
+                return StatusCode(401, e.Message);
+            }
+
             return users.OrderBy(x => x.nombre).ToList();
         }
 
         [HttpGet("[action]")]
-        public string ValidateLogin(string username, string password)
+        public ActionResult ValidateLogin(string username, string password)
         {
 
             try
             {
                 SI3Service si3Service = new SI3Service(username, password);
                 si3Service.Login();
-                if(!string.IsNullOrEmpty(username)) {
+                if (!string.IsNullOrEmpty(username))
+                {
                     BdStatistics bdStatistics = new BdStatistics(_context);
                     bdStatistics.AddUser(username);
                     bdStatistics.AddLogin(username);
@@ -200,152 +219,164 @@ namespace eaSI3Web.Controllers
             }
             catch (Exception e)
             {
-                return e.Message;
+                return StatusCode(401, e.Message);
             }
 
-            return string.Empty;
+            return Ok();
         }
 
         [HttpPost("[action]")]
-        public string Linkissue([FromQuery]string username, [FromQuery]string password,[FromBody]BodyIssue data ) {
+        public ActionResult<string> Linkissue([FromQuery]string username, [FromQuery]string password, [FromBody]BodyIssue data)
+        {
+            string NewIssue = "";
 
-            SI3Service SI3Service = new SI3Service(username,password);
-            
-            SI3.Issues.Issue issue = new SI3.Issues.Issue();
-            issue.user = data.CodUserSi3;
-            issue.product = data.Producto;
-            issue.component = data.Componente;
-            if (data.Modulo != "default") { issue.module = data.Modulo; }
-            issue.title = data.JiraKey.ToUpper();
-            issue.cause = data.Titulo;
-            
-            switch (data.Prioridad) {
-                case "Trivial":
-                case "Menor":
-                    issue.level = SeverityLevels.Minor;
-                    break;
-                case "Mayor":
-                    issue.level = SeverityLevels.Important;
-                    break;
-                case "Crítica":
-                case "Bloqueadora":
-                    issue.level = SeverityLevels.Critical;
-                    break;
-                default:
-                    issue.level = SeverityLevels.Minor;
-                    break;
-            }
+            try
+            {
+                SI3.Issues.Issue issue = new SI3.Issues.Issue();
+                SI3Service SI3Service = new SI3Service(username, password);
+                issue.user = data.CodUserSi3;
+                issue.product = data.Producto;
+                issue.component = data.Componente;
+                if (data.Modulo != "default") { issue.module = data.Modulo; }
+                issue.title = data.JiraKey.ToUpper();
+                issue.cause = data.Titulo;
 
-            switch (data.Prioridad) {
-                case "Trivial":
-                    issue.priority = Prioridades.Low;
-                    break;
-                case "Menor":
-                    issue.priority = Prioridades.Medium;
-                    break;
-                case "Mayor":
-                case "Crítica":
-                    issue.priority = Prioridades.High;
-                    break;
-                case "Bloqueadora":
-                    issue.priority = Prioridades.Urgent;
-                    break;
-                default:
-                    issue.priority = Prioridades.Medium;
-                    break;
-            }
-
-            switch (data.Tipo) {
-                case "Asistencia":
-                case "Preventa":
-                    issue.phase = Phases.Production;
-                    break;
-                case "Desarrollo":
-                case "Tarea":
-                case "Historia":
-                case "Épica":
-                case "Pruebas":
-                case "Especificación":
-                case "Análisis":
-                case "Workpack":
-                case "Calidad":
-                case "Change Request":
-                    issue.phase = Phases.Development;
-                    break;
-                case "Formación":
-                case "Riesgo":
-                case "Vacaciones":
-                case "Interno":
-                case "Gestión":
-                case "Sistemas":
-                case "Permisos":
-                    issue.phase = Phases.User;
-                    break;
-                case "Corrección":
-                case "Bolsa de horas":
-                    issue.phase = Phases.Maintenance;
-                    break;
-                default:
-                    issue.phase = Phases.Maintenance;
-                    break;
-            }
-          
-            switch (data.Tipo) {
-                case "Mantenimiento":
-                    issue.tipo = Tipos.Data_Maintenance;
-                    break;
-                case "Asistencia":
-                    issue.tipo = Tipos.Asistencia;
-                    break;
-                case "Bolsa de Horas":
-                    issue.tipo = Tipos.Bolsa_de_horas;
-                    break;
-                case "Corrección":
-                    issue.tipo = Tipos.Defecto;
-                    break;
-                case "Especificación":
-                case "Análisis":
-                    issue.tipo = Tipos.Especificacion;
-                    break;
-                case "Formación":
-                    issue.tipo = Tipos.Help_and_Documentation;
-                    break;
-                case "Gestión":
-                case "Vacaciones":
-                    issue.tipo = Tipos.Gestion;
-                    break;
-                case "Desarrollo":
-                case "Tarea":
-                case "Workpack":
-                case "Calidad":
-                case "Change Request":
-                    issue.tipo = Tipos.Mejora;
-                    break;
-                case "Preventa":
-                    issue.tipo = Tipos.Help_and_Documentation;
+                switch (data.Prioridad)
+                {
+                    case "Trivial":
+                    case "Menor":
+                        issue.level = SeverityLevels.Minor;
                         break;
-                case "Pruebas":
-                    issue.tipo = Tipos.Pruebas;
-                    break;
-                case "Sistemas":
-                case "Interno":
-                    issue.tipo = Tipos.Security;
-                    break;
-                case "Épica":
-                case "Permisos":
-                    issue.tipo = Tipos.Mejora;
-                    break;
-                default:
-                    issue.tipo = Tipos.Mejora;
-                    break;
+                    case "Mayor":
+                        issue.level = SeverityLevels.Important;
+                        break;
+                    case "Crítica":
+                    case "Bloqueadora":
+                        issue.level = SeverityLevels.Critical;
+                        break;
+                    default:
+                        issue.level = SeverityLevels.Minor;
+                        break;
+                }
+
+                switch (data.Prioridad)
+                {
+                    case "Trivial":
+                        issue.priority = Prioridades.Low;
+                        break;
+                    case "Menor":
+                        issue.priority = Prioridades.Medium;
+                        break;
+                    case "Mayor":
+                    case "Crítica":
+                        issue.priority = Prioridades.High;
+                        break;
+                    case "Bloqueadora":
+                        issue.priority = Prioridades.Urgent;
+                        break;
+                    default:
+                        issue.priority = Prioridades.Medium;
+                        break;
+                }
+
+                switch (data.Tipo)
+                {
+                    case "Asistencia":
+                    case "Preventa":
+                        issue.phase = Phases.Production;
+                        break;
+                    case "Desarrollo":
+                    case "Tarea":
+                    case "Historia":
+                    case "Épica":
+                    case "Pruebas":
+                    case "Especificación":
+                    case "Análisis":
+                    case "Workpack":
+                    case "Calidad":
+                    case "Change Request":
+                        issue.phase = Phases.Development;
+                        break;
+                    case "Formación":
+                    case "Riesgo":
+                    case "Vacaciones":
+                    case "Interno":
+                    case "Gestión":
+                    case "Sistemas":
+                    case "Permisos":
+                        issue.phase = Phases.User;
+                        break;
+                    case "Corrección":
+                    case "Bolsa de horas":
+                        issue.phase = Phases.Maintenance;
+                        break;
+                    default:
+                        issue.phase = Phases.Maintenance;
+                        break;
+                }
+
+                switch (data.Tipo)
+                {
+                    case "Mantenimiento":
+                        issue.tipo = Tipos.Data_Maintenance;
+                        break;
+                    case "Asistencia":
+                        issue.tipo = Tipos.Asistencia;
+                        break;
+                    case "Bolsa de Horas":
+                        issue.tipo = Tipos.Bolsa_de_horas;
+                        break;
+                    case "Corrección":
+                        issue.tipo = Tipos.Defecto;
+                        break;
+                    case "Especificación":
+                    case "Análisis":
+                        issue.tipo = Tipos.Especificacion;
+                        break;
+                    case "Formación":
+                        issue.tipo = Tipos.Help_and_Documentation;
+                        break;
+                    case "Gestión":
+                    case "Vacaciones":
+                        issue.tipo = Tipos.Gestion;
+                        break;
+                    case "Desarrollo":
+                    case "Tarea":
+                    case "Workpack":
+                    case "Calidad":
+                    case "Change Request":
+                        issue.tipo = Tipos.Mejora;
+                        break;
+                    case "Preventa":
+                        issue.tipo = Tipos.Help_and_Documentation;
+                        break;
+                    case "Pruebas":
+                        issue.tipo = Tipos.Pruebas;
+                        break;
+                    case "Sistemas":
+                    case "Interno":
+                        issue.tipo = Tipos.Security;
+                        break;
+                    case "Épica":
+                    case "Permisos":
+                        issue.tipo = Tipos.Mejora;
+                        break;
+                    default:
+                        issue.tipo = Tipos.Mejora;
+                        break;
+                }
+
+                if (data.Tipo == "Corrección") { issue.type = Types.error; } else { issue.type = Types.improv; }
+                NewIssue = SI3Service.NewIssue(issue);
             }
-
-            if (data.Tipo == "Corrección") { issue.type = Types.error; } else { issue.type = Types.improv; }
-
-            return SI3Service.NewIssue(issue);
+            catch (InvalidCredentialException e)
+            {
+                return StatusCode(401, e.Message);
+            }
+            return NewIssue;
         }
         [HttpPost("[action]")]
-        public string Register([FromQuery]string username, [FromQuery]string password, [FromQuery]string selectedWeek,[FromQuery]int totalHours,[FromBody]IEnumerable<WeekJiraIssues> model)
+        public ActionResult Register([FromQuery]string username, [FromQuery]string password, [FromQuery]string selectedWeek, [FromQuery]int totalHours, [FromBody]IEnumerable<WeekJiraIssues> model)
         {
             BdStatistics bdStatistics = new BdStatistics(_context);
             try
@@ -353,7 +384,8 @@ namespace eaSI3Web.Controllers
                 _logger.LogInformation("Usuario " + username + " hizo clic en el botón de Enviar Si3 ");
                 SI3Service SI3Service = new SI3Service(username, password);
 
-                foreach (var week in model.ToList()) {
+                foreach (var week in model.ToList())
+                {
                     week.Issues.RemoveAll(x => x.Tiempo == 0 || string.IsNullOrEmpty(x.IssueSI3Code));
                 }
 
@@ -364,7 +396,7 @@ namespace eaSI3Web.Controllers
                 if (!string.IsNullOrEmpty(validacion))
                     throw new SI3Exception(validacion);
 
-                NormalizarHoras(model);                
+                NormalizarHoras(model);
 
                 Dictionary<string, Dictionary<DayOfWeek, int>> weekWork = new Dictionary<string, Dictionary<DayOfWeek, int>>();
 
@@ -410,18 +442,20 @@ namespace eaSI3Web.Controllers
             {
                 _logger.LogError("Usuario : " + username + " Error : " + e.Message);
                 bdStatistics.AddWorkTracking(username, int.Parse(selectedWeek), totalHours, 1, e.Message);
-                return e.Message;
+                return StatusCode(500, "Error :" + e.Message);
             }
             catch (Exception e)
             {
                 _logger.LogError("Usuario : " + username + " Error : " + e.Message);
                 bdStatistics.AddWorkTracking(username, int.Parse(selectedWeek), totalHours, 1, e.Message);
-                return e.Message;
+                if (e is InvalidCredentialException) { return StatusCode(401, e.Message); }
+                return StatusCode(400, "Error :" + e.Message);
             }
 
-            bdStatistics.AddWorkTracking(username, int.Parse(selectedWeek), totalHours, 0,"Horas imputadas en Si3 correctamente");
+
+            bdStatistics.AddWorkTracking(username, int.Parse(selectedWeek), totalHours, 0, "Horas imputadas en Si3 correctamente");
             _logger.LogInformation("Usuario : " + username + ", horas imputadas en Si3 correctamente");
-            return string.Empty;
+            return Ok();
         }
 
         private string ValidarImputación(SI3Service sI3Service, IEnumerable<WeekJiraIssues> model)

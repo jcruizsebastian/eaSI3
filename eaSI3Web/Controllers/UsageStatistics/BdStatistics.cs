@@ -15,18 +15,18 @@ namespace eaSI3Web.Controllers.UsageStatistics
 
         public void AddUser(string username)
         {
-            var users = from u in _context.Users where u.JiraUserName.Equals(username) select u;
+            var users = from u in _context.Users where u.SI3UserName.Equals(username) select u;
 
             if (!users.Any())
             {
-                _context.Add(new User() { JiraUserName = username, SI3UserName = "of" + username });
+                _context.Add(new User() { JiraUserName = username.Substring(2,username.Length - 2) , SI3UserName = username });
                 _context.SaveChanges();
             }
         }
 
         public void AddLogin(string username)
         {
-            var users = from u in _context.Users where u.JiraUserName.CompareTo(username) == 0 select u;
+            var users = from u in _context.Users where u.SI3UserName.CompareTo(username) == 0 select u;
 
             _context.Add(new Login() { User = (User)users.First(), ConnectionDate = DateTime.Now });
             _context.SaveChanges();

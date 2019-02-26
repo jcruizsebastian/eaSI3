@@ -14,7 +14,7 @@ interface LayoutState {
     cookiesOk: boolean;
     name: string;
     loaded: boolean;
-    
+
 }
 export class Layout extends React.Component<LayoutProps, LayoutState> {
 
@@ -29,9 +29,9 @@ export class Layout extends React.Component<LayoutProps, LayoutState> {
         this.state = { logged: false, cookiesOk: false, name: "", loaded: false };
     }
     async componentDidMount() {
-         await this.validate(); 
+        await this.validate();
     }
-    
+
     //función para sacar las cookies, cname => userJira, passJira ... etc.
     public getCookie(cname: String) {
         var name = cname + "=";
@@ -49,16 +49,16 @@ export class Layout extends React.Component<LayoutProps, LayoutState> {
         return "";
     }
 
-     public validate() {
+    public validate() {
 
         var userJira = this.getCookie("userJira");
         var passJira = this.getCookie("passJira");
         var userSi3 = this.getCookie("userSi3");
         var passSi3 = this.getCookie("passSi3");
 
-         this.setState({ loaded: false });
+        this.setState({ loaded: false });
 
-          fetch('api/Jira/validateLogin?username=' + userJira + '&password=' + passJira)
+        fetch('api/Jira/validateLogin?username=' + userJira + '&password=' + passJira)
             .then(response => response.text() as Promise<String>)
             .then(data => {
                 if (data.length == 0) {
@@ -66,29 +66,29 @@ export class Layout extends React.Component<LayoutProps, LayoutState> {
                     fetch('api/Si3/validateLogin?username=' + userSi3 + '&password=' + passSi3)
                         .then(response => response.text() as Promise<String>)
                         .then(data => {
-                            if (data.length == 0) { this.setState({  cookiesOk: true, loaded: true }); }
-                            else { this.setState({ cookiesOk: false, loaded: true}); }
+                            if (data.length == 0) { this.setState({ cookiesOk: true, loaded: true }); }
+                            else { this.setState({ cookiesOk: false, loaded: true }); }
                         });
                 } else {
                     this.setState({ cookiesOk: false, loaded: true });
                 }
             });
-        
-        
+
+
     }
 
     //función para cambiar una cookie
     public setCookie(cname: string, cvalue: string, exdays: number) {
-    var d = new Date();
-    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-    var expires = "expires=" + d.toUTCString();
-    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+        var d = new Date();
+        d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+        var expires = "expires=" + d.toUTCString();
+        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
     }
 
     public onLogin(nameUser: string) {
         localStorage.removeItem('name');
         localStorage.setItem("name", nameUser);
-        this.setState({ logged: true, cookiesOk: true }); 
+        this.setState({ logged: true, cookiesOk: true });
     }
 
     public logout() {
@@ -99,13 +99,13 @@ export class Layout extends React.Component<LayoutProps, LayoutState> {
         this.setCookie("passSi3", "", 0);
         this.setCookie("codUserSi3", "", 0);
 
-        this.setState({logged: false});
+        this.setState({ logged: false });
     }
 
     public render() {
-        
 
-        var style = { backgroundColor: '#222', height: '50px'};
+
+        var style = { backgroundColor: '#222', height: '50px' };
         let home;
 
         if (this.state.loaded) {
@@ -136,14 +136,14 @@ export class Layout extends React.Component<LayoutProps, LayoutState> {
                     </div>
 
                 </div>
-            } else { home = <LoginGeneral onLogin={this.onLogin} />}
+            } else { home = <LoginGeneral onLogin={this.onLogin} /> }
         }
         const spinner = <span><ReactLoading color='#fff' type='spin' className="spinner" height={128} width={128} /></span>
         return <div className='container-fluid' >
-           
+
             {home}
-            
-            </div>
-            
+
+        </div>
+
     }
 }

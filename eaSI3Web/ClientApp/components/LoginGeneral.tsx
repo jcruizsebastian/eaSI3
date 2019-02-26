@@ -52,30 +52,26 @@ export class LoginGeneral extends React.Component<LoginProps, LoginState> {
         this.setState({ loading: true });
 
         fetch('api/Jira/validateLogin?username=' + userJira + '&password=' + passJira)
-            .then(response => response.text() as Promise<String>)
+            .then(response => {
+                if (!response.ok) {
+                    (response.text() as Promise<String>).then(
+                        data => { alert(data); this.setState({ userJiraLoaded: false }); }
+                    );
+                }
+                else { this.setState({ userJiraLoaded: true }); }
+            })
             .then(data => {
-                document.getElementById("a");
-
-                if (data.length == 0) {
-                    this.setState({ userJiraLoaded: true });
-                    
-                } else { this.setState({ userJiraLoaded: false }); }
-                    fetch('api/Si3/validateLogin?username=' + userSi3 + '&password=' + passSi3)
-                        .then(response => response.text() as Promise<String>)
-                        .then(data => {
-                            document.getElementById("a");
-
-                            if (data.length == 0) { this.setState({ userSi3Loaded: true }); }
-                            else { this.setState({ userSi3Loaded: false }); }
-
-                            this.ValidateLogin();
-                        });
-
-                
-               
+                fetch('api/Si3/validateLogin?username=' + userSi3 + '&password=' + passSi3)
+                    .then(response => {
+                        if (!response.ok) {
+                            (response.text() as Promise<String>).then(
+                                data => { alert(data); this.setState({ userSi3Loaded: false }); }
+                            );
+                        }
+                        else { this.setState({ userSi3Loaded: true }); }
+                        this.ValidateLogin();
+                    });
             });
-
-       
     } 
 
     public ValidateLogin() {

@@ -68,42 +68,60 @@ export class VincularTarea extends React.Component<RouteComponentProps<{}>, Vinc
 
     public handleSubmit(e: { preventDefault: () => void; }) {
         var keyJira: string = (this.refs["tbKeyJira"] as HTMLInputElement).value;
-        
+
         e.preventDefault();
-        this.setState({ loading: true});
+        this.setState({ loading: true });
 
         fetch('api/Si3/products?username=' + this.getCookie("userSi3") + '&password=' + this.getCookie("passSi3"))
             .then(response => response.json() as Promise<Products[]>)
             .then(data => {
-                this.setState({ products: data, loadedData: true});
+                this.setState({ products: data, loadedData: true });
                 fetch('api/Jira/issue?username=' + this.getCookie("userJira") + '&password=' + this.getCookie("passJira") + '&jiraKey=' + keyJira)
-                    .then(response => response.json() as Promise<Issue>)
-                    .then(data => {
-                        if (data.si3ID == null) {
-                            var prioridad_: string = "";
-                            switch (data.priority) {
-                                case 1:
-                                    prioridad_ = "Trivial";
-                                    break;
-                                case 2:
-                                    prioridad_ = "Menor";
-                                    break;
-                                case 3:
-                                    prioridad_ = "Mayor";
-                                    break;
-                                case 4:
-                                    prioridad_ = "Crítica";
-                                    break;
-                                case 5:
-                                    prioridad_ = "Bloqueadora";
-                                    break
-                            }
-                            this.setState({ loadedDataJira: true, titulo: data.summary, prioridad: prioridad_, tipo: data.issuetype, responsable: data.assignee, loading: false });
-                        } else { alert("Esta tarea ya está vinculada en SI3"); this.setState({ loadedDataJira: false, loading: false }); }
-                    });
+                    .then(response => {
+                        if (!response.ok) {
+                            (response.text() as Promise<String>).then(
+                                data => {
+                                    alert(data);
+                                    this.setState({ loadedDataJira: false, loading: false });
+                                }
+                            )
+                        }
+                        else {
+                            (response.json() as Promise<Issue>).then(
+                                data => {
+                                    if (data.si3ID == null) {
+                                        var prioridad_: string = "";
+                                        switch (data.priority) {
+                                            case 1:
+                                                prioridad_ = "Trivial";
+                                                break;
+                                            case 2:
+                                                prioridad_ = "Menor";
+                                                break;
+                                            case 3:
+                                                prioridad_ = "Mayor";
+                                                break;
+                                            case 4:
+                                                prioridad_ = "Crítica";
+                                                break;
+                                            case 5:
+                                                prioridad_ = "Bloqueadora";
+                                                break
+                                        }
+                                        this.setState({
+                                            loadedDataJira: true, titulo: data.summary, prioridad: prioridad_,
+                                            tipo: data.issuetype, responsable: data.assignee, loading: false
+                                        });
+                                    } else {
+                                        alert("Esta tarea ya está vinculada en SI3");
+                                        this.setState({ loadedDataJira: false, loading: false });
+                                    }
+                                });
+                        }
+                    })
             });
 
-        
+
     }
 
     public handleChangeProducts(event: React.FormEvent<HTMLSelectElement>) {
@@ -113,14 +131,14 @@ export class VincularTarea extends React.Component<RouteComponentProps<{}>, Vinc
         this.setState({ componentSelected: event.currentTarget.value, moduleSelected: "default" });
         if (event.currentTarget.value == "default") {
             this.setState({ todoOk: false });
-        } else this.setState({todoOk: true})
+        } else this.setState({ todoOk: true })
     }
     public handleChangeModules(event: React.FormEvent<HTMLSelectElement>) {
         this.setState({ moduleSelected: event.currentTarget.value });
     }
-    
+
     public vincular() {
- 
+
         this.setState({ loading: true });
         var cod = this.getCookie("codUserSi3");
 
@@ -136,12 +154,31 @@ export class VincularTarea extends React.Component<RouteComponentProps<{}>, Vinc
                 'Content-Type': 'application/json'
             },
         })
-            .then(response => response.text() as Promise<String>)
-            .then(data => {
-                var issueKey = data.split("\"")[1];
-                fetch('api/Jira/updateissuesi3customfield?username=' + this.getCookie("userJira") + '&password=' + this.getCookie("passJira") + '&issueKey=' + issueKey + '&jirakey=' + (this.refs["tbKeyJira"] as HTMLInputElement).value)
-                    .then(data => { alert("Tarea vinculada"); this.setState({ loading: false }); })
-
+            .then(response => //response.text() as Promise<String>
+            {
+                if (!response.ok) {
+                    (response.text() as Promise<string>).then(data => {
+                        alert(data);
+                        this.setState({ loading: false });
+                    })
+                }
+                else
+                {
+                    (response.text() as Promise<string>).then(data => {
+                        var issueKey = data.split("\"")[1];
+                        fetch('api/Jira/updateissuesi3customfield?username=' + this.getCookie("userJira") + '&password=' + this.getCookie("passJira") + '&issueKey=' + issueKey + '&jirakey=' + (this.refs["tbKeyJira"] as HTMLInputElement).value)
+                            .then(response => {
+                                if (!response.ok) {
+                                    (response.text() as Promise<string>).then(data => {
+                                        alert(data);
+                                        this.setState({ loading: false });
+                                    })
+                                } else {
+                                    alert("Tarea vinculada"); this.setState({ loading: false });
+                                }
+                            });
+                    });
+                }
                 
             });
     }
@@ -179,7 +216,7 @@ export class VincularTarea extends React.Component<RouteComponentProps<{}>, Vinc
                             <option key={product.code} value={product.code}>
                                 {product.name}
                             </option>
-                            )
+                        )
                     }
                 </select>
                 <br></br>
@@ -193,37 +230,37 @@ export class VincularTarea extends React.Component<RouteComponentProps<{}>, Vinc
                                     {component.name}
                                 </option>
                         ))
-                    }                           
+                    }
                 </select>
-                 <br></br>
+                <br></br>
                 <label className="ptext">Módulo : </label>
                 <select className="custom-select" onChange={this.handleChangeModules}>
                     <option value="default" selected={true}>Seleccione un módulo</option>
                     {
                         this.state.products.filter(product => product.code == this.state.productSelected).map(p => p.componentes.filter(
                             component => component.code == this.state.componentSelected).map(
-                            c => c.modulos.map(modulo =>
-                                <option key={modulo.code} value={modulo.code}>
-                                    {modulo.name}
-                                </option>    
+                                c => c.modulos.map(modulo =>
+                                    <option key={modulo.code} value={modulo.code}>
+                                        {modulo.name}
+                                    </option>
                                 )
-                                   
+
                             ))
                     }
                 </select>
                 <hr></hr>
                 <input type="button" value="Vincular" className="btn btn-primary" onClick={this.vincular} disabled={!this.state.todoOk} />
             </div>
-            )
+        )
     }
 
     public render() {
 
-        
+
 
         let informacion;
         if (this.state.loadedData && this.state.loadedDataJira) {
-             informacion = this.renderInformación();
+            informacion = this.renderInformación();
         }
         const spinner = <span><ReactLoading color='#fff' type='spin' className="spinner" height={128} width={128} /></span>
         return (
@@ -231,9 +268,9 @@ export class VincularTarea extends React.Component<RouteComponentProps<{}>, Vinc
                 <form className="dataForm" onSubmit={this.handleSubmit}>
                     <label className="text">Key Jira :</label>
                     <input type="text" id="keyJira" className="form-control" name="key" ref="tbKeyJira" placeholder="Introduzca Key Jira" autoComplete="off" />
-                    <input type="submit" className="btn btn-primary" value="Generar información"/>
+                    <input type="submit" className="btn btn-primary" value="Generar información" />
                 </form>
-               
+
                 {informacion}
                 <Loader show={this.state.loading} message={spinner} hideContentOnLoad={false} className={(this.state.loading == true) ? "overlay" : "overlay-1"} />
             </div>

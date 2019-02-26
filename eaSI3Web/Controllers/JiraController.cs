@@ -7,8 +7,10 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq;
+using System.Security.Authentication;
 
 namespace eaSI3Web.Controllers
 {
@@ -62,7 +64,6 @@ namespace eaSI3Web.Controllers
                 });
                 intDay += aSumar+1;
             }
-
             
             return calendar;
         }
@@ -70,7 +71,6 @@ namespace eaSI3Web.Controllers
         [HttpGet("[action]")]
         public ActionResult<WeekJiraIssuesResponse> Worklog(string username, string password, string selectedWeek)   
         {
-            return StatusCode(401,"Error : prueba");
             DateTime startOfWeek = DateTime.Now;
             DateTime endOfWeek= DateTime.Now;
             _logger.LogInformation("Usuario " + username + " => clic en el botón de Enviar Jira, Semana elegida : " + selectedWeek);
@@ -93,7 +93,10 @@ namespace eaSI3Web.Controllers
             catch (Exception e)
             {
                 _logger.LogError("Usuario : " + username + " Semana Elegida : " + selectedWeek + "Error : " + e.Message);
-                return StatusCode(401, e.Message);
+                if (e is InvalidCredentialException || e is UnauthorizedAccessException || e is InvalidOperationException)
+                    return StatusCode(401, e.Message);
+
+                return StatusCode(500, e.Message);
             }
             
             WeekJiraIssuesResponse weekJiraIssuesList = new WeekJiraIssuesResponse();
@@ -103,21 +106,34 @@ namespace eaSI3Web.Controllers
         }
 
         [HttpGet("[action]")]
-        public Issue Issue(string username, string password, string jiraKey)
+        public ActionResult<Issue> Issue(string username, string password, string jiraKey)
         {
-            JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(username, password);
-            var jiraIssue = jiraWorkLogService.GetIssue(jiraKey);
+            var jiraIssue = new Issue();
+            BdStatistics bdStatistics = new BdStatistics(_context);
 
-            if (jiraIssue.si3ID != null) {
-                BdStatistics bdStatistics = new BdStatistics(_context);
-                bdStatistics.AddIssueCreation(username, jiraKey, jiraIssue.si3ID, 2, "Tarea ya vinculada");
+            try
+            {
+                JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(username, password);
+                jiraIssue = jiraWorkLogService.GetIssue(jiraKey);
+            }
+            catch (Exception e) {
+
+                bdStatistics.AddIssueCreation(username, jiraKey, jiraIssue.si3ID, 1, e.Message);
+                if (e is InvalidCredentialException || e is UnauthorizedAccessException || e is InvalidOperationException)
+                    return StatusCode(401, e.Message);
+
+                return StatusCode(500, e.Message);
             }
 
+            if (jiraIssue.si3ID != null)
+            {
+                bdStatistics.AddIssueCreation(username, jiraKey, jiraIssue.si3ID, 2, "Tarea ya vinculada");
+            }
             return jiraIssue;
 
         }
         [HttpGet("[action]")]
-        public string ValidateLogin(string username, string password)
+        public ActionResult ValidateLogin(string username, string password)
         {
             try
             {
@@ -125,15 +141,21 @@ namespace eaSI3Web.Controllers
             }
             catch (Exception e)
             {
-                return e.Message;
+                if (e is InvalidCredentialException || e is UnauthorizedAccessException || e is InvalidOperationException)
+                    return StatusCode(401, e.Message);
+
+                return StatusCode(500, e.Message);
+
             }
 
-            return string.Empty;
+            return Ok();
         }
         [HttpGet("[action]")]
-        public void UpdateIssueSi3CustomField(string username, string password, string issueKey, string jirakey) {
-
+        public ActionResult UpdateIssueSi3CustomField(string username, string password, [RegularExpression("[0-9]+")]string issueKey, [RegularExpression("\\w+-[0-9]+")]string jirakey) {
             BdStatistics bdStatistics = new BdStatistics(_context);
+
+            if (!ModelState.IsValid)
+                return StatusCode(400, "");
 
             try
             {
@@ -144,12 +166,17 @@ namespace eaSI3Web.Controllers
             catch (Exception e)
             {               
                 bdStatistics.AddIssueCreation(username, jirakey, issueKey, 1, e.Message);
+
+                if(e is InvalidCredentialException || e is UnauthorizedAccessException || e is InvalidOperationException)
+                    return StatusCode(401, e.Message);
+
+                return StatusCode(500, e.Message);
             }
 
             bdStatistics.AddIssueCreation(username, jirakey, issueKey, 0, "Tarea vinculada correctamente");
-
-
+            return Ok();
         }
+
         public static IEnumerable<WeekJiraIssues> Convert(List<WorkLog> worklog)
         {
             List<WeekJiraIssues> weekJiraIssues = new List<WeekJiraIssues>();
