@@ -1,37 +1,8 @@
-﻿import '../css/agenda.css';
+﻿import 'isomorphic-fetch';
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
-import 'isomorphic-fetch';
-import ReactLoading from "react-loading";
-import Login from './Login';
-import { VincularTarea } from './VincularTarea';
-import { NavLink, Route } from 'react-router-dom';
-
-
-interface JiraIssues {
-    issueSI3Code: string;
-    issueCode: string;
-    issueKey: string;
-    titulo: string;
-    tiempo: number;
-    tiempoCorregido: number;
-}
-
-interface WeekJiraIssues {
-    fecha: Date;
-    issues: JiraIssues[];
-}
-
-
-interface WeekJiraIssuesProps {
-    weekissues: WeekJiraIssues[];
-    isTodoOk: Function;
-}
-
-export interface AgendaState {
-    weekissues: WeekJiraIssues[];
-    link: String;
-}
+import '../css/agenda.css';
+import { WeekJiraIssuesProps } from './Model/Props/WeekJiraIssuesProps';
+import { AgendaState } from './Model/States/AgendaState';
 
 export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
 
@@ -41,22 +12,18 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
         this.isDisabledBtnSi3 = this.isDisabledBtnSi3.bind(this);
         this.timeReassignment = this.timeReassignment.bind(this);
         this.calculateTotalHours = this.calculateTotalHours.bind(this);
-        this.state = { weekissues: this.props.weekissues, link: "https://jira.openfinance.es/browse/"};
+        this.state = { weekissues: this.props.weekissues, link: "https://jira.openfinance.es/browse/" };
     }
 
-   
     componentDidMount() {
         var todoOk = this.isDisabledBtnSi3();
         this.props.isTodoOk(todoOk);
     }
 
-
-        public timeReassignment(event: React.ChangeEvent<HTMLInputElement>) {
-
-        
+    public timeReassignment(event: React.ChangeEvent<HTMLInputElement>) {
         let day = event.currentTarget.id.split('|')[1];
         let issueId = event.currentTarget.id.split('|')[0];
-        
+
         for (var dayIssue of this.props.weekissues) {
             if (new Date(dayIssue.fecha.toString()).getDate().toString() == day) {
                 for (var issue of dayIssue.issues) {
@@ -65,17 +32,17 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                         break;
                     }
                 }
-            }   
             }
+        }
 
-            var todoOk = this.isDisabledBtnSi3();
-            this.props.isTodoOk(todoOk);
+        var todoOk = this.isDisabledBtnSi3();
+        this.props.isTodoOk(todoOk);
 
-        this.forceUpdate(); 
+        this.forceUpdate();
     }
 
     private isDisabledBtnSi3() {
-        
+
         let total = 0;
         let tiempo: number;
 
@@ -89,11 +56,9 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                 }
             }
         }
-        
+
         if (total <= 40) { return false; }
         else { return true; }
-
-
     }
 
     private calculateTotalHours() {
@@ -110,12 +75,12 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
         }
 
         return total;
-    }  
+    }
 
     public render() {
 
         let total: number = this.calculateTotalHours();
-        
+
         console.log("entra en el render de agenda")
         return <div>
 
@@ -131,7 +96,7 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                 </thead>
                 <tbody>
                     {
-                       
+
                         this.props.weekissues.map(Weekissue =>
 
                             <tr key={Weekissue.fecha.toString()} >
@@ -144,7 +109,7 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                                         x =>
                                             <div className="agenda-events-id" key={x.issueCode}>
                                                 <a target="_blank" href={this.state.link.concat(x.issueKey)}>{x.issueKey}</a>
-                                                
+
                                                 <label className="issue-si3">({x.issueSI3Code})</label>
                                             </div>
                                     )}
@@ -156,7 +121,7 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                                                 <label className="issue-si3">({issue.issueSI3Code})</label>
                                             </div>
                                     )
-                                   }
+                                    }
 
                                 </td>
 
@@ -164,16 +129,16 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                                     {Weekissue.issues.filter(issue => issue.issueSI3Code == null).map(
                                         issue =>
 
-                                        <div className="agenda-events-title" key={issue.titulo + issue.issueCode}>
-                                            <label className="agenda-events-label" title={issue.titulo}> {issue.titulo}</label>
-                                        </div>
+                                            <div className="agenda-events-title" key={issue.titulo + issue.issueCode}>
+                                                <label className="agenda-events-label" title={issue.titulo}> {issue.titulo}</label>
+                                            </div>
                                     )}
 
                                     {Weekissue.issues.filter(issue => issue.issueSI3Code != null).map(
                                         x =>
                                             <div className="agenda-events-title" key={x.titulo + x.issueCode}>
-                                            <label className="agenda-events-label" title={x.titulo}> {x.titulo}</label>
-                                        </div>
+                                                <label className="agenda-events-label" title={x.titulo}> {x.titulo}</label>
+                                            </div>
                                     )}
                                 </td>
 
@@ -182,12 +147,12 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
 
                                     {Weekissue.issues.filter(issue => issue.issueSI3Code == null).map(
                                         issue =>
-                                        <div className="agenda-events-hours" key={issue.issueKey}>
-                                            <input type="text" id={issue.issueKey + '|' + new Date(Weekissue.fecha.toString()).getDate()} name="tbTiempoCorregido" value={issue.tiempoCorregido}
+                                            <div className="agenda-events-hours" key={issue.issueKey}>
+                                                <input type="text" id={issue.issueKey + '|' + new Date(Weekissue.fecha.toString()).getDate()} name="tbTiempoCorregido" value={issue.tiempoCorregido}
                                                     placeholder={String(issue.tiempo)} onChange={this.timeReassignment} className={((Number(issue.tiempo) % 1 != 0) || (issue.issueSI3Code == null && issue.tiempo > 0)) ? "invalid" : "valid"}
-                                                autoComplete="off" />
+                                                    autoComplete="off" />
 
-                                        </div>
+                                            </div>
                                     )}
                                     {Weekissue.issues.filter(issue => issue.issueSI3Code != null).map(
                                         issue =>
@@ -215,12 +180,8 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                 </tbody>
             </table>
             <br />
-            
         </div>
-
-
     }
-
 }
 
 export default Agenda;

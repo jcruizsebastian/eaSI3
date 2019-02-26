@@ -1,64 +1,20 @@
-import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import 'isomorphic-fetch';
-import ReactLoading from "react-loading";
-import Agenda from './Agenda';
-import { AgendaState } from './Agenda';
-import Login from './Login';
+import * as React from 'react';
 import Loader from 'react-loader-advanced';
-import { Layout } from './Layout';
-
-//import { Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
-
-interface UserCredentials {
-    Weekissues: WeekJiraIssues[];
-    loadedJira: boolean;
-    loadingJira: boolean;
-    calendar: Calendar;
-    calendarLoaded: boolean;
-    selectedWeek?: string;
-    todoOk: boolean;
-    loading: boolean;
-}
-
-interface WeekJiraIssues {
-    fecha: Date;
-    issues: JiraIssues[];
-}
-
-interface WeekJiraIssuesProps {
-    weekissues: WeekJiraIssues[];
-    isTodoOk: Function;
-}
-
-interface JiraIssues {
-    issueSI3Code: string;
-    issueCode: string;
-    issueKey: string;
-    titulo: string;
-    tiempo: number;
-    tiempoCorregido: number;
-}
+import ReactLoading from "react-loading";
+import { RouteComponentProps } from 'react-router';
+import { Agenda } from './Agenda';
+import { Calendar } from './Model/Calendar';
+import { WeekJiraIssuesProps } from './Model/Props/WeekJiraIssuesProps';
+import { AgendaState } from './Model/States/AgendaState';
+import { UserCredentialsState } from './Model/States/UserCredentialsState';
+import { WeekJiraIssues } from './Model/WeekJiraIssues';
 
 interface WeekJiraIssuesResponse {
     weekJiraIssues: WeekJiraIssues[];
 }
 
-interface JiraResponse {
-    message: string;
-}
-
-interface CalendarWeeks {
-    numberWeek: number;
-    description: string;
-    starOfWeek: Date;
-    endOfWeek: Date;
-}
-
-interface Calendar {
-    weeks: CalendarWeeks[];
-}
-export class Home extends React.Component<RouteComponentProps<{}>, UserCredentials> {
+export class Home extends React.Component<RouteComponentProps<{}>, UserCredentialsState> {
 
     constructor(props: RouteComponentProps<{}>) {
         super(props);
@@ -74,33 +30,26 @@ export class Home extends React.Component<RouteComponentProps<{}>, UserCredentia
         this.state = {
             Weekissues: [], loadedJira: false, loadingJira: false, calendar: { weeks: [] }, calendarLoaded: false, todoOk: false, loading: false
         };
-
-
     }
 
     componentDidMount() { this.getWeekofYear(); }
 
     private confirmLoadedJira() {
         this.setState({
-
             loadingJira: false,
             loadedJira: true
-
         });
     }
 
     private getWeekofYear() {
-
         fetch('api/Jira/Weeks')
             .then(response => response.json() as Promise<Calendar>)
             .then(data => {
                 this.setState({ calendar: data, calendarLoaded: true, selectedWeek: data.weeks.length.toString() });
             });
-
     }
 
     private onLoginJira(e: { preventDefault: () => void; }) {
-
         e.preventDefault();
 
         this.setState({ loadingJira: true, loading: true });
@@ -149,7 +98,6 @@ export class Home extends React.Component<RouteComponentProps<{}>, UserCredentia
     }
 
     private onLoginSi3(e: { preventDefault: () => void; }) {
-
         e.preventDefault();
         this.setState({ loading: true });
         let agenda = (this.refs["agenda1"] as React.Component<WeekJiraIssuesProps, AgendaState>);
@@ -177,18 +125,15 @@ export class Home extends React.Component<RouteComponentProps<{}>, UserCredentia
                     this.setState({ loading: false });
                 }
             });
-    }           
+    }
 
     public handleChangeWeek(event: React.FormEvent<HTMLSelectElement>) {
         this.setState({ selectedWeek: event.currentTarget.value });
-
     }
 
     public isTodoOk(val: boolean) { this.setState({ todoOk: val }); }
 
     public render() {
-
-
         let agenda;
         let si3;
         let jira;
@@ -209,6 +154,7 @@ export class Home extends React.Component<RouteComponentProps<{}>, UserCredentia
                 </select>
             </div>
         }
+
         if (this.state.loadedJira) {
 
             agenda = <Agenda weekissues={this.state.Weekissues} ref="agenda1" isTodoOk={this.isTodoOk} />
@@ -217,12 +163,9 @@ export class Home extends React.Component<RouteComponentProps<{}>, UserCredentia
 
         }
 
-
         const spinner = <span><ReactLoading color='#fff' type='spin' className="spinner" height={128} width={128} /></span>
 
         return (
-
-
             <div>
 
                 {calendar}
@@ -231,10 +174,7 @@ export class Home extends React.Component<RouteComponentProps<{}>, UserCredentia
                 {si3}
                 <Loader show={this.state.loading} message={spinner} hideContentOnLoad={false} className={(this.state.loading == true) ? "overlay" : "overlay-1"} />
             </div>
-
-
         )
-
     }
 }
 export default Home

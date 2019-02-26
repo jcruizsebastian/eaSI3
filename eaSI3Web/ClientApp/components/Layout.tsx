@@ -1,21 +1,13 @@
 import * as React from 'react';
-import { NavMenu } from './NavMenu';
-import { LoginGeneral } from './LoginGeneral';
-import { Route, Redirect } from 'react-router'
-import Loader from 'react-loader-advanced';
 import ReactLoading from "react-loading";
+import { LoginGeneral } from './LoginGeneral';
+import { LayoutState } from './Model/States/LayoutState';
+import { NavMenu } from './NavMenu';
 
 export interface LayoutProps {
     children?: React.ReactNode;
 }
 
-interface LayoutState {
-    logged: boolean;
-    cookiesOk: boolean;
-    name: string;
-    loaded: boolean;
-
-}
 export class Layout extends React.Component<LayoutProps, LayoutState> {
 
     constructor(props: LayoutProps) {

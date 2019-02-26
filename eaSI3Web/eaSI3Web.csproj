@@ -29,8 +29,23 @@
 
   <ItemGroup>
     <None Remove="ClientApp\components\Agenda.tsx" />
-    <None Remove="ClientApp\components\Login.tsx" />
     <None Remove="ClientApp\components\LoginGeneral.tsx" />
+    <None Remove="ClientApp\components\Model\Calendar.tsx" />
+    <None Remove="ClientApp\components\Model\CalendarWeeks.tsx" />
+    <None Remove="ClientApp\components\Model\Component.tsx" />
+    <None Remove="ClientApp\components\Model\Issue.tsx" />
+    <None Remove="ClientApp\components\Model\JiraIssues.tsx" />
+    <None Remove="ClientApp\components\Model\Module.tsx" />
+    <None Remove="ClientApp\components\Model\Product.tsx" />
+    <None Remove="ClientApp\components\Model\Props\LoginProps.tsx" />
+    <None Remove="ClientApp\components\Model\States\AgendaState.tsx" />
+    <None Remove="ClientApp\components\Model\States\LayoutState.tsx" />
+    <None Remove="ClientApp\components\Model\States\LoginState.tsx" />
+    <None Remove="ClientApp\components\Model\States\UserCredentialsState.tsx" />
+    <None Remove="ClientApp\components\Model\States\VincularState.tsx" />
+    <None Remove="ClientApp\components\Model\User.tsx" />
+    <None Remove="ClientApp\components\Model\WeekJiraIssues.tsx" />
+    <None Remove="ClientApp\components\Model\WeekJiraIssuesProps.tsx" />
     <None Remove="ClientApp\components\VincularTarea.tsx" />
   </ItemGroup>
 
@@ -42,8 +57,23 @@
 
   <ItemGroup>
     <TypeScriptCompile Include="ClientApp\components\Agenda.tsx" />
-    <TypeScriptCompile Include="ClientApp\components\Login.tsx" />
     <TypeScriptCompile Include="ClientApp\components\LoginGeneral.tsx" />
+    <TypeScriptCompile Include="ClientApp\components\Model\Calendar.tsx" />
+    <TypeScriptCompile Include="ClientApp\components\Model\CalendarWeeks.tsx" />
+    <TypeScriptCompile Include="ClientApp\components\Model\Component.tsx" />
+    <TypeScriptCompile Include="ClientApp\components\Model\Issue.tsx" />
+    <TypeScriptCompile Include="ClientApp\components\Model\JiraIssues.tsx" />
+    <TypeScriptCompile Include="ClientApp\components\Model\Module.tsx" />
+    <TypeScriptCompile Include="ClientApp\components\Model\Product.tsx" />
+    <TypeScriptCompile Include="ClientApp\components\Model\Props\LoginProps.tsx" />
+    <TypeScriptCompile Include="ClientApp\components\Model\States\AgendaState.tsx" />
+    <TypeScriptCompile Include="ClientApp\components\Model\States\LayoutState.tsx" />
+    <TypeScriptCompile Include="ClientApp\components\Model\States\LoginState.tsx" />
+    <TypeScriptCompile Include="ClientApp\components\Model\States\UserCredentialsState.tsx" />
+    <TypeScriptCompile Include="ClientApp\components\Model\States\VincularState.tsx" />
+    <TypeScriptCompile Include="ClientApp\components\Model\User.tsx" />
+    <TypeScriptCompile Include="ClientApp\components\Model\WeekJiraIssues.tsx" />
+    <TypeScriptCompile Include="ClientApp\components\Model\Props\WeekJiraIssuesProps.tsx" />
     <TypeScriptCompile Include="ClientApp\components\VincularTarea.tsx" />
   </ItemGroup>
 

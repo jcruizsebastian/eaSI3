@@ -1,53 +1,11 @@
 ﻿import * as React from "react";
-import { RouteComponentProps, Route } from "react-router";
-import '../css/vincularTarea.css';
 import Loader from "react-loader-advanced";
 import ReactLoading from "react-loading";
-import { LoginGeneral } from "./LoginGeneral";
-import { NavLink } from "react-router-dom";
-
-interface Modules {
-    code: string;
-    name: string;
-}
-
-interface Components {
-    code: string;
-    name: string;
-    modulos: Modules[];
-}
-
-interface Products {
-    code: string;
-    name: string;
-    componentes: Components[];
-}
-
-interface VincularState {
-    products: Products[]
-    productSelected: string;
-    componentSelected: string;
-    moduleSelected: string;
-    loadedData: boolean;
-    loadedDataJira: boolean;
-    titulo: string;
-    prioridad: string;
-    tipo: string;
-    responsable: string;
-    loading: boolean;
-    todoOk: boolean;
-}
-
-interface Issue {
-    key: string;
-    summary: string;
-    assignee: string;
-    creator: string;
-    priority: number
-    issuetype: string;
-    si3ID: string;
-    issueId: string;
-}
+import { RouteComponentProps } from "react-router";
+import '../css/vincularTarea.css';
+import { Product } from './Model/Product';
+import { VincularState } from './Model/States/VincularState'
+import { Issue } from './Model/Issue'
 
 export class VincularTarea extends React.Component<RouteComponentProps<{}>, VincularState> {
     constructor(props: RouteComponentProps<{}>) {
@@ -73,7 +31,7 @@ export class VincularTarea extends React.Component<RouteComponentProps<{}>, Vinc
         this.setState({ loading: true });
 
         fetch('api/Si3/products?username=' + this.getCookie("userSi3") + '&password=' + this.getCookie("passSi3"))
-            .then(response => response.json() as Promise<Products[]>)
+            .then(response => response.json() as Promise<Product[]>)
             .then(data => {
                 this.setState({ products: data, loadedData: true });
                 fetch('api/Jira/issue?username=' + this.getCookie("userJira") + '&password=' + this.getCookie("passJira") + '&jiraKey=' + keyJira)
@@ -162,8 +120,7 @@ export class VincularTarea extends React.Component<RouteComponentProps<{}>, Vinc
                         this.setState({ loading: false });
                     })
                 }
-                else
-                {
+                else {
                     (response.text() as Promise<string>).then(data => {
                         var issueKey = data.split("\"")[1];
                         fetch('api/Jira/updateissuesi3customfield?username=' + this.getCookie("userJira") + '&password=' + this.getCookie("passJira") + '&issueKey=' + issueKey + '&jirakey=' + (this.refs["tbKeyJira"] as HTMLInputElement).value)
@@ -179,7 +136,7 @@ export class VincularTarea extends React.Component<RouteComponentProps<{}>, Vinc
                             });
                     });
                 }
-                
+
             });
     }
 
