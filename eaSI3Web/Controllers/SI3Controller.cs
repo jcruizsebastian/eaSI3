@@ -14,6 +14,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 using static eaSI3Web.Controllers.JiraController;
+using eaSI3Web.Controllers.Models;
 
 namespace eaSI3Web.Controllers
 {
@@ -28,68 +29,13 @@ namespace eaSI3Web.Controllers
             _logger = logger;
             _context = context;
         }
-
-        public class BodyIssue
-        {
-            public string JiraKey { get; set; }
-            public string Titulo { get; set; }
-            public string Prioridad { get; set; }
-            public string Tipo { get; set; }
-            public string Responsable { get; set; }
-            public string Producto { get; set; }
-            public string Componente { get; set; }
-            public string Modulo { get; set; }
-            public string CodUserSi3 { get; set; }
-
-        }
-        public class User
-        {
-            public string nombre { get; set; }
-            public string codigo { get; set; }
-        }
-        public class Issue
-        {
-            public string product { get; set; }
-            public string component { get; set; }
-            public string module = "0";
-            public string title { get; set; }
-            public string cause { get; set; }
-            public string user { get; set; }
-            public string type { get; set; }
-            public string tipo { get; set; }
-            public string phase { get; set; }
-            public string level { get; set; }
-            public string priority { get; set; }
-        }
-
-        [Serializable]
-        public class Producto
-        {
-            [Serializable]
-            public class Componente
-            {
-                [Serializable]
-                public class Modulo
-                {
-                    public string code { get; set; }
-                    public string name { get; set; }
-                }
-
-                public List<Modulo> modulos { get; set; }
-                public string code { get; set; }
-                public string name { get; set; }
-            }
-
-            public List<Componente> componentes { get; set; }
-            public string code { get; set; }
-            public string name { get; set; }
-        }
-
-        public static List<Producto> products { get; set; }
+        public static List<Models.Producto> products { get; set; }
 
         [HttpGet("[action]")]
-        public ActionResult<List<Producto>> Products([FromQuery]string username, [FromQuery]string password)
+        public ActionResult<List<Models.Producto>> Products([FromQuery]string username, [FromQuery]string password)
         {
+
+/*#if DEBUG
             if (products != null)
                 return products;
 
@@ -103,33 +49,33 @@ namespace eaSI3Web.Controllers
                 //esto de que esté vacío es temporal
                 //return StatusCode(500,e.Message);
             }
-
-            products = new List<Producto>();
+#endif*/
+            products = new List<Models.Producto>();
             var productos = new Dictionary<String,String>();
             try
             {
-                SI3Service SI3Service = new SI3Service(username, password);
+                SI3Service SI3Service = new SI3Service("jcruiz", "_*_d1d4ct1c");
                 productos = SI3Service.GetProducts();
                 foreach (var product in productos)
                 {
-                    List<Producto.Componente> components = new List<Producto.Componente>();
+                    List<Models.Componente> components = new List<Models.Componente>();
 
                     var componentes = SI3Service.GetComponents(product.Value);
                     foreach (var componente in componentes)
                     {
-                        List<Producto.Componente.Modulo> modules = new List<Producto.Componente.Modulo>();
+                        List<Models.Modulo> modules = new List<Models.Modulo>();
 
                         var modulos = SI3Service.GetModules(componente.Value);
 
                         foreach (var modulo in modulos)
                         {
-                            modules.Add(new Producto.Componente.Modulo() { name = modulo.Key, code = modulo.Value });
+                            modules.Add(new Models.Modulo() { name = modulo.Key, code = modulo.Value });
                         }
 
-                        components.Add(new Producto.Componente() { name = componente.Key, code = componente.Value, modulos = modules });
+                        components.Add(new Models.Componente() { name = componente.Key, code = componente.Value, modulos = modules });
                     }
 
-                    products.Add(new Producto() { name = product.Key, code = product.Value, componentes = components });
+                    products.Add(new Models.Producto() { name = product.Key, code = product.Value, componentes = components });
                 }
             } catch (InvalidCredentialException e) {
                 return StatusCode(401, e.Message);
@@ -177,15 +123,15 @@ namespace eaSI3Web.Controllers
         }
 
         [HttpGet("[action]")]
-        public ActionResult<List<User>> Users()
+        public ActionResult<List<Models.User>> Users()
         {
-            List<User> users = new List<User>();
+            List<Models.User> users = new List<Models.User>();
             try
             {
                 SI3Service SI3Service = new SI3Service("ofjcruiz", "_*_d1d4ct1c");
                 foreach (var userDic in SI3Service.GetUsers())
                 {
-                    User user = new User
+                    Models.User user = new Models.User
                     {
                         nombre = userDic.Key,
                         codigo = userDic.Value
@@ -217,7 +163,7 @@ namespace eaSI3Web.Controllers
                     bdStatistics.AddLogin(username);
                 }
             }
-            catch (Exception e)
+            catch (InvalidCredentialException e)
             {
                 return StatusCode(401, e.Message);
             }
@@ -442,7 +388,7 @@ namespace eaSI3Web.Controllers
             {
                 _logger.LogError("Usuario : " + username + " Error : " + e.Message);
                 bdStatistics.AddWorkTracking(username, int.Parse(selectedWeek), totalHours, 1, e.Message);
-                return StatusCode(500, "Error :" + e.Message);
+                return StatusCode(400, "Error :" + e.Message);
             }
             catch (Exception e)
             {

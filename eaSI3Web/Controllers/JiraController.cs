@@ -11,6 +11,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq;
 using System.Security.Authentication;
+using eaSI3Web.Controllers.Models;
 
 namespace eaSI3Web.Controllers
 {
@@ -26,12 +27,12 @@ namespace eaSI3Web.Controllers
             _context = context;
         }
 
-        static Calendar calendar = new Calendar();
+        static Models.Calendar calendar = new Models.Calendar();
 
         [HttpGet("[action]")]
-        public ActionResult<Calendar> Weeks() {
+        public ActionResult<Models.Calendar> Weeks() {
             
-            calendar.Weeks = new List<Calendar.CalendarWeeks>();
+            calendar.Weeks = new List<CalendarWeeks>();
             int weekOfYear = CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(DateTime.Now, CalendarWeekRule.FirstDay, DayOfWeek.Monday);
 
             int intDay = 1;
@@ -56,7 +57,7 @@ namespace eaSI3Web.Controllers
                 string description = day.Day + "/" + day.Month + "/" + DateTime.Now.Year + " to " + (intDay+aSumar) + "/" + intMonth + "/" + DateTime.Now.Year ;
 
 
-                calendar.Weeks.Add(new Calendar.CalendarWeeks() {
+                calendar.Weeks.Add(new CalendarWeeks() {
                     numberWeek = i + 1,
                     description = description,
                     startOfWeek = new DateTime(DateTime.Now.Year, day.Month, day.Day),
@@ -106,9 +107,9 @@ namespace eaSI3Web.Controllers
         }
 
         [HttpGet("[action]")]
-        public ActionResult<Issue> Issue(string username, string password, string jiraKey)
+        public ActionResult<IssueConveter.Model.Issue> Issue(string username, string password, string jiraKey)
         {
-            var jiraIssue = new Issue();
+            var jiraIssue = new IssueConveter.Model.Issue();
             BdStatistics bdStatistics = new BdStatistics(_context);
 
             try
@@ -186,7 +187,7 @@ namespace eaSI3Web.Controllers
                 WeekJiraIssues dateIssues = new WeekJiraIssues();
                 dateIssues.Fecha = workDate.First().RecordDate.Date;
 
-                dateIssues.Issues = new List<WeekJiraIssues.JiraIssues>();
+                dateIssues.Issues = new List<JiraIssues>();
 
                 foreach(var work in workDate)
                 {
@@ -194,51 +195,13 @@ namespace eaSI3Web.Controllers
                     if (issue != null)
                         issue.Tiempo += (work.TimeSpentSeconds / 3600.0);
                     else
-                        dateIssues.Issues.Add(new WeekJiraIssues.JiraIssues() { Titulo = work.Summary + " - " + work.Comment, IssueKey = work.Key, IssueCode = work.IssueId, Tiempo = (work.TimeSpentSeconds / 3600.0), IssueSI3Code = work.si3ID });
+                        dateIssues.Issues.Add(new JiraIssues() { Titulo = work.Summary + " - " + work.Comment, IssueKey = work.Key, IssueCode = work.IssueId, Tiempo = (work.TimeSpentSeconds / 3600.0), IssueSI3Code = work.si3ID });
                 }
                 weekJiraIssues.Add(dateIssues);
             }
 
             return weekJiraIssues.OrderBy(d => d.Fecha);
         }
-
-        public class WeekJiraIssuesResponse {
-            public IEnumerable<WeekJiraIssues> WeekJiraIssues { get; set; }
-            public bool NotOk { get; set; }
-            public string Message { get; set; }
-
-        }
-
-        public class Calendar {
-            public List<CalendarWeeks> Weeks { get; set; }
-
-            public class CalendarWeeks {
-
-                public int numberWeek { get; set; }
-                public string description { get; set; }
-                public DateTime startOfWeek { get; set; }
-                public DateTime endOfWeek { get; set; }
-            }
-        }
       
-        public class WeekJiraIssues
-        {
-            public DateTime Fecha { get; set; }
-            public List<JiraIssues> Issues { get; set; }
-
-            public class JiraIssues : ICloneable
-            {
-                public string IssueSI3Code { get; set; }
-                public string IssueCode { get; set; }
-                public string IssueKey { get; set; }
-                public string Titulo { get; set; }
-                public double Tiempo { get; set; }
-
-                public object Clone()
-                {
-                    return (JiraIssues)this.MemberwiseClone();
-                }
-            }
-        }
     }
 }

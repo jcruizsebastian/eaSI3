@@ -31,52 +31,66 @@ export class VincularTarea extends React.Component<RouteComponentProps<{}>, Vinc
         this.setState({ loading: true });
 
         fetch('api/Si3/products?username=' + this.getCookie("userSi3") + '&password=' + this.getCookie("passSi3"))
-            .then(response => response.json() as Promise<Product[]>)
-            .then(data => {
-                this.setState({ products: data, loadedData: true });
-                fetch('api/Jira/issue?username=' + this.getCookie("userJira") + '&password=' + this.getCookie("passJira") + '&jiraKey=' + keyJira)
-                    .then(response => {
-                        if (!response.ok) {
-                            (response.text() as Promise<String>).then(
-                                data => {
-                                    alert(data);
-                                    this.setState({ loadedDataJira: false, loading: false });
-                                }
-                            )
+            .then(response => 
+            {
+                if (!response.ok) {
+                    (response.text() as Promise<String>).then(
+                        data => {
+                            alert(data);
+                            this.setState({ loadedDataJira: false, loading: false });
                         }
-                        else {
-                            (response.json() as Promise<Issue>).then(
-                                data => {
-                                    if (data.si3ID == null) {
-                                        var prioridad_: string = "";
-                                        switch (data.priority) {
-                                            case 1:
-                                                prioridad_ = "Trivial";
-                                                break;
-                                            case 2:
-                                                prioridad_ = "Menor";
-                                                break;
-                                            case 3:
-                                                prioridad_ = "Mayor";
-                                                break;
-                                            case 4:
-                                                prioridad_ = "Crítica";
-                                                break;
-                                            case 5:
-                                                prioridad_ = "Bloqueadora";
-                                                break
-                                        }
-                                        this.setState({
-                                            loadedDataJira: true, titulo: data.summary, prioridad: prioridad_,
-                                            tipo: data.issuetype, responsable: data.assignee, loading: false
-                                        });
-                                    } else {
-                                        alert("Esta tarea ya está vinculada en SI3");
-                                        this.setState({ loadedDataJira: false, loading: false });
+                    );
+                }
+                else {
+                    (response.json() as Promise<Product[]>).then(
+                        data => {
+                            this.setState({ products: data, loadedData: true });
+                            fetch('api/Jira/issue?username=' + this.getCookie("userJira") + '&password=' + this.getCookie("passJira") + '&jiraKey=' + keyJira)
+                                .then(response => {
+                                    if (!response.ok) {
+                                        (response.text() as Promise<String>).then(
+                                            data => {
+                                                alert(data);
+                                                this.setState({ loadedDataJira: false, loading: false });
+                                            }
+                                        )
+                                    }
+                                    else {
+                                        (response.json() as Promise<Issue>).then(
+                                            data => {
+                                                if (data.si3ID == null) {
+                                                    var prioridad_: string = "";
+                                                    switch (data.priority) {
+                                                        case 1:
+                                                            prioridad_ = "Trivial";
+                                                            break;
+                                                        case 2:
+                                                            prioridad_ = "Menor";
+                                                            break;
+                                                        case 3:
+                                                            prioridad_ = "Mayor";
+                                                            break;
+                                                        case 4:
+                                                            prioridad_ = "Crítica";
+                                                            break;
+                                                        case 5:
+                                                            prioridad_ = "Bloqueadora";
+                                                            break
+                                                    }
+                                                    this.setState({
+                                                        loadedDataJira: true, titulo: data.summary, prioridad: prioridad_,
+                                                        tipo: data.issuetype, responsable: data.assignee, loading: false
+                                                    });
+                                                } else {
+                                                    alert("Esta tarea ya está vinculada en SI3");
+                                                    this.setState({ loadedDataJira: false, loading: false });
+                                                }
+                                            });
                                     }
                                 });
                         }
-                    })
+                    )
+                }
             });
 
 

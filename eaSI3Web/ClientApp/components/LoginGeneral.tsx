@@ -84,7 +84,7 @@ export class LoginGeneral extends React.Component<LoginProps, LoginState> {
 
             this.props.onLogin(name);
 
-        } else { this.setState({ loading: false }); alert("Crendenciales incorrectas"); }
+        } else { this.setState({ loading: false });}
     }
 
     render() {
