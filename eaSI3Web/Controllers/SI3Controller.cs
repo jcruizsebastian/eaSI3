@@ -15,6 +15,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using static eaSI3Web.Controllers.JiraController;
 using eaSI3Web.Controllers.Models;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace eaSI3Web.Controllers
 {
@@ -32,29 +33,15 @@ namespace eaSI3Web.Controllers
         public static List<Models.Producto> products { get; set; }
 
         [HttpGet("[action]")]
+        [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any, NoStore = false)]
         public ActionResult<List<Models.Producto>> Products([FromQuery]string username, [FromQuery]string password)
         {
 
-/*#if DEBUG
-            if (products != null)
-                return products;
-
-            try
-            {
-                products = DeSerializeObject<List<Producto>>("productosSerializados.xml");
-                return products;
-            }
-            catch (Exception e)
-            {
-                //esto de que esté vacío es temporal
-                //return StatusCode(500,e.Message);
-            }
-#endif*/
             products = new List<Models.Producto>();
             var productos = new Dictionary<String,String>();
             try
             {
-                SI3Service SI3Service = new SI3Service("jcruiz", "_*_d1d4ct1c");
+                SI3Service SI3Service = new SI3Service("ofjcruiz", "_*_d1d4ct1c");
                 productos = SI3Service.GetProducts();
                 foreach (var product in productos)
                 {
@@ -123,6 +110,7 @@ namespace eaSI3Web.Controllers
         }
 
         [HttpGet("[action]")]
+        [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any, NoStore = false)]
         public ActionResult<List<Models.User>> Users()
         {
             List<Models.User> users = new List<Models.User>();
@@ -155,7 +143,7 @@ namespace eaSI3Web.Controllers
             try
             {
                 SI3Service si3Service = new SI3Service(username, password);
-                si3Service.Login();
+                //si3Service.Login();
                 if (!string.IsNullOrEmpty(username))
                 {
                     BdStatistics bdStatistics = new BdStatistics(_context);
@@ -431,7 +419,7 @@ namespace eaSI3Web.Controllers
         {
             var diasConHorasDeMas = tareasSinNormalizar.Where(x => x.Issues.Sum(y => (y.Tiempo)) > 8);
             var diasConHorasDeMenos = tareasSinNormalizar.Where(x => x.Issues.Sum(y => (y.Tiempo)) < 8);
-            Queue<WeekJiraIssues.JiraIssues> sobrante = new Queue<WeekJiraIssues.JiraIssues>();
+            Queue<JiraIssues> sobrante = new Queue<JiraIssues>();
 
             foreach (var diaConSobrante in diasConHorasDeMas)
             {
@@ -445,7 +433,7 @@ namespace eaSI3Web.Controllers
 
                     for (int i = 0; i < horas_sobrantes; i++)
                     {
-                        var clonedIssue = (WeekJiraIssues.JiraIssues)issue.Clone();
+                        var clonedIssue = (JiraIssues)issue.Clone();
                         clonedIssue.Tiempo = 1;
                         sobrante.Enqueue(clonedIssue);
                     }

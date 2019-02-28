@@ -14,16 +14,14 @@ namespace SI3Connector
 {
     public class SI3Service
     {
-        private string username { get; set; }
-        private string password { get; set; }
         private string usercode { get; set; }
         private SI3HttpRequest SI3HttpRequest { get; set; }
 
         public SI3Service(string username, string password)
         {
-            this.username = username;
-            this.password = password;
             SI3HttpRequest = new SI3HttpRequest();
+
+            Login(username, password);
         }
 
         private static Dictionary<string, string> products { get; set; }
@@ -31,8 +29,6 @@ namespace SI3Connector
         {
             if (products != null)
                 return products;
-
-            Login();
 
             var request = SI3HttpRequest.Post(new Uri("http://si3.infobolsa.es/Si3/its/asp/ProductosActivosXML.asp"), null);
             request.Wait();
@@ -53,7 +49,7 @@ namespace SI3Connector
             if(components == null)
                 components = new Dictionary<string, Dictionary<string, string>>();
 
-            Login();
+            //Login();
 
             var request = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/its/asp/ComponentesXML.asp?cod={producto}"), null);
             request.Wait();
@@ -74,7 +70,7 @@ namespace SI3Connector
             if (modules == null)
                 modules = new Dictionary<string, Dictionary<string, string>>();
 
-            Login();
+            //Login();
 
             var request = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/its/asp/ModulesXML.asp?cod={component}"), null);
             request.Wait();
@@ -92,7 +88,7 @@ namespace SI3Connector
             if (users != null)
                 return users;
 
-            Login();
+            //Login();
 
             var request = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/its/asp/usuariosFiltradosXML.asp"), null);
             request.Wait();
@@ -104,7 +100,7 @@ namespace SI3Connector
             return users;
         }
 
-        public void Login()
+        public void Login(string username, string password)
         {
             var x_www_form_url_encoded = new Dictionary<string, string>();
             x_www_form_url_encoded.Add("user", username);
@@ -122,7 +118,7 @@ namespace SI3Connector
 
         public string NewIssue(Issue newIssueData)
         {
-            Login();
+            //Login();
             var x_www_form_url_encoded = new Dictionary<string, string>();
             x_www_form_url_encoded.Clear();
             x_www_form_url_encoded.Add("product", newIssueData.product);
@@ -146,7 +142,7 @@ namespace SI3Connector
 
             var idSi3 = request.Result.Split("viewToEdit('")[1].Split("'")[0];
 
-            Login();
+            //Login();
 
             x_www_form_url_encoded.Clear();
             x_www_form_url_encoded.Add("isid", idSi3);
@@ -155,7 +151,7 @@ namespace SI3Connector
             var request2 = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/its/asp/saveIssue.asp"), x_www_form_url_encoded);
             request2.Wait();
 
-            Login();
+            //Login();
 
             x_www_form_url_encoded.Clear();
             x_www_form_url_encoded.Add("isid", idSi3);
@@ -169,7 +165,7 @@ namespace SI3Connector
 
         public string AddIssueWork(string issueid, DateTime date, int time)
         {
-            Login();
+            //Login();
             var x_www_form_url_encoded = new Dictionary<string, string>();
             x_www_form_url_encoded.Clear();
             x_www_form_url_encoded.Add("newTimeRecord", time.ToString());
@@ -184,7 +180,7 @@ namespace SI3Connector
 
         public bool IsIssueOpened(string issueid)
         {
-            Login();
+            //Login();
             var x_www_form_url_encoded = new Dictionary<string, string>();
             x_www_form_url_encoded.Clear();
 
@@ -212,7 +208,7 @@ namespace SI3Connector
 
             x_www_form_url_encoded.Add($"COMM{projectCode}+++", string.Empty);
 
-            Login();
+            //Login();
 
             var request = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/treport/asp/saveWReport.asp?cod={weekCode}&stchange=0&initst=1&usercode={usercode}&aa={DateTime.Today.Year}&pn=Resumen"), x_www_form_url_encoded);
             request.Wait();
@@ -238,14 +234,14 @@ namespace SI3Connector
             var projectCode = milestoneProjectCode.Split(",")[0].Replace("-", "");
             var milestoneCode = milestoneProjectCode.Split(",")[1].Replace("-", ".");
 
-            Login();
+            //Login();
 
             var request = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/gestion/asp/PlanSistemas.asp"), null);
             request.Wait();
 
             string projectID = GetProjectId(projectCode, request.Result);
 
-            Login();
+            //Login();
 
             request = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/gestion/asp/MilestonesXML.asp?cod={projectID}"), null);
             request.Wait();
