@@ -14,9 +14,9 @@ interface WeekJiraIssuesResponse {
     weekJiraIssues: WeekJiraIssues[];
 }
 
-export class Home extends React.Component<RouteComponentProps<{}>, UserCredentialsState> {
+export class Home extends React.Component<{}, UserCredentialsState> {
 
-    constructor(props: RouteComponentProps<{}>) {
+    constructor(props: {}) {
         super(props);
 
         this.onLoginJira = this.onLoginJira.bind(this);

@@ -92,7 +92,7 @@ export class LoginGeneral extends React.Component<LoginProps, LoginState> {
         return (
             <div className="bodyLogin">
                 <form className="formulario" onSubmit={this.handleSubmit}>
-                    <img src="logo.png" width="96" height="96" className="img" />
+                    <img src="logo_open.png" width="156" height="94" className="img" />
                     <div><label>Usuario de Jira : <input type="text" name="name" ref="tbUserJira" placeholder="Introduzca usuario de Jira" autoComplete="off" /></label></div>
                     <div><label>Contraseña de Jira : <input type="password" name="name" ref="tbPassJira" placeholder="Introduzca contraseña de Jira" autoComplete="off" /></label></div>
                     <div><label>Nombre de usuario : <select ref="tbCodUserSi3">

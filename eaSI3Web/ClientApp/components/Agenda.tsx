@@ -3,6 +3,7 @@ import * as React from 'react';
 import '../css/agenda.css';
 import { WeekJiraIssuesProps } from './Model/Props/WeekJiraIssuesProps';
 import { AgendaState } from './Model/States/AgendaState';
+import { PopupVincularTarea } from './popupVincularTarea';
 
 export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
 
@@ -12,7 +13,9 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
         this.isDisabledBtnSi3 = this.isDisabledBtnSi3.bind(this);
         this.timeReassignment = this.timeReassignment.bind(this);
         this.calculateTotalHours = this.calculateTotalHours.bind(this);
-        this.state = { weekissues: this.props.weekissues, link: "https://jira.openfinance.es/browse/" };
+        this.vincular = this.vincular.bind(this);
+        this.closePopup = this.closePopup.bind(this);
+        this.state = { weekissues: this.props.weekissues, link: "https://jira.openfinance.es/browse/", vincular: false, issueVincular:"" };
     }
 
     componentDidMount() {
@@ -61,6 +64,12 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
         else { return true; }
     }
 
+    public vincular(issuekey: string) {
+        //e.preventDefault();
+        this.setState({ vincular: true, issueVincular: issuekey });
+        this.forceUpdate();
+       
+    }
     private calculateTotalHours() {
 
         let total = 0;
@@ -76,14 +85,18 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
 
         return total;
     }
-
+    public closePopup() {
+        this.setState({ vincular: false });
+    }
     public render() {
 
         let total: number = this.calculateTotalHours();
-
-        console.log("entra en el render de agenda")
+    
         return <div>
-
+            {this.state.vincular ?
+                <PopupVincularTarea keyJira={this.state.issueVincular} closePopup={this.closePopup} />
+                : null
+            }
             <table className="table .table-responsive">
                 <caption>Lista de tareas Jira</caption>
                 <thead className="thead-dark">
@@ -109,8 +122,8 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                                         x =>
                                             <div className="agenda-events-id" key={x.issueCode}>
                                                 <a target="_blank" href={this.state.link.concat(x.issueKey)}>{x.issueKey}</a>
-
-                                                <label className="issue-si3">({x.issueSI3Code})</label>
+                                                <button type="button" id="btn-vincular" className="btn btn-danger btn-sm" onClick={() => { this.vincular(x.issueKey) }} >Vincular</button>
+                                               
                                             </div>
                                     )}
 
@@ -180,6 +193,7 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                 </tbody>
             </table>
             <br />
+            
         </div>
     }
 }

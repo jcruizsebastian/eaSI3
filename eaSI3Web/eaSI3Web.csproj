@@ -38,6 +38,8 @@
     <None Remove="ClientApp\components\Model\Module.tsx" />
     <None Remove="ClientApp\components\Model\Product.tsx" />
     <None Remove="ClientApp\components\Model\Props\LoginProps.tsx" />
+    <None Remove="ClientApp\components\Model\Props\popupProps.tsx" />
+    <None Remove="ClientApp\components\Model\Props\VincularTareaProps.tsx" />
     <None Remove="ClientApp\components\Model\States\AgendaState.tsx" />
     <None Remove="ClientApp\components\Model\States\LayoutState.tsx" />
     <None Remove="ClientApp\components\Model\States\LoginState.tsx" />
@@ -46,6 +48,7 @@
     <None Remove="ClientApp\components\Model\User.tsx" />
     <None Remove="ClientApp\components\Model\WeekJiraIssues.tsx" />
     <None Remove="ClientApp\components\Model\WeekJiraIssuesProps.tsx" />
+    <None Remove="ClientApp\components\PopupVincularTarea.tsx" />
     <None Remove="ClientApp\components\VincularTarea.tsx" />
   </ItemGroup>
 
@@ -66,6 +69,8 @@
     <TypeScriptCompile Include="ClientApp\components\Model\Module.tsx" />
     <TypeScriptCompile Include="ClientApp\components\Model\Product.tsx" />
     <TypeScriptCompile Include="ClientApp\components\Model\Props\LoginProps.tsx" />
+    <TypeScriptCompile Include="ClientApp\components\Model\Props\popupProps.tsx" />
+    <TypeScriptCompile Include="ClientApp\components\Model\Props\VincularTareaProps.tsx" />
     <TypeScriptCompile Include="ClientApp\components\Model\States\AgendaState.tsx" />
     <TypeScriptCompile Include="ClientApp\components\Model\States\LayoutState.tsx" />
     <TypeScriptCompile Include="ClientApp\components\Model\States\LoginState.tsx" />
@@ -74,6 +79,7 @@
     <TypeScriptCompile Include="ClientApp\components\Model\User.tsx" />
     <TypeScriptCompile Include="ClientApp\components\Model\WeekJiraIssues.tsx" />
     <TypeScriptCompile Include="ClientApp\components\Model\Props\WeekJiraIssuesProps.tsx" />
+    <TypeScriptCompile Include="ClientApp\components\PopupVincularTarea.tsx" />
     <TypeScriptCompile Include="ClientApp\components\VincularTarea.tsx" />
   </ItemGroup>
 

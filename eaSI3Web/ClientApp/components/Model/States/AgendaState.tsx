@@ -3,4 +3,6 @@
 export interface AgendaState {
     weekissues: WeekJiraIssues[];
     link: String;
+    vincular: boolean;
+    issueVincular: string;
 }

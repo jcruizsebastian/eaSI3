@@ -6,9 +6,10 @@ import '../css/vincularTarea.css';
 import { Product } from './Model/Product';
 import { VincularState } from './Model/States/VincularState'
 import { Issue } from './Model/Issue'
+import { VincularTareaProps } from "./Model/Props/VincularTareaProps";
 
-export class VincularTarea extends React.Component<RouteComponentProps<{}>, VincularState> {
-    constructor(props: RouteComponentProps<{}>) {
+export class VincularTarea extends React.Component<VincularTareaProps, VincularState> {
+    constructor(props: VincularTareaProps) {
         super(props);
 
         this.state = {
@@ -22,17 +23,28 @@ export class VincularTarea extends React.Component<RouteComponentProps<{}>, Vinc
         this.handleChangeComponents = this.handleChangeComponents.bind(this);
         this.handleChangeModules = this.handleChangeModules.bind(this);
         this.vincular = this.vincular.bind(this);
+        this.generarInformacion = this.generarInformacion.bind(this);
     }
 
     public handleSubmit(e: { preventDefault: () => void; }) {
-        var keyJira: string = (this.refs["tbKeyJira"] as HTMLInputElement).value;
-
         e.preventDefault();
+        this.generarInformacion();
+
+    }
+
+    public generarInformacion() {
+        var keyJira: string;
+
+        if (this.props.jiraKey.length > 0) {
+            keyJira = this.props.jiraKey;
+        } else {
+            keyJira = (this.refs["tbKeyJira"] as HTMLInputElement).value;
+        }
+
         this.setState({ loading: true });
 
         fetch('api/Si3/products?username=' + this.getCookie("userSi3") + '&password=' + this.getCookie("passSi3"))
-            .then(response => 
-            {
+            .then(response => {
                 if (!response.ok) {
                     (response.text() as Promise<String>).then(
                         data => {
@@ -92,8 +104,6 @@ export class VincularTarea extends React.Component<RouteComponentProps<{}>, Vinc
                     )
                 }
             });
-
-
     }
 
     public handleChangeProducts(event: React.FormEvent<HTMLSelectElement>) {
@@ -114,10 +124,15 @@ export class VincularTarea extends React.Component<RouteComponentProps<{}>, Vinc
         this.setState({ loading: true });
         var cod = this.getCookie("codUserSi3");
 
+        var key;
+        if (this.props.jiraKey.length > 0) {
+            key = this.props.jiraKey
+        } else { key = (this.refs["tbKeyJira"] as HTMLInputElement).value; }
+
         fetch('api/Si3/Linkissue?username=' + this.getCookie("userSi3") + '&password=' + this.getCookie("passSi3"), {
             method: 'post',
             body: JSON.stringify({
-                JiraKey: (this.refs["tbKeyJira"] as HTMLInputElement).value, Titulo: this.state.titulo, Prioridad: this.state.prioridad,
+                JiraKey: key, Titulo: this.state.titulo, Prioridad: this.state.prioridad,
                 Tipo: this.state.tipo, Producto: this.state.productSelected, Componente: this.state.componentSelected, Modulo: this.state.moduleSelected,
                 Responsable: this.state.responsable, CodUserSi3: cod
             }),
@@ -226,8 +241,23 @@ export class VincularTarea extends React.Component<RouteComponentProps<{}>, Vinc
     }
 
     public render() {
+        console.log("render vincular tarea");
 
-
+        let formulario;
+        if (this.props.jiraKey.length == 0) {
+            formulario = <div>
+                <form className="dataForm" onSubmit={this.handleSubmit}>
+                    <label className="text">Key Jira :</label>
+                    <input type="text" id="keyJira" className="form-control" name="key" ref="tbKeyJira" placeholder="Introduzca Key Jira" autoComplete="off" />
+                    <input type="submit" className="btn btn-primary" value="Generar información" />
+                </form>
+            </div>;
+        }
+        if (this.props.jiraKey.length > 0 && !this.state.loading && !this.state.loadedData)
+        {
+            formulario = <div></div>
+            this.generarInformacion();
+        }
 
         let informacion;
         if (this.state.loadedData && this.state.loadedDataJira) {
@@ -236,12 +266,7 @@ export class VincularTarea extends React.Component<RouteComponentProps<{}>, Vinc
         const spinner = <span><ReactLoading color='#fff' type='spin' className="spinner" height={128} width={128} /></span>
         return (
             <div>
-                <form className="dataForm" onSubmit={this.handleSubmit}>
-                    <label className="text">Key Jira :</label>
-                    <input type="text" id="keyJira" className="form-control" name="key" ref="tbKeyJira" placeholder="Introduzca Key Jira" autoComplete="off" />
-                    <input type="submit" className="btn btn-primary" value="Generar información" />
-                </form>
-
+                {formulario}
                 {informacion}
                 <Loader show={this.state.loading} message={spinner} hideContentOnLoad={false} className={(this.state.loading == true) ? "overlay" : "overlay-1"} />
             </div>
