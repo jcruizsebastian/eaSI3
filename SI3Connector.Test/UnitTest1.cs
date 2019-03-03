@@ -102,6 +102,13 @@ namespace SI3Connector.Test
         }
 
         [TestMethod]
+        public void testAvailableHours()
+        {
+            SI3Service service = new SI3Service("ofjcruiz", "_*_d1d4ct1c");
+            var a = service.AvailableHours();
+        }
+
+        [TestMethod]
         public void testNewIssue()
         {
             Issue newissue = new Issue()
