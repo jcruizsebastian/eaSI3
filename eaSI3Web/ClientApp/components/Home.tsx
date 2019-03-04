@@ -26,6 +26,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
         this.getWeekofYear = this.getWeekofYear.bind(this);
         this.handleChangeWeek = this.handleChangeWeek.bind(this);
         this.getCookie = this.getCookie.bind(this);
+        this.isDisabledJira = this.isDisabledJira.bind(this);
 
         this.state = {
             Weekissues: [], loadedJira: false, loadingJira: false, calendar: { weeks: [] }, calendarLoaded: false, todoOk: false,
@@ -43,6 +44,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
     }
 
     private getWeekofYear() {
+        this.setState({ loading: true});
         fetch('api/Jira/Weeks')
             .then(response => response.json() as Promise<Calendar>)
             .then(data => {
@@ -55,14 +57,22 @@ export class Home extends React.Component<{}, UserCredentialsState> {
                         );
                     } else {
                         (response.json() as Promise<number>).then(data => {
-                            this.setState({ availableHours: 40 - data });
+                            if (data > 0) { this.isDisabledJira(); this.setState({ availableHours: 50, loading: false }); }
+                            else { this.setState({ availableHours: 40 - data, loading:false }); }
                         });
                     }
                 });
-                this.setState({ calendar: data, calendarLoaded: true, selectedWeek: data.weeks.length.toString() });
+                this.setState({ calendar: data, calendarLoaded: true, selectedWeek: data.weeks.length.toString()});
             });
     }
 
+    private isDisabledJira() {
+        if (this.state.availableHours == 50) {
+            alert("Ya hay horas imputadas en Si3.")
+            return true;
+        } else return false;
+            
+    }
     private onLoginJira(e: { preventDefault: () => void; }) {
         e.preventDefault();
 
@@ -148,14 +158,17 @@ export class Home extends React.Component<{}, UserCredentialsState> {
     public isTodoOk(val: boolean) { this.setState({ todoOk: val }); }
 
     public render() {
+        let error;
         let agenda;
         let si3;
         let jira;
         let calendar;
-
+        if (this.state.availableHours == 50) {
+            //alert("Ya hay horas imputadas en Jira");
+        }
         if (this.state.calendarLoaded) {
-            jira = <input type="button" value="Obtener issues" className="btn btn-primary" onClick={this.onLoginJira} />
-
+            jira = <input type="button" value="Obtener issues" className="btn btn-primary" onClick={this.onLoginJira} disabled={this.isDisabledJira()} />
+            
             calendar = <div>
                 <label>Elija semana de trabajo :</label>
                 <select className="custom-select" onChange={this.handleChangeWeek} >
