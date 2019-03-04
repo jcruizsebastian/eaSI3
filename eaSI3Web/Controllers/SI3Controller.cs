@@ -323,7 +323,7 @@ namespace eaSI3Web.Controllers
         }
 
         [HttpGet("[action]")]
-        public ActionResult<Dictionary<int, int>> AvailableHours([FromQuery]string username, [FromQuery]string password)
+        public ActionResult<Dictionary<int, int>> AvailableHours2([FromQuery]string username, [FromQuery]string password)
         {
             SI3Service SI3Service = new SI3Service(username, password);
             return SI3Service.AvailableHours().ToDictionary(x => (int)x.Key, y => y.Value);
