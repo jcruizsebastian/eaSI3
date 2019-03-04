@@ -76,7 +76,7 @@ export class LoginGeneral extends React.Component<LoginProps, LoginState> {
             var expiration_date = new Date();
             expiration_date.setFullYear(expiration_date.getFullYear() + 1);
 
-            document.cookie = "userJira=" + userJira + "; expires=" + expiration_date;
+            document.cookie = "userJira=" + userJira + "; path=/;"+ "expires=" + expiration_date;
             document.cookie = "passJira=" + passJira + "; expires=" + expiration_date;
             document.cookie = "codUserSi3=" + codUserSi3 + "; expires=" + expiration_date;
             document.cookie = "userSi3=" + userSi3 + "; expires=" + expiration_date;
