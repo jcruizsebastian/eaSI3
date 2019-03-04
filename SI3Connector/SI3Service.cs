@@ -316,6 +316,29 @@ namespace SI3Connector
             return CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(time, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
         }
 
+        public Dictionary<DayOfWeek, int> AvailableHours()
+        {
+            Dictionary<DayOfWeek, int> availableHours = new Dictionary<DayOfWeek, int>();
+
+            var weekNumber = GetIso8601WeekOfYear(DateTime.Today);
+            var weekCode = GetWeekCode(weekNumber);
+
+            var request = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/treport/asp/weeklyreport.asp?cod={weekCode}&aa={DateTime.Today.Year}&pn=Resumen"));
+            request.Wait();
+
+            var doc = new HtmlDocument();
+            doc.LoadHtml(request.Result);
+
+            var weekHours = doc.DocumentNode.SelectNodes("//td[@colspan=2][contains(text(),'Totals')]/parent::*/td[not(@colspan)]/input");
+
+            for(int contador = 0; contador < 5; contador++)
+            {
+                availableHours.Add((DayOfWeek)contador + 1, Convert.ToInt32(weekHours[contador].Attributes["value"].Value));
+            }
+
+            return availableHours;
+        }
+
         internal string GetWeekCode(int weekNumber)
         {
             var request = SI3HttpRequest.Post(new Uri("http://si3.infobolsa.es/Si3/treport/asp/resumen.asp"));

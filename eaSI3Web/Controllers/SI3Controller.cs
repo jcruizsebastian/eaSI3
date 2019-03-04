@@ -451,15 +451,15 @@ namespace eaSI3Web.Controllers
                 }
             }
 
-            if (!sobrante.Any())
-                return;
-
             foreach (var diaConFaltante in diasConHorasDeMenos)
             {
                 double horas_faltantes = Math.Abs(diaConFaltante.Issues.Sum(x => x.Tiempo) - 8);
 
                 for (int i = 0; i < horas_faltantes; i++)
                 {
+                    if (!sobrante.Any())
+                        return;
+
                     var issue = sobrante.Dequeue();
                     diaConFaltante.Issues.Add(issue);
                 }
