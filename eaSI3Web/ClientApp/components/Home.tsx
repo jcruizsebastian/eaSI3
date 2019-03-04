@@ -146,7 +146,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
                     (response.text() as Promise<String>).then(data => { alert(data); this.setState({ loading: false }); });
                 } else {
                     alert("Horas imputadas en SI3");
-                    this.setState({ loading: false });
+                    this.setState({ loading: false, todoOk: true });
                 }
             });
     }
