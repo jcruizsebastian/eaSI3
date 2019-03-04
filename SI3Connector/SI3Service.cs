@@ -291,8 +291,12 @@ namespace SI3Connector
             string documentMilestoneCode = string.Empty;
             for (int i = 4; i < documentMilestones.Count; i = i + 2)
             {
-                string documentProjectCode = doc.DocumentNode.SelectSingleNode($"//*[@id=\"TableExcel\"]/tr/td/table/tr[{i}][not(@valign)]/td[2]").InnerHtml.Trim();
-                if (project == documentProjectCode)
+                var milestone = doc.DocumentNode.SelectSingleNode($"//*[@id=\"TableExcel\"]/tr/td/table/tr[{i}][not(@valign)]/td[2]");
+
+                string projectCode = milestone.InnerHtml.Trim();
+                string titleProject = milestone.Attributes["title"].Value.Trim();
+
+                if (project == projectCode)
                 {
                     documentMilestoneCode = doc.DocumentNode.SelectSingleNode($"//*[@id=\"TableExcel\"]/tr/td/table/tr[{i}]/td/a[@onclick]").OuterHtml.Split("id=\"img")[1].Split("\"></a>")[0].Split("\"")[0];
                     break;

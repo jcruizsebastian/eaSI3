@@ -3,4 +3,5 @@
 export interface WeekJiraIssuesProps {
     weekissues: WeekJiraIssues[];
     isTodoOk: Function;
+    availableHours: Number;
 }

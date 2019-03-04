@@ -135,6 +135,18 @@ namespace eaSI3Web.Controllers
 
             return users.OrderBy(x => x.nombre).ToList();
         }
+        [HttpGet("[action]")]
+        public ActionResult<int> AvailableHours(string username, string password) {
+            try
+            {
+                SI3Service Si3Service = new SI3Service(username, password);
+                return Si3Service.AvailableHours().Sum(x => x.Value);
+            }
+            catch (InvalidCredentialException e)
+            {
+                return StatusCode(401, e.Message);
+            }
+        }
 
         [HttpGet("[action]")]
         public ActionResult ValidateLogin(string username, string password)

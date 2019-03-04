@@ -10,4 +10,5 @@ export interface UserCredentialsState {
     selectedWeek?: string;
     todoOk: boolean;
     loading: boolean;
+    availableHours: Number;
 }
