@@ -4,6 +4,7 @@ import '../css/agenda.css';
 import { WeekJiraIssuesProps } from './Model/Props/WeekJiraIssuesProps';
 import { AgendaState } from './Model/States/AgendaState';
 import { PopupVincularTarea } from './popupVincularTarea';
+import { Props } from 'react-loader-advanced';
 
 export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
 
@@ -21,6 +22,7 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
     componentDidMount() {
         var todoOk = this.isDisabledBtnSi3();
         this.props.isTodoOk(todoOk);
+        
     }
 
     public timeReassignment(event: React.ChangeEvent<HTMLInputElement>) {
@@ -60,14 +62,14 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
             }
         }
 
-        if (total <= 40) { return false; }
+        if (total <= this.props.availableHours) { return false; }
         else { return true; }
     }
 
     public vincular(issuekey: string) {
         //e.preventDefault();
         this.setState({ vincular: true, issueVincular: issuekey });
-        this.forceUpdate();
+        //this.forceUpdate();
        
     }
     private calculateTotalHours() {
@@ -85,7 +87,17 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
 
         return total;
     }
-    public closePopup() {
+    public closePopup(idSi3: string) {
+        if (idSi3.length > 0) {
+            let WeekJiraIssues = this.props.weekissues;
+            for (let weekIssue of WeekJiraIssues) {
+                for (let Issue of weekIssue.issues) {
+                    if (Issue.issueSI3Code == null) {
+                        Issue.issueSI3Code = idSi3;
+                    }
+                }
+            }
+        }
         this.setState({ vincular: false });
     }
     public render() {
@@ -161,7 +173,7 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                                     {Weekissue.issues.filter(issue => issue.issueSI3Code == null).map(
                                         issue =>
                                             <div className="agenda-events-hours" key={issue.issueKey}>
-                                                <input type="text" id={issue.issueKey + '|' + new Date(Weekissue.fecha.toString()).getDate()} name="tbTiempoCorregido" value={issue.tiempoCorregido}
+                                                <input type="text" id={issue.issueKey + '|' + new Date(Weekissue.fecha.toString()).getDate()} name="tbTiempoCorregido" value={issue.tiempo}
                                                     placeholder={String(issue.tiempo)} onChange={this.timeReassignment} className={((Number(issue.tiempo) % 1 != 0) || (issue.issueSI3Code == null && issue.tiempo > 0)) ? "invalid" : "valid"}
                                                     autoComplete="off" />
 
@@ -170,7 +182,7 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                                     {Weekissue.issues.filter(issue => issue.issueSI3Code != null).map(
                                         issue =>
                                             <div className="agenda-events-hours" key={issue.issueKey}>
-                                                <input type="text" id={issue.issueKey + '|' + new Date(Weekissue.fecha.toString()).getDate()} name="tbTiempoCorregido" value={issue.tiempoCorregido}
+                                                <input type="text" id={issue.issueKey + '|' + new Date(Weekissue.fecha.toString()).getDate()} name="tbTiempoCorregido" value={issue.tiempo}
                                                     placeholder={String(issue.tiempo)} onChange={this.timeReassignment} className={((Number(issue.tiempo) % 1 != 0) || (issue.issueSI3Code == null && issue.tiempo > 0)) ? "invalid" : "valid"}
                                                     autoComplete="off" />
 
@@ -188,7 +200,7 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td><label className="agenda-total">Total : {total.toString()}</label></td>
+                        <td><label className="agenda-total">Horas : {total.toString()}/{this.props.availableHours.toString()} </label></td>
                     </tr>
                 </tbody>
             </table>

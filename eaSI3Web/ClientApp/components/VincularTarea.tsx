@@ -124,7 +124,7 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
         this.setState({ loading: true });
         var cod = this.getCookie("codUserSi3");
 
-        var key;
+        var key: string;
         if (this.props.jiraKey.length > 0) {
             key = this.props.jiraKey
         } else { key = (this.refs["tbKeyJira"] as HTMLInputElement).value; }
@@ -152,7 +152,7 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
                 else {
                     (response.text() as Promise<string>).then(data => {
                         var issueKey = data.split("\"")[1];
-                        fetch('api/Jira/updateissuesi3customfield?username=' + this.getCookie("userJira") + '&password=' + this.getCookie("passJira") + '&issueKey=' + issueKey + '&jirakey=' + (this.refs["tbKeyJira"] as HTMLInputElement).value)
+                        fetch('api/Jira/updateissuesi3customfield?username=' + this.getCookie("userJira") + '&password=' + this.getCookie("passJira") + '&issueKey=' + issueKey + '&jirakey=' + key)
                             .then(response => {
                                 if (!response.ok) {
                                     (response.text() as Promise<string>).then(data => {
@@ -160,6 +160,9 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
                                         this.setState({ loading: false });
                                     })
                                 } else {
+                                    if (this.props.jiraKey.length > 0) {
+                                        this.props.vincular(issueKey);
+                                    }
                                     alert("Tarea vinculada"); this.setState({ loading: false });
                                 }
                             });
@@ -253,7 +256,7 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
                 </form>
             </div>;
         }
-        if (this.props.jiraKey.length > 0 && !this.state.loading && !this.state.loadedData)
+        if (this.props.jiraKey.length > 0 && !this.state.loading && !this.state.loadedData && !this.state.loadedDataJira)
         {
             formulario = <div></div>
             this.generarInformacion();

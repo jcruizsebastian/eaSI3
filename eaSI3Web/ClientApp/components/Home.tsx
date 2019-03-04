@@ -28,7 +28,8 @@ export class Home extends React.Component<{}, UserCredentialsState> {
         this.getCookie = this.getCookie.bind(this);
 
         this.state = {
-            Weekissues: [], loadedJira: false, loadingJira: false, calendar: { weeks: [] }, calendarLoaded: false, todoOk: false, loading: false
+            Weekissues: [], loadedJira: false, loadingJira: false, calendar: { weeks: [] }, calendarLoaded: false, todoOk: false,
+            loading: false, availableHours: 0
         };
     }
 
@@ -45,6 +46,19 @@ export class Home extends React.Component<{}, UserCredentialsState> {
         fetch('api/Jira/Weeks')
             .then(response => response.json() as Promise<Calendar>)
             .then(data => {
+                fetch('api/Si3/AvailableHours?username=' + this.getCookie("userSi3") + '&password=' + this.getCookie("passSi3")).then(response => {
+                    if (!response.ok) {
+                        (response.text() as Promise<String>).then(
+                            data => {
+                                alert(data);
+                            }
+                        );
+                    } else {
+                        (response.json() as Promise<number>).then(data => {
+                            this.setState({ availableHours: 40 - data });
+                        });
+                    }
+                });
                 this.setState({ calendar: data, calendarLoaded: true, selectedWeek: data.weeks.length.toString() });
             });
     }
@@ -144,10 +158,10 @@ export class Home extends React.Component<{}, UserCredentialsState> {
 
             calendar = <div>
                 <label>Elija semana de trabajo :</label>
-                <select className="custom-select" onChange={this.handleChangeWeek} disabled value={this.state.calendar.weeks.length}>
+                <select className="custom-select" onChange={this.handleChangeWeek} >
                     {
                         this.state.calendar.weeks.map(week =>
-                            <option value={week.numberWeek} key={week.numberWeek} >
+                            <option value={week.numberWeek} key={week.numberWeek} selected={week.numberWeek == this.state.calendar.weeks.length ? true:false }>
                                 {week.description}
                             </option>)
                     }
@@ -157,7 +171,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
 
         if (this.state.loadedJira) {
 
-            agenda = <Agenda weekissues={this.state.Weekissues} ref="agenda1" isTodoOk={this.isTodoOk} />
+            agenda = <Agenda weekissues={this.state.Weekissues} ref="agenda1" isTodoOk={this.isTodoOk} availableHours={this.state.availableHours} />
 
             si3 = <div> <input type="button" id="btnSi3" value="Imputar tareas en Si3" className="btn btn-primary" disabled={this.state.todoOk} onClick={this.onLoginSi3} /></div>;
 
