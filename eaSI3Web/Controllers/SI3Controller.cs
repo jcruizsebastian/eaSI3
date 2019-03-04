@@ -309,6 +309,14 @@ namespace eaSI3Web.Controllers
             }
             return NewIssue;
         }
+
+        [HttpGet("[action]")]
+        public ActionResult<Dictionary<int, int>> AvailableHours([FromQuery]string username, [FromQuery]string password)
+        {
+            SI3Service SI3Service = new SI3Service(username, password);
+            return SI3Service.AvailableHours().ToDictionary(x => (int)x.Key, y => y.Value);
+        }
+
         [HttpPost("[action]")]
         public ActionResult Register([FromQuery]string username, [FromQuery]string password, [FromQuery]string selectedWeek, [FromQuery]int totalHours, [FromBody]IEnumerable<WeekJiraIssues> model)
         {
