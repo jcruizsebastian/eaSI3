@@ -128,5 +128,18 @@ namespace SI3Connector.Test
             SI3Service service = new SI3Service("ofjcruiz", "_*_d1d4ct1c");
             var a = service.NewIssue(newissue);
         }
+        [TestMethod]
+        public void GetProjects()
+        {
+            SI3Service service = new SI3Service("ofjcruiz", "_*_d1d4ct1c");
+            var a = service.GetProjects();
+        }
+        [TestMethod]
+        public void GetMilestones()
+        {
+            SI3Service service = new SI3Service("ofjcruiz", "_*_d1d4ct1c");
+            var a = service.GetMilestones();
+        }
     }
+    
 }

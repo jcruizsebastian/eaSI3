@@ -329,6 +329,34 @@ namespace eaSI3Web.Controllers
             return SI3Service.AvailableHours().ToDictionary(x => (int)x.Key, y => y.Value);
         }
 
+        [HttpGet("[action]")]
+        [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any, NoStore = false)]
+        public ActionResult<List<Project>> Projects(string username, string password)
+        {
+            List<Project> projects = new List<Project>();
+            try
+            {
+                SI3Service Si3Service = new SI3Service(username, password);
+                Dictionary<string, string> projectsService = Si3Service.GetProjects();
+                foreach (var proj in projectsService)
+                {
+                    Project project = new Project
+                    {
+                        code = proj.Key,
+                        title = proj.Value
+                    };
+
+                    projects.Add(project);
+                }
+            }
+            catch (InvalidCredentialException e)
+            {
+                return StatusCode(401,e.Message);
+            }
+
+            return projects;
+        }
+
         [HttpPost("[action]")]
         public ActionResult Register([FromQuery]string username, [FromQuery]string password, [FromQuery]string selectedWeek, [FromQuery]int totalHours, [FromBody]IEnumerable<WeekJiraIssues> model)
         {

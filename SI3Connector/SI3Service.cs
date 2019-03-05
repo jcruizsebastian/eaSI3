@@ -281,7 +281,57 @@ namespace SI3Connector
                 return milestone;
             }
         }
+        //Método para sacar todos los hitos
+        public Dictionary<string,List<Milestone>> GetMilestones()
+        {
+            Dictionary<string,List<Milestone>> milestones = new Dictionary<string, List<Milestone>>();
+            Dictionary<string, string> projects = GetProjects();
+            foreach (var project in projects)
+            {
+                var request = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/gestion/asp/PlanSistemas.asp"), null);
+                request.Wait();
+                var projectID = GetProjectId(project.Key,request.Result);
 
+                request = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/gestion/asp/MilestonesXML.asp?cod={projectID}"), null);
+                request.Wait();
+
+                XmlSerializer serializer = new XmlSerializer(typeof(Milestones));
+                using (TextReader reader = new StringReader(request.Result.Replace("\r\n<?xml version=\"1.0\" encoding=\"ISO-8859-1\" ?>\r\n", "")))
+                {
+                    Milestones milestonesSerializer = (Milestones)serializer.Deserialize(reader);
+                    List<Milestone> milestone = milestonesSerializer.milestone;
+                    milestones.Add(project.Key,milestone);
+                }                
+            }
+            return milestones;
+        }
+        //Método para sacar todos los proyectos
+        public Dictionary<string, string> GetProjects()
+        {
+            Dictionary<string, string> projects = new Dictionary<string, string>();
+
+            var request = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/gestion/asp/PlanSistemas.asp"), null);
+            request.Wait();
+
+            var doc = new HtmlDocument();
+            doc.LoadHtml(request.Result);
+
+            var documentMilestones = doc.DocumentNode.SelectNodes("//*[@id=\"TableExcel\"]/tr/td/table/tr/td/a[@onclick]");
+            for (int i = 4; i < documentMilestones.Count; i = i+2)
+            {
+                var milestone = doc.DocumentNode.SelectSingleNode($"//*[@id=\"TableExcel\"]/tr/td/table/tr[{i}][not(@valign)]/td[2]");
+                if (milestone != null)
+                {
+                    string projectCode = milestone.InnerHtml.Trim();
+                    string titleProject = doc.DocumentNode.SelectSingleNode($"//*[@id=\"TableExcel\"]/tr/td/table/tr[{i}]/td[3]/a/u").InnerHtml.Trim();
+                    if (!string.IsNullOrEmpty(titleProject))
+                    {
+                        projects.Add(projectCode, titleProject);
+                    }
+                }
+            }
+            return projects;
+        }
         private static string GetProjectId(string project, string result)
         {
             var doc = new HtmlDocument();
