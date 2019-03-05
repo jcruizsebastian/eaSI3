@@ -1,7 +1,6 @@
 ﻿import * as React from "react";
 import Loader from "react-loader-advanced";
 import ReactLoading from "react-loading";
-import { RouteComponentProps } from "react-router";
 import '../css/vincularTarea.css';
 import { Product } from './Model/Product';
 import { VincularState } from './Model/States/VincularState'
@@ -141,7 +140,7 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
                 'Content-Type': 'application/json'
             },
         })
-            .then(response => //response.text() as Promise<String>
+            .then(response =>
             {
                 if (!response.ok) {
                     (response.text() as Promise<string>).then(data => {
@@ -244,7 +243,6 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
     }
 
     public render() {
-        console.log("render vincular tarea");
 
         let formulario;
         if (this.props.jiraKey.length == 0) {

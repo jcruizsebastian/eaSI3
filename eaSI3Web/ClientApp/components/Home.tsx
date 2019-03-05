@@ -2,7 +2,6 @@ import 'isomorphic-fetch';
 import * as React from 'react';
 import Loader from 'react-loader-advanced';
 import ReactLoading from "react-loading";
-import { RouteComponentProps } from 'react-router';
 import { Agenda } from './Agenda';
 import { Calendar } from './Model/Calendar';
 import { WeekJiraIssuesProps } from './Model/Props/WeekJiraIssuesProps';
@@ -158,18 +157,15 @@ export class Home extends React.Component<{}, UserCredentialsState> {
     public isTodoOk(val: boolean) { this.setState({ todoOk: val }); }
 
     public render() {
-        let error;
         let agenda;
         let si3;
         let jira;
         let calendar;
-        if (this.state.availableHours == 50) {
-            //alert("Ya hay horas imputadas en Jira");
-        }
+
         if (this.state.calendarLoaded) {
             jira = <input type="button" value="Obtener issues" className="btn btn-primary" onClick={this.onLoginJira} disabled={this.isDisabledJira()} />
-            
-            calendar = <div>
+
+            calendar = <div className="select-calendar">
                 <label>Elija semana de trabajo :</label>
                 <select className="custom-select" onChange={this.handleChangeWeek} >
                     {
@@ -185,7 +181,6 @@ export class Home extends React.Component<{}, UserCredentialsState> {
         if (this.state.loadedJira) {
 
             agenda = <Agenda weekissues={this.state.Weekissues} ref="agenda1" isTodoOk={this.isTodoOk} availableHours={this.state.availableHours} />
-
             si3 = <div> <input type="button" id="btnSi3" value="Imputar tareas en Si3" className="btn btn-primary" disabled={this.state.todoOk} onClick={this.onLoginSi3} /></div>;
 
         }

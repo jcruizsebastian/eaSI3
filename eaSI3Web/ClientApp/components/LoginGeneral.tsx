@@ -77,10 +77,10 @@ export class LoginGeneral extends React.Component<LoginProps, LoginState> {
             expiration_date.setFullYear(expiration_date.getFullYear() + 1);
 
             document.cookie = "userJira=" + userJira + "; path=/;"+ "expires=" + expiration_date;
-            document.cookie = "passJira=" + passJira + "; expires=" + expiration_date;
-            document.cookie = "codUserSi3=" + codUserSi3 + "; expires=" + expiration_date;
-            document.cookie = "userSi3=" + userSi3 + "; expires=" + expiration_date;
-            document.cookie = "passSi3=" + passSi3 + "; expires=" + expiration_date;
+            document.cookie = "passJira=" + passJira + "; path=/;" + "expires=" + expiration_date;
+            document.cookie = "codUserSi3=" + codUserSi3 + "; path=/;" + "expires=" + expiration_date;
+            document.cookie = "userSi3=" + userSi3 + "; path=/;" + "expires=" + expiration_date;
+            document.cookie = "passSi3=" + passSi3 + "; path=/;" + "expires=" + expiration_date;
 
             this.props.onLogin(name);
 
@@ -92,10 +92,10 @@ export class LoginGeneral extends React.Component<LoginProps, LoginState> {
         return (
             <div className="bodyLogin">
                 <form className="formulario" onSubmit={this.handleSubmit}>
-                    <img src="logo_open.png" width="156" height="94" className="img" />
-                    <div><label>Usuario de Jira : <input type="text" name="name" ref="tbUserJira" placeholder="Introduzca usuario de Jira" autoComplete="off" /></label></div>
-                    <div><label>Contraseña de Jira : <input type="password" name="name" ref="tbPassJira" placeholder="Introduzca contraseña de Jira" autoComplete="off" /></label></div>
-                    <div><label>Nombre de usuario : <select ref="tbCodUserSi3">
+                    <img src="logo_open.png" width="200" height="75" className="img" />
+                    <div><label id="labelForm">Usuario de Jira : <input type="text" name="name" ref="tbUserJira" placeholder="Introduzca usuario de Jira" autoComplete="off" /></label></div>
+                    <div><label id="labelForm">Contraseña de Jira : <input type="password" name="name" ref="tbPassJira" placeholder="Introduzca contraseña de Jira" autoComplete="off" /></label></div>
+                    <div><label id="labelForm">Nombre de usuario : <select ref="tbCodUserSi3">
                         <option value="default">Seleccione un usuario</option>
                         {
                             this.state.users.map(user =>
@@ -105,8 +105,8 @@ export class LoginGeneral extends React.Component<LoginProps, LoginState> {
                             )
                         }
                     </select></label></div>
-                    <div><label>Usuario de Si3 : <input type="text" name="name" ref="tbUserSi3" placeholder="Introduzca usuario de Si3" autoComplete="off" /></label></div>
-                    <div><label>Contraseña de Si3 : <input type="password" name="name" ref="tbPassSi3" placeholder="Introduzca contraseña de Si3" autoComplete="off" /></label></div>
+                    <div><label id="labelForm">Usuario de Si3 : <input type="text" name="name" ref="tbUserSi3" placeholder="Introduzca usuario de Si3" autoComplete="off" /></label></div>
+                    <div><label id="labelForm">Contraseña de Si3 : <input type="password" name="name" ref="tbPassSi3" placeholder="Introduzca contraseña de Si3" autoComplete="off" /></label></div>
                     <div><input type="submit" name="submit" value="Iniciar Sesión" className="btn btn-primary" /></div>
                 </form>
                 <Loader show={this.state.loading} message={spinner} hideContentOnLoad={false} className={(this.state.loading == true) ? "overlay" : "overlay-1"} />

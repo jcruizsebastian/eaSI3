@@ -96,14 +96,11 @@ export class Layout extends React.Component<LayoutProps, LayoutState> {
 
     public render() {
 
-
         var style = { backgroundColor: '#222', height: '50px' };
         let home;
 
         if (this.state.loaded) {
-            console.log("loaded");
             if (document.cookie.length == 0) {
-                console.log("0 cookies");
                 home = <LoginGeneral onLogin={this.onLogin} />
             }
             else if (this.state.cookiesOk) {

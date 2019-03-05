@@ -4,7 +4,6 @@ import '../css/agenda.css';
 import { WeekJiraIssuesProps } from './Model/Props/WeekJiraIssuesProps';
 import { AgendaState } from './Model/States/AgendaState';
 import { PopupVincularTarea } from './popupVincularTarea';
-import { Props } from 'react-loader-advanced';
 
 export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
 
@@ -67,11 +66,9 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
     }
 
     public vincular(issuekey: string) {
-        //e.preventDefault();
-        this.setState({ vincular: true, issueVincular: issuekey });
-        //this.forceUpdate();
-       
+        this.setState({ vincular: true, issueVincular: issuekey });       
     }
+
     private calculateTotalHours() {
 
         let total = 0;
@@ -121,7 +118,6 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                 </thead>
                 <tbody>
                     {
-
                         this.props.weekissues.map(Weekissue =>
 
                             <tr key={Weekissue.fecha.toString()} >
