@@ -438,7 +438,7 @@ namespace eaSI3Web.Controllers
         public IEnumerable<WeekJiraIssues> NormalizarHoras(IEnumerable<WeekJiraIssues> tareasSinNormalizar, SI3Service SI3Service)
         {
             var issues = tareasSinNormalizar.SelectMany(x => x.Issues).ToList();
-            var issuesQueue = new Queue<JiraIssues>(issues);
+            var issuesQueue = new LinkedList<JiraIssues>(issues);
 
             var availableHours = SI3Service.AvailableHours();
 
@@ -452,14 +452,15 @@ namespace eaSI3Web.Controllers
                     if (!issuesQueue.Any())
                         break;
 
-                    var dequedIssue = issuesQueue.Dequeue();
+                    var dequedIssue = issuesQueue.First();
+                    issuesQueue.RemoveFirst();
 
                     if (dequedIssue.Tiempo > availableHoursInDay)
                     {
                         var splitedIssue = (JiraIssues)dequedIssue.Clone();
                         splitedIssue.Tiempo = Math.Abs(dequedIssue.Tiempo - availableHoursInDay);
                         dequedIssue.Tiempo = availableHoursInDay;
-                        issuesQueue.Enqueue(splitedIssue);
+                        issuesQueue.AddFirst(splitedIssue);
                     }
 
                     var currentDay = StartOfWeek(tareasSinNormalizar.First().Fecha, DayOfWeek.Monday);
@@ -480,58 +481,5 @@ namespace eaSI3Web.Controllers
             int diff = (7 + (dt.DayOfWeek - startOfWeek)) % 7;
             return dt.AddDays(-1 * diff).Date;
         }
-
-        //    public void NormalizarHoras(IEnumerable<WeekJiraIssues> tareasSinNormalizar, SI3Service SI3Service)
-        //{
-        //    var availableHours = SI3Service.AvailableHours();
-
-        //    var diasConHorasDeMas = tareasSinNormalizar.Where(x => x.Issues.Sum(y => (y.Tiempo)) > 8);
-        //    var diasConHorasDeMenos = tareasSinNormalizar.Where(x => x.Issues.Sum(y => (y.Tiempo)) < 8);
-        //    Queue<JiraIssues> sobrante = new Queue<JiraIssues>();
-
-        //    foreach (var diaConSobrante in diasConHorasDeMas)
-        //    {
-        //        double horas_sobrantes = diaConSobrante.Issues.Sum(x => x.Tiempo) - 8;
-
-        //        var issuesConHorasSobrantes = diaConSobrante.Issues.Where(x => x.Tiempo >= (horas_sobrantes));
-
-        //        if (issuesConHorasSobrantes != null && issuesConHorasSobrantes.Any())
-        //        {
-        //            var issue = issuesConHorasSobrantes.First();
-
-        //            for (int i = 0; i < horas_sobrantes; i++)
-        //            {
-        //                var clonedIssue = (JiraIssues)issue.Clone();
-        //                clonedIssue.Tiempo = 1;
-        //                sobrante.Enqueue(clonedIssue);
-        //            }
-
-        //            issue.Tiempo -= horas_sobrantes;
-        //        }
-        //        else //Solo tiene issues de 1 hora
-        //        {
-        //            var issues = diaConSobrante.Issues.Where(x => x.Tiempo == 1).ToList().Take((int)horas_sobrantes);
-        //            foreach (var issue in issues)
-        //            {
-        //                sobrante.Enqueue(issue);
-        //                diaConSobrante.Issues.Remove(issue);
-        //            }
-        //        }
-        //    }
-
-        //    foreach (var diaConFaltante in diasConHorasDeMenos)
-        //    {
-        //        double horas_faltantes = Math.Abs(diaConFaltante.Issues.Sum(x => x.Tiempo) - 8);
-
-        //        for (int i = 0; i < horas_faltantes; i++)
-        //        {
-        //            if (!sobrante.Any())
-        //                return;
-
-        //            var issue = sobrante.Dequeue();
-        //            diaConFaltante.Issues.Add(issue);
-        //        }
-        //    }
-        //}
     }
 }
