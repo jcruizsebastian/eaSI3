@@ -35,8 +35,12 @@
     <None Remove="ClientApp\components\Model\Component.tsx" />
     <None Remove="ClientApp\components\Model\Issue.tsx" />
     <None Remove="ClientApp\components\Model\JiraIssues.tsx" />
+    <None Remove="ClientApp\components\Model\Milestone.tsx" />
+    <None Remove="ClientApp\components\Model\Milestones.tsx" />
+    <None Remove="ClientApp\components\Model\Milestonetsx.tsx" />
     <None Remove="ClientApp\components\Model\Module.tsx" />
     <None Remove="ClientApp\components\Model\Product.tsx" />
+    <None Remove="ClientApp\components\Model\Project.tsx" />
     <None Remove="ClientApp\components\Model\Props\LoginProps.tsx" />
     <None Remove="ClientApp\components\Model\Props\popupProps.tsx" />
     <None Remove="ClientApp\components\Model\Props\VincularTareaProps.tsx" />
@@ -67,8 +71,11 @@
     <TypeScriptCompile Include="ClientApp\components\Model\Component.tsx" />
     <TypeScriptCompile Include="ClientApp\components\Model\Issue.tsx" />
     <TypeScriptCompile Include="ClientApp\components\Model\JiraIssues.tsx" />
+    <TypeScriptCompile Include="ClientApp\components\Model\Milestone.tsx" />
+    <TypeScriptCompile Include="ClientApp\components\Model\Milestones.tsx" />
     <TypeScriptCompile Include="ClientApp\components\Model\Module.tsx" />
     <TypeScriptCompile Include="ClientApp\components\Model\Product.tsx" />
+    <TypeScriptCompile Include="ClientApp\components\Model\Project.tsx" />
     <TypeScriptCompile Include="ClientApp\components\Model\Props\LoginProps.tsx" />
     <TypeScriptCompile Include="ClientApp\components\Model\Props\popupProps.tsx" />
     <TypeScriptCompile Include="ClientApp\components\Model\Props\VincularTareaProps.tsx" />

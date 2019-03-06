@@ -1,4 +1,6 @@
 ﻿import { Product } from '../Product'
+import { Project } from '../Project';
+import { Milestones } from '../Milestones';
 
 export interface VincularState {
     products: Product[]
@@ -13,4 +15,8 @@ export interface VincularState {
     responsable: string;
     loading: boolean;
     todoOk: boolean;
+    projects: Project[];
+    projectSelected: string;
+    milestones: Milestones[];
+    milestoneSelected: string;
 }

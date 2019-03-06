@@ -2,6 +2,7 @@
 using SI3.Issues;
 using SI3.Projects;
 using SI3Connector.Exceptions;
+using SI3Connector.Model;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -285,14 +286,10 @@ namespace SI3Connector
         public Dictionary<string,List<Milestone>> GetMilestones()
         {
             Dictionary<string,List<Milestone>> milestones = new Dictionary<string, List<Milestone>>();
-            Dictionary<string, string> projects = GetProjects();
+            List<Project> projects = GetProjects();
             foreach (var project in projects)
             {
-                var request = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/gestion/asp/PlanSistemas.asp"), null);
-                request.Wait();
-                var projectID = GetProjectId(project.Key,request.Result);
-
-                request = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/gestion/asp/MilestonesXML.asp?cod={projectID}"), null);
+                var request = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/gestion/asp/MilestonesXML.asp?cod={project.Id}"), null);
                 request.Wait();
 
                 XmlSerializer serializer = new XmlSerializer(typeof(Milestones));
@@ -300,15 +297,19 @@ namespace SI3Connector
                 {
                     Milestones milestonesSerializer = (Milestones)serializer.Deserialize(reader);
                     List<Milestone> milestone = milestonesSerializer.milestone;
-                    milestones.Add(project.Key,milestone);
+                    milestone.RemoveAll(x => x.Status != "I");
+                    if (milestone.Count > 0)
+                    {
+                        milestones.Add(project.Code, milestone);
+                    }
                 }                
             }
             return milestones;
         }
         //Método para sacar todos los proyectos
-        public Dictionary<string, string> GetProjects()
+        public List<Project> GetProjects()
         {
-            Dictionary<string, string> projects = new Dictionary<string, string>();
+            List<Project> projects = new List<Project>();
 
             var request = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/gestion/asp/PlanSistemas.asp"), null);
             request.Wait();
@@ -324,10 +325,16 @@ namespace SI3Connector
                 {
                     string projectCode = milestone.InnerHtml.Trim();
                     string titleProject = doc.DocumentNode.SelectSingleNode($"//*[@id=\"TableExcel\"]/tr/td/table/tr[{i}]/td[3]/a/u").InnerHtml.Trim();
-                    if (!string.IsNullOrEmpty(titleProject))
+                    var projectID = GetProjectId(projectCode, request.Result);
+
+                    Project project = new Project
                     {
-                        projects.Add(projectCode, titleProject);
-                    }
+                        Code = projectCode,
+                        Title = titleProject,
+                        Id = projectID
+                    };
+
+                    projects.Add(project);
                 }
             }
             return projects;

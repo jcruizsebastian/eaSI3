@@ -6,6 +6,8 @@ import { Product } from './Model/Product';
 import { VincularState } from './Model/States/VincularState'
 import { Issue } from './Model/Issue'
 import { VincularTareaProps } from "./Model/Props/VincularTareaProps";
+import { Project } from "./Model/Project";
+import { Milestones } from "./Model/Milestones";
 
 export class VincularTarea extends React.Component<VincularTareaProps, VincularState> {
     constructor(props: VincularTareaProps) {
@@ -13,7 +15,8 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
 
         this.state = {
             products: [], productSelected: "", componentSelected: "", moduleSelected: "", loadedData: false,
-            loadedDataJira: false, titulo: "", prioridad: "", tipo: "", loading: false, responsable: "", todoOk: false
+            loadedDataJira: false, titulo: "", prioridad: "", tipo: "", loading: false, responsable: "", todoOk: false,
+            projects: [], milestones: [], projectSelected: "", milestoneSelected:""
         };
 
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -21,6 +24,8 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
         this.handleChangeProducts = this.handleChangeProducts.bind(this);
         this.handleChangeComponents = this.handleChangeComponents.bind(this);
         this.handleChangeModules = this.handleChangeModules.bind(this);
+        this.handleChangeProject = this.handleChangeProject.bind(this);
+        this.handleChangeMilestone = this.handleChangeMilestone.bind(this);
         this.vincular = this.vincular.bind(this);
         this.generarInformacion = this.generarInformacion.bind(this);
     }
@@ -88,9 +93,43 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
                                                             prioridad_ = "Bloqueadora";
                                                             break
                                                     }
+
+                                                    fetch('api/Si3/Projects?username=' + this.getCookie("userSi3") + '&password=' + this.getCookie("passSi3"))
+                                                        .then(response => {
+                                                            if (!response.ok) {
+                                                                (response.text() as Promise<String>).then(
+                                                                    data => {
+                                                                        alert(data);
+                                                                        this.setState({ loadedDataJira: false, loading: false });
+                                                                    }
+                                                                )
+                                                            } else {
+                                                                (response.json() as Promise<Project[]>).then(
+                                                                    data => {
+                                                                        this.setState({ projects: data});
+                                                                        fetch('api/Si3/Milestones?username=' + this.getCookie("userSi3") + "&password=" + this.getCookie("passSi3"))
+                                                                            .then(response => {
+                                                                                if (!response.ok) {
+                                                                                    (response.text() as Promise<String>).then(
+                                                                                        data => {
+                                                                                            alert(data);
+                                                                                            this.setState({ loadedDataJira: false, loading: false });
+                                                                                        }
+                                                                                    )
+                                                                                } else {
+                                                                                    (response.json() as Promise<Milestones[]>).then(data => {
+                                                                                        this.setState({ milestones: data, loading: false, loadedDataJira: true });
+                                                                                    })
+                                                                                }
+                                                                            });
+                                                                    }                                                                
+                                                                )                                                                
+                                                            }
+                                                        });
+
                                                     this.setState({
-                                                        loadedDataJira: true, titulo: data.summary, prioridad: prioridad_,
-                                                        tipo: data.issuetype, responsable: data.assignee, loading: false
+                                                        titulo: data.summary, prioridad: prioridad_,
+                                                        tipo: data.issuetype, responsable: data.assignee,
                                                     });
                                                 } else {
                                                     alert("Esta tarea ya está vinculada en SI3");
@@ -105,6 +144,12 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
             });
     }
 
+    public handleChangeProject(event: React.FormEvent<HTMLSelectElement>) {
+        this.setState({ projectSelected: event.currentTarget.value, milestoneSelected: "default" });
+    }
+    public handleChangeMilestone(event: React.FormEvent<HTMLSelectElement>) {
+        this.setState({ milestoneSelected: event.currentTarget.value});
+    }
     public handleChangeProducts(event: React.FormEvent<HTMLSelectElement>) {
         this.setState({ productSelected: event.currentTarget.value, componentSelected: "default", moduleSelected: "default", todoOk: false });
     }
@@ -190,55 +235,97 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
 
     public renderInformación() {
         return (
+
             <div>
-                <hr></hr>
-                <p className="ptext"><b>Título Jira :</b> {this.state.titulo} </p>
-                <p className="ptext"><b>Prioridad :</b> {this.state.prioridad}</p>
-                <p className="ptext"><b>Tipo : </b>{this.state.tipo}</p>
-                <p className="ptext"><b>Responsable : </b>{this.state.responsable}</p>
-                <label className="ptext">Producto : </label>
-                <select className="custom-select" onChange={this.handleChangeProducts} >
-                    <option value="default" selected={true}>Seleccione un producto</option>
-                    {
-                        this.state.products.map(product =>
-                            <option key={product.code} value={product.code}>
-                                {product.name}
-                            </option>
-                        )
-                    }
-                </select>
-                <br></br>
-                <label className="ptext">Componente : </label>
-                <select className="custom-select" onChange={this.handleChangeComponents}>
-                    <option value="default" selected={true}>Seleccione un componente</option>
-                    {
-                        this.state.products.filter(product => product.code == this.state.productSelected).map(p => p.componentes.map(
-                            component =>
-                                <option key={component.code} value={component.code}>
-                                    {component.name}
-                                </option>
-                        ))
-                    }
-                </select>
-                <br></br>
-                <label className="ptext">Módulo : </label>
-                <select className="custom-select" onChange={this.handleChangeModules}>
-                    <option value="default" selected={true}>Seleccione un módulo</option>
-                    {
-                        this.state.products.filter(product => product.code == this.state.productSelected).map(p => p.componentes.filter(
-                            component => component.code == this.state.componentSelected).map(
-                                c => c.modulos.map(modulo =>
-                                    <option key={modulo.code} value={modulo.code}>
-                                        {modulo.name}
+                <label><p className="ptext">Vincular a : </p></label>
+                <div id="tab" className="btn-group" data-toggle="buttons-radio">
+                    <a href="#tarea" className="btn btn-large btn-danger active" data-toggle="tab">Tarea</a>
+                    <a href="#proyecto" className="btn btn-large btn-danger" data-toggle="tab">Proyecto</a>
+
+                </div>
+
+                <div className="tab-content">
+                    <div className="tab-pane active" id="tarea">
+                        <hr></hr>
+                        <p className="ptext"><b>Título Jira :</b> {this.state.titulo} </p>
+                        <p className="ptext"><b>Prioridad :</b> {this.state.prioridad}</p>
+                        <p className="ptext"><b>Tipo : </b>{this.state.tipo}</p>
+                        <p className="ptext"><b>Responsable : </b>{this.state.responsable}</p>
+                        <label className="ptext">Producto : </label>
+                        <select className="custom-select" onChange={this.handleChangeProducts} >
+                            <option value="default" selected={true}>Seleccione un producto</option>
+                            {
+                                this.state.products.map(product =>
+                                    <option key={product.code} value={product.code}>
+                                        {product.name}
                                     </option>
                                 )
+                            }
+                        </select>
+                        <br></br>
+                        <label className="ptext">Componente : </label>
+                        <select className="custom-select" onChange={this.handleChangeComponents}>
+                            <option value="default" selected={true}>Seleccione un componente</option>
+                            {
+                                this.state.products.filter(product => product.code == this.state.productSelected).map(p => p.componentes.map(
+                                    component =>
+                                        <option key={component.code} value={component.code}>
+                                            {component.name}
+                                        </option>
+                                ))
+                            }
+                        </select>
+                        <br></br>
+                        <label className="ptext">Módulo : </label>
+                        <select className="custom-select" onChange={this.handleChangeModules}>
+                            <option value="default" selected={true}>Seleccione un módulo</option>
+                            {
+                                this.state.products.filter(product => product.code == this.state.productSelected).map(p => p.componentes.filter(
+                                    component => component.code == this.state.componentSelected).map(
+                                        c => c.modulos.map(modulo =>
+                                            <option key={modulo.code} value={modulo.code}>
+                                                {modulo.name}
+                                            </option>
+                                        )
 
-                            ))
-                    }
-                </select>
-                <hr></hr>
-                <input type="button" value="Vincular" className="btn btn-primary" onClick={this.vincular} disabled={!this.state.todoOk} />
+                                    ))
+                            }
+                        </select>
+                        <hr></hr>
+                        <input type="button" value="Vincular" className="btn btn-primary" onClick={this.vincular} disabled={!this.state.todoOk} />
+                    </div>
+                    <div className="tab-pane" id="proyecto">
+                        <hr></hr>
+                        <label className="ptext">Proyecto : </label>
+                        <select className="custom-select" onChange={this.handleChangeProject}>
+                            <option value="default" selected={true}>Seleccione un proyecto</option>
+                            {
+                                this.state.projects.map(project =>
+                                    <option key={project.code} value={project.code}>
+                                        {project.title}
+                                    </option>
+                                )
+                            }
+                        </select>
+                        <br></br>
+                        <label className="ptext">Hito : </label>
+                        <select className="custom-select" onChange={this.handleChangeMilestone}>
+                            <option value="default" selected={true}>Seleccione un hito</option>
+                            {
+                                this.state.milestones.filter(milestone => milestone.projectCode.toString() == this.state.projectSelected).map(
+                                    m => m.milestone.map(
+                                        milestone =>
+                                            <option>{milestone.name}</option>
+                                    )
+                                )
+                            }
+                        </select>
+                        <hr></hr>
+                        <input type="button" value="Vincular" className="btn btn-primary" />
+                    </div>
+                </div>                            
             </div>
+            
         )
     }
 
@@ -268,7 +355,10 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
         return (
             <div>
                 {formulario}
-                {informacion}
+                <div className="container-vincular">
+                        {informacion}
+                </div>
+
                 <Loader show={this.state.loading} message={spinner} hideContentOnLoad={false} className={(this.state.loading == true) ? "overlay" : "overlay-1"} />
             </div>
         )

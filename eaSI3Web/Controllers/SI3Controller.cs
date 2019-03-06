@@ -13,9 +13,8 @@ using System.Security.Authentication;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
-using static eaSI3Web.Controllers.JiraController;
 using eaSI3Web.Controllers.Models;
-using Microsoft.Extensions.Caching.Memory;
+using Project = SI3Connector.Model.Project;
 
 namespace eaSI3Web.Controllers
 {
@@ -33,7 +32,7 @@ namespace eaSI3Web.Controllers
         public static List<Models.Producto> products { get; set; }
 
         [HttpGet("[action]")]
-        [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any, NoStore = false)]
+        [ResponseCache(Duration = 86400, Location = ResponseCacheLocation.Any, NoStore = false)]
         public ActionResult<List<Models.Producto>> Products([FromQuery]string username, [FromQuery]string password)
         {
 
@@ -110,7 +109,7 @@ namespace eaSI3Web.Controllers
         }
 
         [HttpGet("[action]")]
-        [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any, NoStore = false)]
+        [ResponseCache(Duration = 86400, Location = ResponseCacheLocation.Any, NoStore = false)]
         public ActionResult<List<Models.User>> Users()
         {
             List<Models.User> users = new List<Models.User>();
@@ -330,20 +329,39 @@ namespace eaSI3Web.Controllers
         }
 
         [HttpGet("[action]")]
-        [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any, NoStore = false)]
-        public ActionResult<List<Project>> Projects(string username, string password)
+        [ResponseCache(Duration = 86400, Location = ResponseCacheLocation.Any, NoStore = false)]
+        public ActionResult<List<Milestones>> Milestones(string username, string password)
         {
-            List<Project> projects = new List<Project>();
+            List<Milestones> milestones = new List<Milestones>();
+            SI3Service Si3Service = new SI3Service(username, password);
+            Dictionary<string, List<SI3.Projects.Milestone>> milestonesService = Si3Service.GetMilestones();
+            foreach (var m in milestonesService)
+            {
+                Milestones milestone = new Milestones
+                {
+                    ProjectCode = m.Key,
+                    Milestone = m.Value
+                };
+                milestones.Add(milestone);
+            }
+            return milestones;
+        }
+
+        [HttpGet("[action]")]
+        [ResponseCache(Duration = 86400, Location = ResponseCacheLocation.Any, NoStore = false)]
+        public ActionResult<List<Models.Project>> Projects(string username, string password)
+        {
+            List<Models.Project> projects = new List<Models.Project>();
             try
             {
                 SI3Service Si3Service = new SI3Service(username, password);
-                Dictionary<string, string> projectsService = Si3Service.GetProjects();
+                List<Project> projectsService = Si3Service.GetProjects();
                 foreach (var proj in projectsService)
                 {
-                    Project project = new Project
+                    Models.Project project = new Models.Project
                     {
-                        code = proj.Key,
-                        title = proj.Value
+                        code = proj.Code,
+                        title = proj.Title
                     };
 
                     projects.Add(project);
