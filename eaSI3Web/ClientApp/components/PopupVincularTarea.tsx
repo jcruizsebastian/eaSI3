@@ -20,7 +20,7 @@ export class PopupVincularTarea extends React.Component<popupProps, PopupState>{
             <div className="popup">
                 <div className="popup_inner">
                     <button type="button" id="close" className="btn btn-danger btn-sm" onClick={() => { this.props.closePopup(this.state.idSi3) }}>X</button>
-                    <h1 className="titlePopup">Vincular Tarea</h1>
+
                     <VincularTarea jiraKey={this.props.keyJira} vincular={this.vincular} />
                 </div>
             </div>
