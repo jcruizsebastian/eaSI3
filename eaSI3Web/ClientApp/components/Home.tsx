@@ -42,23 +42,10 @@ export class Home extends React.Component<{}, UserCredentialsState> {
     }
 
     private getWeekofYear() {
-        this.setState({ loading: true});
+       
         fetch('api/Jira/Weeks')
             .then(response => response.json() as Promise<Calendar>)
             .then(data => {
-                fetch('api/Si3/AvailableHours?username=' + this.getCookie("userSi3") + '&password=' + this.getCookie("passSi3")).then(response => {
-                    if (!response.ok) {
-                        (response.text() as Promise<String>).then(
-                            data => {
-                                alert(data);
-                            }
-                        );
-                    } else {
-                        (response.json() as Promise<number>).then(data => {
-                             this.setState({ availableHours: 40 - data, loading:false }); 
-                        });
-                    }
-                });
                 this.setState({ calendar: data, calendarLoaded: true, selectedWeek: data.weeks.length.toString()});
             });
     }
@@ -82,8 +69,23 @@ export class Home extends React.Component<{}, UserCredentialsState> {
                             this.setState({ loadingJira: false, loadedJira: false, loading: false });
 
                         }
-                        else
-                            this.setState({ Weekissues: data.weekJiraIssues, loading: false }, this.confirmLoadedJira);
+                        else {
+                            fetch('api/Si3/AvailableHours?username=' + this.getCookie("userSi3") + '&password=' + this.getCookie("passSi3")).then(response => {
+                                if (!response.ok) {
+                                    (response.text() as Promise<String>).then(
+                                        data => {
+                                            alert(data);
+                                        }
+                                    );
+                                } else {
+                                    (response.json() as Promise<number>).then(data => {
+                                        this.setState({ availableHours: 40 - data, loading: false });
+                                    });
+                                }
+                            });
+
+                            this.setState({ Weekissues: data.weekJiraIssues}, this.confirmLoadedJira);
+                        }
                     })
             })
             .catch(error => {
@@ -123,22 +125,41 @@ export class Home extends React.Component<{}, UserCredentialsState> {
             }
         }
 
-        fetch('api/SI3/register?username=' + this.getCookie("userSi3") + '&password=' + this.getCookie("passSi3") + '&selectedWeek=' + this.state.selectedWeek + '&totalHours=' + total, {
-            method: 'post',
-            body: JSON.stringify(agenda.props.weekissues),
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-        })
-            .then(response => {
-                if (!response.ok) {
-                    (response.text() as Promise<String>).then(data => { alert(data); this.setState({ loading: false }); });
-                } else {
-                    alert("Horas imputadas en SI3");
-                    this.setState({ loading: false, todoOk: true });
-                }
-            });
+        fetch('api/Si3/AvailableHours?username=' + this.getCookie("userSi3") + '&password=' + this.getCookie("passSi3")).then(response => {
+            if (!response.ok) {
+                (response.text() as Promise<String>).then(
+                    data => {
+                        alert(data);
+                    }
+                );
+            } else {
+                (response.json() as Promise<number>).then(data => {
+                    if ((40 - data) != this.state.availableHours) {
+                        alert("Se han imputador horas en Si3 mientras utilizabas eaSI3");
+                        this.setState({ availableHours: 40 - data, loading: false });
+                    } else {
+                        fetch('api/SI3/register?username=' + this.getCookie("userSi3") + '&password=' + this.getCookie("passSi3") + '&selectedWeek=' + this.state.selectedWeek + '&totalHours=' + total, {
+                            method: 'post',
+                            body: JSON.stringify(agenda.props.weekissues),
+                            headers: {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                            },
+                        })
+                            .then(response => {
+                                if (!response.ok) {
+                                    (response.text() as Promise<String>).then(data => { alert(data); this.setState({ loading: false }); });
+                                } else {
+                                    alert("Horas imputadas en SI3");
+                                    this.setState({ loading: false, todoOk: true });
+                                }
+                            });
+                    }
+                });
+            }
+        });
+
+        
     }
 
     public handleChangeWeek(event: React.FormEvent<HTMLSelectElement>) {
@@ -169,7 +190,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
             </div>
         }
 
-        if (this.state.loadedJira) {
+        if (this.state.loadedJira && this.state.availableHours > 0) {
 
             agenda = <Agenda weekissues={this.state.Weekissues} ref="agenda1" isTodoOk={this.isTodoOk} availableHours={this.state.availableHours} />
             si3 = <div> <input type="button" id="btnSi3" value="Imputar tareas en Si3" className="btn btn-primary" disabled={this.state.todoOk} onClick={this.onLoginSi3} /></div>;
