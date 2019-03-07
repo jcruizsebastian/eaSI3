@@ -150,7 +150,6 @@ namespace eaSI3Web.Controllers
         [HttpGet("[action]")]
         public ActionResult ValidateLogin(string username, string password)
         {
-
             try
             {
                 SI3Service si3Service = new SI3Service(username, password);

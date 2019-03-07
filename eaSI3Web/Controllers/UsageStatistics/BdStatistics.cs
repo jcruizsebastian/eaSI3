@@ -10,7 +10,7 @@ namespace eaSI3Web.Controllers.UsageStatistics
 
         public BdStatistics(StatisticsContext context)
         {
-            _context = context;
+            _context = context; 
         }
 
         public void AddUser(string username)

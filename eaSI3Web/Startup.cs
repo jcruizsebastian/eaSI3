@@ -22,8 +22,8 @@ namespace eaSI3Web
         {
             services.AddMvc();
 
-            var connection = @"Server=(localdb)\mssqllocaldb;Database=EFGetStarted.AspNetCore.NewDb;Trusted_Connection=True;ConnectRetryCount=0";
-            services.AddDbContext<StatisticsContext>(options => options.UseSqlite(connection));
+            var connection = @"User ID=easi3; Password=easi3easi3;Initial Catalog=easi3;Data Source=SRVSQL02\SQL_DEV_2017;timeout=40;Pooling=False;Connection Lifetime=1;";
+            services.AddDbContext<StatisticsContext>(options => options.UseSqlServer(connection));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

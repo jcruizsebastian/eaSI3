@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using eaSI3Web.Models;
@@ -9,19 +10,22 @@ using eaSI3Web.Models;
 namespace eaSI3Web.Migrations
 {
     [DbContext(typeof(StatisticsContext))]
-    [Migration("20190225113049_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20190307161545_Initial_Migration")]
+    partial class Initial_Migration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.2-servicing-10034");
+                .HasAnnotation("ProductVersion", "2.2.2-servicing-10034")
+                .HasAnnotation("Relational:MaxIdentifierLength", 128)
+                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("eaSI3Web.Models.IssueCreation", b =>
                 {
                     b.Property<int>("IssueCreationId")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("CreationDate");
 
@@ -45,7 +49,8 @@ namespace eaSI3Web.Migrations
             modelBuilder.Entity("eaSI3Web.Models.Login", b =>
                 {
                     b.Property<int>("LoginId")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("ConnectionDate");
 
@@ -61,7 +66,8 @@ namespace eaSI3Web.Migrations
             modelBuilder.Entity("eaSI3Web.Models.User", b =>
                 {
                     b.Property<int>("UserId")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("JiraUserName");
 
@@ -70,7 +76,8 @@ namespace eaSI3Web.Migrations
                     b.HasKey("UserId");
 
                     b.HasIndex("JiraUserName", "SI3UserName")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[JiraUserName] IS NOT NULL AND [SI3UserName] IS NOT NULL");
 
                     b.ToTable("Users");
                 });
@@ -78,7 +85,8 @@ namespace eaSI3Web.Migrations
             modelBuilder.Entity("eaSI3Web.Models.WorkTracking", b =>
                 {
                     b.Property<int>("WorkTrackingId")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int>("TotalHours");
 

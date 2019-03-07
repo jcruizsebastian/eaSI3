@@ -1,9 +1,10 @@
 ﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace eaSI3Web.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class Initial_Migration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -12,7 +13,7 @@ namespace eaSI3Web.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     JiraUserName = table.Column<string>(nullable: true),
                     SI3UserName = table.Column<string>(nullable: true)
                 },
@@ -26,7 +27,7 @@ namespace eaSI3Web.Migrations
                 columns: table => new
                 {
                     IssueCreationId = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     JiraKey = table.Column<string>(nullable: true),
                     SI3Key = table.Column<string>(nullable: true),
                     CreationDate = table.Column<DateTime>(nullable: false),
@@ -50,7 +51,7 @@ namespace eaSI3Web.Migrations
                 columns: table => new
                 {
                     LoginId = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     UserId = table.Column<int>(nullable: true),
                     ConnectionDate = table.Column<DateTime>(nullable: false)
                 },
@@ -70,7 +71,7 @@ namespace eaSI3Web.Migrations
                 columns: table => new
                 {
                     WorkTrackingId = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     UserId = table.Column<int>(nullable: true),
                     TotalHours = table.Column<int>(nullable: false),
                     Week = table.Column<int>(nullable: false),
@@ -104,7 +105,8 @@ namespace eaSI3Web.Migrations
                 name: "IX_Users_JiraUserName_SI3UserName",
                 table: "Users",
                 columns: new[] { "JiraUserName", "SI3UserName" },
-                unique: true);
+                unique: true,
+                filter: "[JiraUserName] IS NOT NULL AND [SI3UserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_WorkTracking_UserId",
