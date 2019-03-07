@@ -15,6 +15,7 @@ export interface VincularState {
     responsable: string;
     loading: boolean;
     todoOk: boolean;
+    todoOkProject: boolean;
     projects: Project[];
     projectSelected: string;
     milestones: Milestones[];

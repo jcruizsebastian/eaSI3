@@ -84,12 +84,12 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
 
         return total;
     }
-    public closePopup(idSi3: string) {
+    public closePopup(idSi3: string, key: string) {
         if (idSi3.length > 0) {
             let WeekJiraIssues = this.props.weekissues;
             for (let weekIssue of WeekJiraIssues) {
                 for (let Issue of weekIssue.issues) {
-                    if (Issue.issueSI3Code == null) {
+                    if (Issue.issueSI3Code == null && Issue.issueKey == key) {
                         Issue.issueSI3Code = idSi3;
                     }
                 }

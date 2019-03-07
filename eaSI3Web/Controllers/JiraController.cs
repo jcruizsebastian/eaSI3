@@ -12,6 +12,7 @@ using System.Globalization;
 using System.Linq;
 using System.Security.Authentication;
 using eaSI3Web.Controllers.Models;
+using System.Text.RegularExpressions;
 
 namespace eaSI3Web.Controllers
 {
@@ -30,50 +31,54 @@ namespace eaSI3Web.Controllers
         static Models.Calendar calendar = new Models.Calendar();
 
         [HttpGet("[action]")]
-        public ActionResult<Models.Calendar> Weeks() {
-            
+        public ActionResult<Models.Calendar> Weeks()
+        {
+
             calendar.Weeks = new List<CalendarWeeks>();
             int weekOfYear = CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(DateTime.Now, CalendarWeekRule.FirstDay, DayOfWeek.Monday);
 
             int intDay = 1;
             int intMonth = 1;
 
-            for (int i = 0; i < weekOfYear; i++) {
-                
-                DateTime day = new DateTime(DateTime.Now.Year,intMonth,intDay);
+            for (int i = 0; i < weekOfYear; i++)
+            {
+
+                DateTime day = new DateTime(DateTime.Now.Year, intMonth, intDay);
                 int aSumar = 6;
 
                 //Este if hay que revisarlo , no sirve para todos los años, solo para el actual
                 //i == 0 es lo mismo que comprobar que es la primera semana.
-                if (i==0) { aSumar = 5;  }
+                if (i == 0) { aSumar = 5; }
 
                 //Semana entre dos meses
-                if (intDay+aSumar > CultureInfo.InvariantCulture.Calendar.GetDaysInMonth(DateTime.Now.Year, day.Month)) {
+                if (intDay + aSumar > CultureInfo.InvariantCulture.Calendar.GetDaysInMonth(DateTime.Now.Year, day.Month))
+                {
                     intDay = (intDay + aSumar) - CultureInfo.InvariantCulture.Calendar.GetDaysInMonth(DateTime.Now.Year, day.Month);
                     aSumar = 0;
                     intMonth += 1;
                 }
 
-                string description = day.Day + "/" + day.Month + "/" + DateTime.Now.Year + " to " + (intDay+aSumar) + "/" + intMonth + "/" + DateTime.Now.Year ;
+                string description = day.Day + "/" + day.Month + "/" + DateTime.Now.Year + " to " + (intDay + aSumar) + "/" + intMonth + "/" + DateTime.Now.Year;
 
 
-                calendar.Weeks.Add(new CalendarWeeks() {
+                calendar.Weeks.Add(new CalendarWeeks()
+                {
                     numberWeek = i + 1,
                     description = description,
                     startOfWeek = new DateTime(DateTime.Now.Year, day.Month, day.Day),
-                    endOfWeek = new DateTime(DateTime.Now.Year, intMonth,(intDay+aSumar))
+                    endOfWeek = new DateTime(DateTime.Now.Year, intMonth, (intDay + aSumar))
                 });
-                intDay += aSumar+1;
+                intDay += aSumar + 1;
             }
-            
+
             return calendar;
         }
 
         [HttpGet("[action]")]
-        public ActionResult<WeekJiraIssuesResponse> Worklog(string username, string password, string selectedWeek)   
+        public ActionResult<WeekJiraIssuesResponse> Worklog(string username, string password, string selectedWeek)
         {
             DateTime startOfWeek = DateTime.Now;
-            DateTime endOfWeek= DateTime.Now;
+            DateTime endOfWeek = DateTime.Now;
             _logger.LogInformation("Usuario " + username + " => clic en el botón de Enviar Jira, Semana elegida : " + selectedWeek);
 
             foreach (var week in calendar.Weeks)
@@ -84,7 +89,7 @@ namespace eaSI3Web.Controllers
                     endOfWeek = week.endOfWeek;
                 }
             }
-            
+
             JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(username, password);
             var currentWorklog = new List<WorkLog>();
             try
@@ -99,7 +104,7 @@ namespace eaSI3Web.Controllers
 
                 return StatusCode(500, e.Message);
             }
-            
+
             WeekJiraIssuesResponse weekJiraIssuesList = new WeekJiraIssuesResponse();
             weekJiraIssuesList.WeekJiraIssues = Convert(currentWorklog);
             _logger.LogInformation("Worklog devuelto satisfactoriamente a " + username);
@@ -117,7 +122,8 @@ namespace eaSI3Web.Controllers
                 JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(username, password);
                 jiraIssue = jiraWorkLogService.GetIssue(jiraKey);
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
 
                 bdStatistics.AddIssueCreation(username, jiraKey, jiraIssue.si3ID, 1, e.Message);
                 if (e is InvalidCredentialException || e is UnauthorizedAccessException || e is InvalidOperationException)
@@ -152,7 +158,49 @@ namespace eaSI3Web.Controllers
             return Ok();
         }
         [HttpGet("[action]")]
-        public ActionResult UpdateIssueSi3CustomField(string username, string password, [RegularExpression("[0-9]+")]string issueKey, [RegularExpression("\\w+-[0-9]+")]string jirakey) {
+        public ActionResult<string> updateIssueSi3Project(string username, string password, string codeProject, string codeMilestone, string jiraKey)
+        {
+            BdStatistics bdStatistics = new BdStatistics(_context);
+
+            Regex regex = new Regex(@"^(H\.[0-9]{1,4}).+$");
+            Match match = regex.Match(codeMilestone);
+            if (match.Success)
+            {
+                codeMilestone = match.Groups[1].Value;
+                codeMilestone = codeMilestone.Replace(".", "-");
+            }
+
+            Regex regex2 = new Regex(@"^(O)([0-9]+)$");
+            Match match2 = regex2.Match(codeProject);
+            if (match2.Success)
+            {
+                codeProject = match2.Groups[1].Value + "-" + match2.Groups[2].Value;
+            }
+
+            var key = codeProject + "," + codeMilestone;
+
+            try
+            {
+                JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(username, password);
+                string body = JsonConvert.SerializeObject(new { fields = new { customfield_10300 = key } });
+                jiraWorkLogService.UpdateIssue(jiraKey, body);
+            }
+            catch (Exception e)
+            {
+                bdStatistics.AddIssueCreation(username, jiraKey, key, 1, e.Message);
+
+                if (e is InvalidCredentialException || e is UnauthorizedAccessException || e is InvalidOperationException)
+                    return StatusCode(401, e.Message);
+
+                return StatusCode(500, e.Message);
+            }
+
+            bdStatistics.AddIssueCreation(username, jiraKey, key, 0, "Tarea vinculada correctamente");
+            return key;
+        }
+        [HttpGet("[action]")]
+        public ActionResult UpdateIssueSi3CustomField(string username, string password, [RegularExpression("[0-9]+")]string issueKey, [RegularExpression("\\w+-[0-9]+")]string jirakey)
+        {
             BdStatistics bdStatistics = new BdStatistics(_context);
 
             if (!ModelState.IsValid)
@@ -165,10 +213,10 @@ namespace eaSI3Web.Controllers
                 jiraWorkLogService.UpdateIssue(jirakey, body);
             }
             catch (Exception e)
-            {               
+            {
                 bdStatistics.AddIssueCreation(username, jirakey, issueKey, 1, e.Message);
 
-                if(e is InvalidCredentialException || e is UnauthorizedAccessException || e is InvalidOperationException)
+                if (e is InvalidCredentialException || e is UnauthorizedAccessException || e is InvalidOperationException)
                     return StatusCode(401, e.Message);
 
                 return StatusCode(500, e.Message);
@@ -189,7 +237,7 @@ namespace eaSI3Web.Controllers
 
                 dateIssues.Issues = new List<JiraIssues>();
 
-                foreach(var work in workDate)
+                foreach (var work in workDate)
                 {
                     var issue = dateIssues.Issues.SingleOrDefault(x => x.IssueKey == work.Key);
                     if (issue != null)
@@ -202,6 +250,6 @@ namespace eaSI3Web.Controllers
 
             return weekJiraIssues.OrderBy(d => d.Fecha);
         }
-      
+
     }
 }

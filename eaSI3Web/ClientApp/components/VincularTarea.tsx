@@ -15,7 +15,7 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
 
         this.state = {
             products: [], productSelected: "", componentSelected: "", moduleSelected: "", loadedData: false,
-            loadedDataJira: false, titulo: "", prioridad: "", tipo: "", loading: false, responsable: "", todoOk: false,
+            loadedDataJira: false, titulo: "", prioridad: "", tipo: "", loading: false, responsable: "", todoOk: false, todoOkProject: false,
             projects: [], milestones: [], projectSelected: "", milestoneSelected:""
         };
 
@@ -27,6 +27,7 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
         this.handleChangeProject = this.handleChangeProject.bind(this);
         this.handleChangeMilestone = this.handleChangeMilestone.bind(this);
         this.vincular = this.vincular.bind(this);
+        this.vincularProyecto = this.vincularProyecto.bind(this);
         this.generarInformacion = this.generarInformacion.bind(this);
     }
 
@@ -145,22 +146,55 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
     }
 
     public handleChangeProject(event: React.FormEvent<HTMLSelectElement>) {
-        this.setState({ projectSelected: event.currentTarget.value, milestoneSelected: "default" });
+        this.setState({ projectSelected: event.currentTarget.value, milestoneSelected: "default", todoOkProject: false });
     }
     public handleChangeMilestone(event: React.FormEvent<HTMLSelectElement>) {
-        this.setState({ milestoneSelected: event.currentTarget.value});
+        if (event.currentTarget.value == "default") {
+            this.setState({ milestoneSelected: event.currentTarget.value, todoOkProject: false });
+        } else this.setState({ milestoneSelected: event.currentTarget.value, todoOkProject: true })
     }
     public handleChangeProducts(event: React.FormEvent<HTMLSelectElement>) {
         this.setState({ productSelected: event.currentTarget.value, componentSelected: "default", moduleSelected: "default", todoOk: false });
     }
     public handleChangeComponents(event: React.FormEvent<HTMLSelectElement>) {
-        this.setState({ componentSelected: event.currentTarget.value, moduleSelected: "default" });
+
         if (event.currentTarget.value == "default") {
-            this.setState({ todoOk: false });
-        } else this.setState({ todoOk: true })
+            this.setState({ componentSelected: event.currentTarget.value, moduleSelected: "default",todoOk: false });
+        } else this.setState({ componentSelected: event.currentTarget.value, moduleSelected: "default",todoOk: true })
     }
     public handleChangeModules(event: React.FormEvent<HTMLSelectElement>) {
         this.setState({ moduleSelected: event.currentTarget.value });
+    }
+
+    public vincularProyecto() {
+
+        this.setState({loading: true});
+
+        var key: string;
+        if (this.props.jiraKey.length > 0) {
+            key = this.props.jiraKey
+        } else {
+            key = (this.refs["tbKeyJira"] as HTMLInputElement).value;
+        }     
+
+        fetch('api/Jira/updateIssueSi3Project?username=' + this.getCookie("userJira") + '&password=' + this.getCookie("passJira") +
+            '&codeProject=' + this.state.projectSelected + '&codeMilestone=' + this.state.milestoneSelected + '&jiraKey=' + key)
+            .then(response => {
+                if (!response.ok) {
+                    (response.text() as Promise<string>).then(data => {
+                        alert(data);
+                        this.setState({ loading: false });
+                    })
+                } else {
+                    (response.text() as Promise<string>).then(data => {
+                        if (this.props.jiraKey.length > 0) {
+                            this.props.vincular( data, key);
+                        }
+                        alert("Tarea vinculada"); this.setState({ loading: false });
+                    })
+                    
+                }
+            });
     }
 
     public vincular() {
@@ -205,7 +239,7 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
                                     })
                                 } else {
                                     if (this.props.jiraKey.length > 0) {
-                                        this.props.vincular(issueKey);
+                                        this.props.vincular(issueKey,key);
                                     }
                                     alert("Tarea vinculada"); this.setState({ loading: false });
                                 }
@@ -234,6 +268,7 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
     }
 
     public renderInformación() {
+        
         return (
 
             <div>
@@ -315,13 +350,15 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
                                 this.state.milestones.filter(milestone => milestone.projectCode.toString() == this.state.projectSelected).map(
                                     m => m.milestone.map(
                                         milestone =>
-                                            <option>{milestone.name}</option>
+                                            <option key={milestone.name} value={milestone.name}>
+                                                {milestone.name}
+                                            </option>
                                     )
                                 )
                             }
                         </select>
                         <hr></hr>
-                        <input type="button" value="Vincular" className="btn btn-primary" />
+                        <input type="button" value="Vincular" className="btn btn-primary" onClick={this.vincularProyecto} disabled={!this.state.todoOkProject} />
                     </div>
                 </div>                            
             </div>

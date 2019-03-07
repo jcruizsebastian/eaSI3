@@ -55,6 +55,7 @@
     <None Remove="ClientApp\components\Model\WeekJiraIssuesProps.tsx" />
     <None Remove="ClientApp\components\PopupVincularTarea.tsx" />
     <None Remove="ClientApp\components\VincularTarea.tsx" />
+    <None Remove="ClientApp\css\radiobutton.css" />
   </ItemGroup>
 
   <ItemGroup>

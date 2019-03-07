@@ -25,7 +25,6 @@ export class Home extends React.Component<{}, UserCredentialsState> {
         this.getWeekofYear = this.getWeekofYear.bind(this);
         this.handleChangeWeek = this.handleChangeWeek.bind(this);
         this.getCookie = this.getCookie.bind(this);
-        this.isDisabledJira = this.isDisabledJira.bind(this);
 
         this.state = {
             Weekissues: [], loadedJira: false, loadingJira: false, calendar: { weeks: [] }, calendarLoaded: false, todoOk: false,
@@ -56,8 +55,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
                         );
                     } else {
                         (response.json() as Promise<number>).then(data => {
-                            if (data > 0) { this.isDisabledJira(); this.setState({ availableHours: 50, loading: false }); }
-                            else { this.setState({ availableHours: 40 - data, loading:false }); }
+                             this.setState({ availableHours: 40 - data, loading:false }); 
                         });
                     }
                 });
@@ -65,13 +63,6 @@ export class Home extends React.Component<{}, UserCredentialsState> {
             });
     }
 
-    private isDisabledJira() {
-        if (this.state.availableHours == 50) {
-            alert("Ya hay horas imputadas en Si3.")
-            return true;
-        } else return false;
-            
-    }
     private onLoginJira(e: { preventDefault: () => void; }) {
         e.preventDefault();
 
@@ -163,7 +154,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
         let calendar;
 
         if (this.state.calendarLoaded) {
-            jira = <input type="button" value="Obtener issues" className="btn btn-primary" onClick={this.onLoginJira} disabled={this.isDisabledJira()} />
+            jira = <input type="button" value="Obtener issues" className="btn btn-primary" onClick={this.onLoginJira}  />
 
             calendar = <div className="select-calendar">
                 <label>Elija semana de trabajo :</label>
