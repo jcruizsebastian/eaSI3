@@ -20,7 +20,7 @@ namespace eaSI3Web.Controllers
     public class JiraController : Controller
     {
         private readonly StatisticsContext _context;
-
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         private readonly ILogger<JiraController> _logger;
         public JiraController(ILogger<JiraController> logger, StatisticsContext context)
         {
@@ -33,6 +33,7 @@ namespace eaSI3Web.Controllers
         [HttpGet("[action]")]
         public ActionResult<Models.Calendar> Weeks()
         {
+            logger.Info("Calculando calendario");
             var version = GetType().Assembly.GetName().Version.ToString();
             calendar.version = version;
             calendar.Weeks = new List<CalendarWeeks>();
