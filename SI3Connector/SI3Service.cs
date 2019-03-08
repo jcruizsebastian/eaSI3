@@ -214,6 +214,19 @@ namespace SI3Connector
                 x_www_form_url_encoded.Add($"{projectCode}+++-{weekNumber}-{((int)work.Key)}", work.Value.ToString());
             }
 
+            var justAddedWork = GetJustAddeProjectWork(weekCode);
+            foreach (var addedWork in justAddedWork)
+            {
+                foreach(var work in addedWork.Value)
+                {
+                    var key = $"{addedWork.Key}+++-{weekNumber}-{((int)work.Key)}";
+                    if (x_www_form_url_encoded.ContainsKey(key))
+                        x_www_form_url_encoded[key] = (Convert.ToInt32(x_www_form_url_encoded[key]) + Convert.ToInt32(work.Value)).ToString();
+                    else
+                        x_www_form_url_encoded.Add(key, work.Value.ToString());
+                }
+            }
+
             x_www_form_url_encoded.Add($"COMM{projectCode}+++", string.Empty);
 
             //Login();
@@ -222,6 +235,23 @@ namespace SI3Connector
             request.Wait();
 
             return request.Result;
+        }
+
+        public Dictionary<string, Dictionary<DayOfWeek, int>> GetJustAddeProjectWork(string weekCode)
+        {
+            var request = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/treport/asp/weeklyreport.asp?cod={weekCode}&aa={DateTime.Today.Year}&pn=Resumen"));
+            request.Wait();
+
+            var doc = new HtmlDocument();
+            doc.LoadHtml(request.Result);
+
+            var documentMilestones = doc.DocumentNode.SelectNodes("//*/tr[contains(@name,\"rowproyecto\")]/td/input[contains(@onclick,\"selectObj(this)\")]");
+            return documentMilestones
+                .Where(x => x.Attributes["value"].Value != "0")
+                .GroupBy(y => y.Attributes["id"].Value.Split("-")[0])
+                .ToDictionary(  z => z.Key.Trim(), 
+                                s => s.ToDictionary(p => (DayOfWeek)Int32.Parse(p.Attributes["id"].Value.Split("-")[2]), 
+                                                    h => Int32.Parse(h.Attributes["value"].Value)));
         }
 
         public bool IsProjectOpened(string issueid)

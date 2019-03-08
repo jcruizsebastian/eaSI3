@@ -23,7 +23,7 @@ namespace SI3Connector.Test
             work.Add(DayOfWeek.Monday, 5);
             work.Add(DayOfWeek.Thursday, 3);
 
-            service.AddProjectWork("H-53", work);
+            service.AddProjectWork("O-120,H-53", work);
         }
 
         [TestMethod]
@@ -139,6 +139,13 @@ namespace SI3Connector.Test
         {
             SI3Service service = new SI3Service("ofjcruiz", "_*_d1d4ct1c");
             var a = service.GetMilestones();
+        }
+
+        [TestMethod]
+        public void GetJustAddeProjectWorkTest()
+        {
+            SI3Service service = new SI3Service("ofjcruiz", "_*_d1d4ct1c");
+            var a = service.GetJustAddeProjectWork("47983-10");
         }
     }
     
