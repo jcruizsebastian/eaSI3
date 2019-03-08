@@ -9,6 +9,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Security.Authentication;
+using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 
 namespace SI3Connector
@@ -182,6 +183,12 @@ namespace SI3Connector
         public bool IsIssueOpened(string issueid)
         {
             //Login();
+            Regex regex = new Regex(@"^[0-9]+$");
+            Match match = regex.Match(issueid);
+
+            if (!match.Success)
+                throw new SI3Exception("El ID SI3 de la tarea: " + issueid + " es incorrecto!");
+
             var x_www_form_url_encoded = new Dictionary<string, string>();
             x_www_form_url_encoded.Clear();
 
@@ -221,7 +228,13 @@ namespace SI3Connector
         {
             try
             {
+                Regex regex = new Regex(@"^O\-[0-9]+\,H\-[0-9]+$");
+                Match match = regex.Match(issueid);
+                if (!match.Success)
+                    throw new SI3Exception("El ID SI3 del proyecto: " + issueid + " es incorrecto!");
+
                 GetMilestone(issueid);
+
             }catch(SI3Exception si3Exception)
             {
                 return false;

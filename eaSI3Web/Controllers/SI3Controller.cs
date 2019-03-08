@@ -464,7 +464,7 @@ namespace eaSI3Web.Controllers
             var issuesIds = model.SelectMany(x => x.Issues).Where(z => z.Tiempo > 0).Select(y => y.IssueSI3Code);
 
             foreach (var issueid in issuesIds)
-            {
+            {                
                 if (double.TryParse(issueid, out var a))
                 {
                     if (!sI3Service.IsIssueOpened(issueid))
