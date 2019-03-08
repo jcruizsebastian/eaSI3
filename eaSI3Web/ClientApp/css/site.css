@@ -159,3 +159,6 @@ hr {
 #tab {
     margin-left:10px;
 }
+.oculto {
+    display:none;
+}

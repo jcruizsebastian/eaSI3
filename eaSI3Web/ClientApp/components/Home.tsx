@@ -27,12 +27,15 @@ export class Home extends React.Component<{}, UserCredentialsState> {
         this.getCookie = this.getCookie.bind(this);
 
         this.state = {
-            Weekissues: [], loadedJira: false, loadingJira: false, calendar: { weeks: [] }, calendarLoaded: false, todoOk: false,
+            Weekissues: [], loadedJira: false, loadingJira: false, calendar: { version:"", weeks: [] }, calendarLoaded: false, todoOk: false,
             loading: false, availableHours: 0
         };
     }
 
-    componentDidMount() { this.getWeekofYear(); }
+    componentDidMount() {
+        
+        this.getWeekofYear();
+    }
 
     private confirmLoadedJira() {
         this.setState({
@@ -201,7 +204,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
 
         return (
             <div>
-
+                <span className="oculto">{this.state.calendar.version}</span>
                 {calendar}
                 {jira}
                 {agenda}

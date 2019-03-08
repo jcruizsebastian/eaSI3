@@ -33,7 +33,8 @@ namespace eaSI3Web.Controllers
         [HttpGet("[action]")]
         public ActionResult<Models.Calendar> Weeks()
         {
-
+            var version = GetType().Assembly.GetName().Version.ToString();
+            calendar.version = version;
             calendar.Weeks = new List<CalendarWeeks>();
             int weekOfYear = CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(DateTime.Now, CalendarWeekRule.FirstDay, DayOfWeek.Monday);
 
