@@ -137,7 +137,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
                     if ((40 - data) != this.state.availableHours) {
                         alert("Se han imputador horas en Si3 mientras utilizabas eaSI3");
                         this.setState({ availableHours: 40 - data, loading: false });
-                    } else {
+                    } else {   
                         fetch('api/SI3/register?username=' + this.getCookie("userSi3") + '&password=' + this.getCookie("passSi3") + '&selectedWeek=' + this.state.selectedWeek + '&totalHours=' + total, {
                             method: 'post',
                             body: JSON.stringify(agenda.props.weekissues),
