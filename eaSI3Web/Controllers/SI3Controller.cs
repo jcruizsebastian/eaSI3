@@ -77,7 +77,7 @@ namespace eaSI3Web.Controllers
         /// <typeparam name="T"></typeparam>
         /// <param name="fileName"></param>
         /// <returns></returns>
-        public T DeSerializeObject<T>(string fileName)
+        private T DeSerializeObject<T>(string fileName)
         {
             if (string.IsNullOrEmpty(fileName)) { return default(T); }
 
@@ -480,7 +480,7 @@ namespace eaSI3Web.Controllers
             return sb.ToString();
         }
 
-        public IEnumerable<WeekJiraIssues> NormalizarHoras(IEnumerable<WeekJiraIssues> tareasSinNormalizar, SI3Service SI3Service)
+        private IEnumerable<WeekJiraIssues> NormalizarHoras(IEnumerable<WeekJiraIssues> tareasSinNormalizar, SI3Service SI3Service)
         {
             var issues = tareasSinNormalizar.SelectMany(x => x.Issues).ToList();
             var issuesQueue = new LinkedList<JiraIssues>(issues);
@@ -521,7 +521,7 @@ namespace eaSI3Web.Controllers
             return normalized;
         }
 
-        public DateTime StartOfWeek(DateTime dt, DayOfWeek startOfWeek)
+        private DateTime StartOfWeek(DateTime dt, DayOfWeek startOfWeek)
         {
             int diff = (7 + (dt.DayOfWeek - startOfWeek)) % 7;
             return dt.AddDays(-1 * diff).Date;

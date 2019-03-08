@@ -227,7 +227,7 @@ namespace eaSI3Web.Controllers
             return Ok();
         }
 
-        public static IEnumerable<WeekJiraIssues> Convert(List<WorkLog> worklog)
+        private static IEnumerable<WeekJiraIssues> Convert(List<WorkLog> worklog)
         {
             List<WeekJiraIssues> weekJiraIssues = new List<WeekJiraIssues>();
 
