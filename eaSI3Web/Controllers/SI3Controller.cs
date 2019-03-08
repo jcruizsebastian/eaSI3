@@ -21,12 +21,11 @@ namespace eaSI3Web.Controllers
     [Route("api/[controller]")]
     public class SI3Controller : Controller
     {
-        private readonly ILogger<SI3Controller> _logger;
         private readonly StatisticsContext _context;
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public SI3Controller(ILogger<SI3Controller> logger, StatisticsContext context)
+        public SI3Controller(StatisticsContext context)
         {
-            _logger = logger;
             _context = context;
         }
         public static List<Models.Producto> products { get; set; }
@@ -64,6 +63,7 @@ namespace eaSI3Web.Controllers
                     products.Add(new Models.Producto() { name = product.Key, code = product.Value, componentes = components });
                 }
             } catch (InvalidCredentialException e) {
+                logger.Error("Username: " + username + " ,Error: " + e.Message);
                 return StatusCode(401, e.Message);
             }
 
@@ -129,6 +129,7 @@ namespace eaSI3Web.Controllers
             }
             catch (InvalidCredentialException e)
             {
+                logger.Error("Error: " + e.Message);
                 return StatusCode(401, e.Message);
             }
 
@@ -143,6 +144,7 @@ namespace eaSI3Web.Controllers
             }
             catch (InvalidCredentialException e)
             {
+                logger.Error("Username: " + username + " ,Error: " + e.Message);
                 return StatusCode(401, e.Message);
             }
         }
@@ -163,6 +165,7 @@ namespace eaSI3Web.Controllers
             }
             catch (InvalidCredentialException e)
             {
+                logger.Error("Username: " + username + " ,Error: " + e.Message);
                 return StatusCode(401, e.Message);
             }
 
@@ -315,6 +318,7 @@ namespace eaSI3Web.Controllers
             }
             catch (InvalidCredentialException e)
             {
+                logger.Error("Username: " + username + " ,Error: " + e.Message);
                 return StatusCode(401, e.Message);
             }
             return NewIssue;
@@ -368,6 +372,7 @@ namespace eaSI3Web.Controllers
             }
             catch (InvalidCredentialException e)
             {
+                logger.Error("Username: " + username + " ,Error: " + e.Message);
                 return StatusCode(401,e.Message);
             }
 
@@ -380,7 +385,6 @@ namespace eaSI3Web.Controllers
             BdStatistics bdStatistics = new BdStatistics(_context);
             try
             {
-                _logger.LogInformation("Usuario " + username + " hizo clic en el botón de Enviar Si3 ");
                 SI3Service SI3Service = new SI3Service(username, password);
 
                 foreach (var week in model.ToList())
@@ -439,13 +443,13 @@ namespace eaSI3Web.Controllers
             }
             catch (SI3Exception e)
             {
-                _logger.LogError("Usuario : " + username + " Error : " + e.Message);
+                logger.Error("Username: " + username + " ,Error: " + e.Message);
                 bdStatistics.AddWorkTracking(username, int.Parse(selectedWeek), totalHours, 1, e.Message);
                 return StatusCode(400, "Error :" + e.Message);
             }
             catch (Exception e)
             {
-                _logger.LogError("Usuario : " + username + " Error : " + e.Message);
+                logger.Error("Username: " + username + " ,Error: " + e.Message);
                 bdStatistics.AddWorkTracking(username, int.Parse(selectedWeek), totalHours, 1, e.Message);
                 if (e is InvalidCredentialException) { return StatusCode(401, e.Message); }
                 return StatusCode(400, "Error :" + e.Message);
@@ -453,7 +457,6 @@ namespace eaSI3Web.Controllers
 
 
             bdStatistics.AddWorkTracking(username, int.Parse(selectedWeek), totalHours, 0, "Horas imputadas en Si3 correctamente");
-            _logger.LogInformation("Usuario : " + username + ", horas imputadas en Si3 correctamente");
             return Ok();
         }
 
