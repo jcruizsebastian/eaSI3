@@ -196,7 +196,13 @@ export class Home extends React.Component<{}, UserCredentialsState> {
         if (this.state.loadedJira && this.state.availableHours > 0) {
 
             agenda = <Agenda weekissues={this.state.Weekissues} ref="agenda1" isTodoOk={this.isTodoOk} availableHours={this.state.availableHours} />
-            si3 = <div> <input type="button" id="btnSi3" value="Imputar tareas en Si3" className="btn btn-primary" disabled={this.state.todoOk} onClick={this.onLoginSi3} /></div>;
+            si3 = <div>
+                <input id="radiobtn" className="form-check-input" type="radio" ref="submitRadioBtn" value="option1" disabled />
+                <label className="form-check-label">
+                    Submit en Si3
+                </label>
+                <br></br>
+                <input type="button" id="btnSi3" value="Imputar tareas en Si3" className="btn btn-primary" disabled={this.state.todoOk} onClick={this.onLoginSi3} /></div>;
 
         }
 

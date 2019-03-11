@@ -1,3 +1,4 @@
+using eaSI3Web.Configs;
 using eaSI3Web.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -6,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Swagger;
+using System.Collections.Generic;
 
 namespace eaSI3Web
 {
@@ -21,11 +23,15 @@ namespace eaSI3Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+            
+            services.Configure<Data>(Configuration.GetSection("Data"));
+            services.Configure<ConnectionStrings>(Configuration.GetSection("ConnectionStrings"));
 
-            var connection = ;
+            var connection = Configuration["ConnectionStrings:DefaultConnection"];
+            
             services.AddDbContext<StatisticsContext>(options => options.UseSqlServer(connection));
-
+            services.AddOptions();
+            services.AddMvc();
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
             {

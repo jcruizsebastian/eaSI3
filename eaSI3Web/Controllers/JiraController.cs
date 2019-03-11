@@ -13,17 +13,21 @@ using System.Linq;
 using System.Security.Authentication;
 using eaSI3Web.Controllers.Models;
 using System.Text.RegularExpressions;
+using System.Configuration;
+using eaSI3Web.Configs;
+using Microsoft.Extensions.Options;
 
 namespace eaSI3Web.Controllers
 {
     [Route("api/[controller]")]
     public class JiraController : Controller
     {
+        public IOptions<Data> data;
         private readonly StatisticsContext _context;
-
         private readonly ILogger<JiraController> _logger;
-        public JiraController(ILogger<JiraController> logger, StatisticsContext context)
+        public JiraController(ILogger<JiraController> logger, StatisticsContext context, IOptions<Data> data)
         {
+            this.data = data;
             _logger = logger;
             _context = context;
         }
@@ -91,7 +95,7 @@ namespace eaSI3Web.Controllers
                 }
             }
 
-            JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(username, password);
+            JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(username, password, data.Value.Jira_Host_URL);
             var currentWorklog = new List<WorkLog>();
             try
             {
@@ -120,7 +124,7 @@ namespace eaSI3Web.Controllers
 
             try
             {
-                JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(username, password);
+                JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(username, password, data.Value.Jira_Host_URL);
                 jiraIssue = jiraWorkLogService.GetIssue(jiraKey);
             }
             catch (Exception e)
@@ -145,7 +149,7 @@ namespace eaSI3Web.Controllers
         {
             try
             {
-                JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(username, password);
+                JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(username, password, data.Value.Jira_Host_URL);
             }
             catch (Exception e)
             {
@@ -182,7 +186,7 @@ namespace eaSI3Web.Controllers
 
             try
             {
-                JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(username, password);
+                JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(username, password, data.Value.Jira_Host_URL);
                 string body = JsonConvert.SerializeObject(new { fields = new { customfield_10300 = key } });
                 jiraWorkLogService.UpdateIssue(jiraKey, body);
             }
@@ -209,7 +213,7 @@ namespace eaSI3Web.Controllers
 
             try
             {
-                JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(username, password);
+                JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(username, password, data.Value.Jira_Host_URL);
                 string body = JsonConvert.SerializeObject(new { fields = new { customfield_10300 = issueKey } });
                 jiraWorkLogService.UpdateIssue(jirakey, body);
             }

@@ -18,11 +18,13 @@ namespace SI3Connector
     {
         private string usercode { get; set; }
         private SI3HttpRequest SI3HttpRequest { get; set; }
-
-        public SI3Service(string username, string password)
+        private int Work_Hours { get; set; }
+        private string si3Url { get; set; }
+        public SI3Service(string username, string password, int Work_Hours, string si3Url)
         {
             SI3HttpRequest = new SI3HttpRequest();
-
+            this.Work_Hours = Work_Hours;
+            this.si3Url = si3Url;
             Login(username, password);
         }
 
@@ -32,7 +34,7 @@ namespace SI3Connector
             if (products != null)
                 return products;
 
-            var request = SI3HttpRequest.Post(new Uri("http://si3.infobolsa.es/Si3/its/asp/ProductosActivosXML.asp"), null);
+            var request = SI3HttpRequest.Post(new Uri($"{si3Url}Si3/its/asp/ProductosActivosXML.asp"), null);
             request.Wait();
 
             var productos = GetGeneric<Productos>(request.Result);
@@ -44,7 +46,7 @@ namespace SI3Connector
 
         public void Submit()
         {
-            int WORK_HOURS = 40;
+            int WORK_HOURS = Work_Hours;
 
             var spendedHours = SpendedHours().Sum(x => x.Value);
             if (spendedHours != WORK_HOURS)
@@ -63,9 +65,7 @@ namespace SI3Connector
             if(components == null)
                 components = new Dictionary<string, Dictionary<string, string>>();
 
-            //Login();
-
-            var request = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/its/asp/ComponentesXML.asp?cod={producto}"), null);
+            var request = SI3HttpRequest.Post(new Uri($"{si3Url}Si3/its/asp/ComponentesXML.asp?cod={producto}"), null);
             request.Wait();
 
             var componentes = GetGeneric<Componentes>(request.Result);
@@ -84,9 +84,7 @@ namespace SI3Connector
             if (modules == null)
                 modules = new Dictionary<string, Dictionary<string, string>>();
 
-            //Login();
-
-            var request = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/its/asp/ModulesXML.asp?cod={component}"), null);
+            var request = SI3HttpRequest.Post(new Uri($"{si3Url}Si3/its/asp/ModulesXML.asp?cod={component}"), null);
             request.Wait();
 
             var modulos = GetGeneric<Modules>(request.Result);
@@ -104,7 +102,7 @@ namespace SI3Connector
 
             //Login();
 
-            var request = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/its/asp/usuariosFiltradosXML.asp"), null);
+            var request = SI3HttpRequest.Post(new Uri($"{si3Url}Si3/its/asp/usuariosFiltradosXML.asp"), null);
             request.Wait();
 
             var usuarios = GetGeneric<Usuarios>(request.Result);
@@ -121,7 +119,7 @@ namespace SI3Connector
             x_www_form_url_encoded.Add("pwd", password);
             x_www_form_url_encoded.Add("DSN", "GESOPENFINANCE");
 
-            var request = SI3HttpRequest.Post(new Uri("http://si3.infobolsa.es/si3/asp/identificacion.asp"), x_www_form_url_encoded);
+            var request = SI3HttpRequest.Post(new Uri($"{si3Url}si3/asp/identificacion.asp"), x_www_form_url_encoded);
             request.Wait();
 
             if (request.Result.Contains("denegado.htm"))
@@ -151,7 +149,7 @@ namespace SI3Connector
             x_www_form_url_encoded.Add("title", newIssueData.title);
             x_www_form_url_encoded.Add("cause", newIssueData.cause);
 
-            var request = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/its/asp/CreateIssue.asp"), x_www_form_url_encoded);
+            var request = SI3HttpRequest.Post(new Uri($"{si3Url}Si3/its/asp/CreateIssue.asp"), x_www_form_url_encoded);
             request.Wait();
 
             var idSi3 = request.Result.Split("viewToEdit('")[1].Split("'")[0];
@@ -162,7 +160,7 @@ namespace SI3Connector
             x_www_form_url_encoded.Add("isid", idSi3);
             x_www_form_url_encoded.Add("asign", newIssueData.user);
 
-            var request2 = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/its/asp/saveIssue.asp"), x_www_form_url_encoded);
+            var request2 = SI3HttpRequest.Post(new Uri($"{si3Url}Si3/its/asp/saveIssue.asp"), x_www_form_url_encoded);
             request2.Wait();
 
             //Login();
@@ -171,7 +169,7 @@ namespace SI3Connector
             x_www_form_url_encoded.Add("isid", idSi3);
             x_www_form_url_encoded.Add("actions", newIssueData.actions);
 
-            var request3 = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/its/asp/saveIssue.asp"), x_www_form_url_encoded);
+            var request3 = SI3HttpRequest.Post(new Uri($"{si3Url}Si3/its/asp/saveIssue.asp"), x_www_form_url_encoded);
             request3.Wait();
 
             return idSi3;
@@ -186,7 +184,7 @@ namespace SI3Connector
             x_www_form_url_encoded.Add("newDate", $"{date.Day.ToString("D2")}/{date.Month.ToString("D2")}/{date.Year - 2000}");
             x_www_form_url_encoded.Add("timerecordtype", "R");
 
-            var request = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/its/asp/newTimeRecord.asp?cod={issueid}&type=1"), x_www_form_url_encoded);
+            var request = SI3HttpRequest.Post(new Uri($"{si3Url}Si3/its/asp/newTimeRecord.asp?cod={issueid}&type=1"), x_www_form_url_encoded);
             request.Wait();
 
             return request.Result;
@@ -204,7 +202,7 @@ namespace SI3Connector
             var x_www_form_url_encoded = new Dictionary<string, string>();
             x_www_form_url_encoded.Clear();
 
-            var request = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/its/asp/viewIssue.asp?cod={issueid}"), x_www_form_url_encoded);
+            var request = SI3HttpRequest.Post(new Uri($"{si3Url}Si3/its/asp/viewIssue.asp?cod={issueid}"), x_www_form_url_encoded);
             request.Wait();
 
             return request.Result.Contains("Open&nbsp;&nbsp");
@@ -243,7 +241,7 @@ namespace SI3Connector
 
             //Login();
 
-            var request = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/treport/asp/saveWReport.asp?cod={weekCode}&stchange=0&initst=1&usercode={usercode}&aa={DateTime.Today.Year}&pn=Resumen"), x_www_form_url_encoded);
+            var request = SI3HttpRequest.Post(new Uri($"{si3Url}Si3/treport/asp/saveWReport.asp?cod={weekCode}&stchange=0&initst=1&usercode={usercode}&aa={DateTime.Today.Year}&pn=Resumen"), x_www_form_url_encoded);
             request.Wait();
 
             return request.Result;
@@ -251,7 +249,7 @@ namespace SI3Connector
 
         public Dictionary<string, Dictionary<DayOfWeek, int>> GetJustAddeProjectWork(string weekCode)
         {
-            var request = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/treport/asp/weeklyreport.asp?cod={weekCode}&aa={DateTime.Today.Year}&pn=Resumen"));
+            var request = SI3HttpRequest.Post(new Uri($"{si3Url}Si3/treport/asp/weeklyreport.asp?cod={weekCode}&aa={DateTime.Today.Year}&pn=Resumen"));
             request.Wait();
 
             var doc = new HtmlDocument();
@@ -292,14 +290,14 @@ namespace SI3Connector
 
             //Login();
 
-            var request = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/gestion/asp/PlanSistemas.asp"), null);
+            var request = SI3HttpRequest.Post(new Uri($"{si3Url}Si3/gestion/asp/PlanSistemas.asp"), null);
             request.Wait();
 
             string projectID = GetProjectId(projectCode, request.Result);
 
             //Login();
 
-            request = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/gestion/asp/MilestonesXML.asp?cod={projectID}"), null);
+            request = SI3HttpRequest.Post(new Uri($"{si3Url}Si3/gestion/asp/MilestonesXML.asp?cod={projectID}"), null);
             request.Wait();
             var result = request.Result;
 
@@ -344,7 +342,7 @@ namespace SI3Connector
             List<Project> projects = GetProjects();
             foreach (var project in projects)
             {
-                var request = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/gestion/asp/MilestonesXML.asp?cod={project.Id}"), null);
+                var request = SI3HttpRequest.Post(new Uri($"{si3Url}Si3/gestion/asp/MilestonesXML.asp?cod={project.Id}"), null);
                 request.Wait();
 
                 XmlSerializer serializer = new XmlSerializer(typeof(Milestones));
@@ -366,7 +364,7 @@ namespace SI3Connector
         {
             List<Project> projects = new List<Project>();
 
-            var request = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/gestion/asp/PlanSistemas.asp"), null);
+            var request = SI3HttpRequest.Post(new Uri($"{si3Url}Si3/gestion/asp/PlanSistemas.asp"), null);
             request.Wait();
 
             var doc = new HtmlDocument();
@@ -440,7 +438,7 @@ namespace SI3Connector
             var weekCode = GetWeekCode(weekNumber);
             //var weekCode = "47806-9";
 
-            var request = SI3HttpRequest.Post(new Uri($"http://si3.infobolsa.es/Si3/treport/asp/weeklyreport.asp?cod={weekCode}&aa={DateTime.Today.Year}&pn=Resumen"));
+            var request = SI3HttpRequest.Post(new Uri($"{si3Url}Si3/treport/asp/weeklyreport.asp?cod={weekCode}&aa={DateTime.Today.Year}&pn=Resumen"));
             request.Wait();
 
             var doc = new HtmlDocument();
@@ -458,7 +456,7 @@ namespace SI3Connector
 
         internal string GetWeekCode(int weekNumber)
         {
-            var request = SI3HttpRequest.Post(new Uri("http://si3.infobolsa.es/Si3/treport/asp/resumen.asp"));
+            var request = SI3HttpRequest.Post(new Uri($"{si3Url}Si3/treport/asp/resumen.asp"));
             request.Wait();
 
             var doc = new HtmlDocument();

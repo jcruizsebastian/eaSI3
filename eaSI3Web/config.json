@@ -5,6 +5,8 @@
   "Data": {
     "Week_Hours": 40,
     "Jira_Host_URL": "https://jira.openfinance.es/",
-    "SI3_Host_URL": "https://jira.openfinance.es/"
+    "SI3_Host_URL": "http://si3.infobolsa.es/",
+    "Jira_IDSI3_CustomFieldID": "10300",
+    "Jira_Epic_CustomFieldID": "10006"
   }
 }

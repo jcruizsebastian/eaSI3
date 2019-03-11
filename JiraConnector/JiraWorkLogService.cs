@@ -5,6 +5,7 @@ using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace JiraConnector
 {
@@ -12,9 +13,9 @@ namespace JiraConnector
     {
         private JiraHttpRequest jiraHttpRequest { get; set; }
 
-        public JiraWorkLogService(string username, string password)
+        public JiraWorkLogService(string username, string password, string jiraUrl)
         {
-            jiraHttpRequest = new JiraHttpRequest(username, password);
+            jiraHttpRequest = new JiraHttpRequest(username, password, jiraUrl);
 
             //Probamos que se hace login correctamente con las credenciales recibidas
             jiraHttpRequest.DoJiraRequest<JiraIssue>(JiraURIRepository.LOGIN(username), Method.GET);
@@ -44,10 +45,13 @@ namespace JiraConnector
                 log.Summary = issue.Summary;
                 log.Key = issue.Key;
 
-                log.si3ID = response.Data.Issues.First(x => x.id == log.IssueId)?.fields?.customfield_10300?.ToString().Trim();
+                var fields = response.Data.Issues.First(x => x.id == log.IssueId)?.fields;
+                var properties = fields.GetType().GetProperties();
+                log.si3ID = properties.First(p => p.Name == "customfield_10300")?.GetValue(fields)?.ToString().Trim();
+
                 if (string.IsNullOrEmpty(log.si3ID))
-                {
-                    string epicJiraKey = response.Data.Issues.First(y => y.id == log.IssueId)?.fields?.customfield_10006?.ToString().Trim();
+                {                   
+                    string epicJiraKey = properties.First(p => p.Name == "customfield_10006")?.GetValue(fields)?.ToString().Trim();
                     if (!string.IsNullOrEmpty(epicJiraKey))
                     {
                         var worklogIssueEpica = GetIssue(epicJiraKey);

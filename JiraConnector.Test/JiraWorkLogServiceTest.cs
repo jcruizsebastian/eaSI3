@@ -10,6 +10,9 @@ namespace JiraConnector.Test
     {
         private string username { get; set; }
         private string password { get; set; }
+
+        private string jiraUrl;
+
         private JiraWorkLogService jiraWorkLogService { get; set; }
 
         [TestInitialize]
@@ -17,8 +20,9 @@ namespace JiraConnector.Test
         {
             username = "jcruiz";
             password = "_*_d1d4ct1c97";
+            jiraUrl = "https://jira.openfinance.es/";
 
-            jiraWorkLogService = new JiraWorkLogService(username, password);
+            jiraWorkLogService = new JiraWorkLogService(username, password,jiraUrl);
         }
 
         [TestMethod]
@@ -48,7 +52,7 @@ namespace JiraConnector.Test
         public void TestLogin()
         {
             //Assert
-            jiraWorkLogService = new JiraWorkLogService(username, password);
+            jiraWorkLogService = new JiraWorkLogService(username, password,jiraUrl);
         }
 
         [TestMethod]
@@ -59,7 +63,7 @@ namespace JiraConnector.Test
             string badpassword = "anypass";
 
             //Assert
-            Assert.ThrowsException<InvalidCredentialException>(() => new JiraWorkLogService(badusername, badpassword));
+            Assert.ThrowsException<InvalidCredentialException>(() => new JiraWorkLogService(badusername, badpassword,jiraUrl));
         }
 
         [TestMethod]

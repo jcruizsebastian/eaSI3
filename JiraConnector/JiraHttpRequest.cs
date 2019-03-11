@@ -7,13 +7,13 @@ namespace JiraConnector
 {
     public class JiraHttpRequest
     {
-        private const string jiraURL = "https://jira.openfinance.es/";
-
+        private string jiraURL { get; set; } 
         private string _userName { get; set; }
         private string _password { get; set; }
 
-        public JiraHttpRequest(string userName, string password)
+        public JiraHttpRequest(string userName, string password, string _jiraURL)
         {
+            jiraURL = _jiraURL;
             _userName = userName;
             _password = password;
         }
