@@ -56,6 +56,11 @@ namespace eaSI3Web
         public static IWebHostBuilder BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
+                .ConfigureAppConfiguration((hostingContext, config) =>
+                {
+                    config.SetBasePath(Directory.GetCurrentDirectory());
+                    config.AddJsonFile("config.json", optional: true, reloadOnChange: true);
+                })
                 .ConfigureLogging(logging =>
                 {
                     logging.ClearProviders();

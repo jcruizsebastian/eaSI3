@@ -139,7 +139,7 @@ namespace eaSI3Web.Controllers
             try
             {
                 SI3Service Si3Service = new SI3Service(username, password);
-                return Si3Service.AvailableHours().Sum(x => x.Value);
+                return Si3Service.SpendedHours().Sum(x => x.Value);
             }
             catch (InvalidCredentialException e)
             {
@@ -324,7 +324,7 @@ namespace eaSI3Web.Controllers
         public ActionResult<Dictionary<int, int>> AvailableHours2([FromQuery]string username, [FromQuery]string password)
         {
             SI3Service SI3Service = new SI3Service(username, password);
-            return SI3Service.AvailableHours().ToDictionary(x => (int)x.Key, y => y.Value);
+            return SI3Service.SpendedHours().ToDictionary(x => (int)x.Key, y => y.Value);
         }
 
         [HttpGet("[action]")]
@@ -485,7 +485,7 @@ namespace eaSI3Web.Controllers
             var issues = tareasSinNormalizar.SelectMany(x => x.Issues).ToList();
             var issuesQueue = new LinkedList<JiraIssues>(issues);
 
-            var availableHours = SI3Service.AvailableHours();
+            var availableHours = SI3Service.SpendedHours();
 
             IList<WeekJiraIssues> normalized = new List<WeekJiraIssues>();
 

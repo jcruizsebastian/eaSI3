@@ -42,6 +42,18 @@ namespace SI3Connector
             return products;
         }
 
+        public void Submit()
+        {
+            int WORK_HOURS = 40;
+
+            var spendedHours = SpendedHours().Sum(x => x.Value);
+            if (spendedHours != WORK_HOURS)
+                throw new SI3Exception($"No se pueden consignar menos de {WORK_HOURS} horas.");
+
+            var request = SI3HttpRequest.Post(new Uri($""), null);
+            request.Wait();
+        }
+
         private static Dictionary<string, Dictionary<string, string>> components { get; set; }
         public Dictionary<string, string> GetComponents(string producto)
         {
@@ -420,7 +432,7 @@ namespace SI3Connector
             return CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(time, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
         }
 
-        public Dictionary<DayOfWeek, int> AvailableHours()
+        public Dictionary<DayOfWeek, int> SpendedHours()
         {
             Dictionary<DayOfWeek, int> availableHours = new Dictionary<DayOfWeek, int>();
 
