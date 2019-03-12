@@ -378,6 +378,21 @@ namespace eaSI3Web.Controllers
         }
 
         [HttpPost("[action]")]
+        public ActionResult Submit([FromBody] BodyData body)
+        {
+            try
+            {
+                SI3Service si3Service = new SI3Service(body.username, body.password, data.Value.Week_Hours, data.Value.Si3_Host_URL);
+                //si3Service.Submit();
+            }
+            catch (InvalidCredentialException e)
+            {
+                return StatusCode(401, e.Message);
+            }
+
+            return Ok();
+        }
+        [HttpPost("[action]")]
         public ActionResult Register([FromQuery]string username, [FromQuery]string password, [FromQuery]string selectedWeek, [FromQuery]int totalHours, [FromBody]IEnumerable<WeekJiraIssues> model)
         {
             BdStatistics bdStatistics = new BdStatistics(_context);

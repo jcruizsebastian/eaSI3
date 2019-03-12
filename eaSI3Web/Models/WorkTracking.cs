@@ -12,5 +12,6 @@ namespace eaSI3Web.Models
         public DateTime TrackingDate { get; set; }
         public TrackResult TrackResult { get; set; }
         public string TrackResultAddtionalInfo { get; set; }
+        public bool Submit { get; set; }
     }
 }

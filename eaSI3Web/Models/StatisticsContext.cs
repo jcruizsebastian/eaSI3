@@ -8,7 +8,13 @@ namespace eaSI3Web.Models
         { }
 
         public StatisticsContext(DbContextOptions<StatisticsContext> options) : base(options)
-        { }
+        {
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer("User ID=sa; Password=sancho;Initial Catalog=easi3;Data Source=LAPTOP104;timeout=40;Pooling=False;Connection Lifetime=1;");
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
