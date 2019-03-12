@@ -24,11 +24,10 @@ namespace eaSI3Web.Controllers
     {
         public IOptions<Data> data;
         private readonly StatisticsContext _context;
-        private readonly ILogger<JiraController> _logger;
-        public JiraController(ILogger<JiraController> logger, StatisticsContext context, IOptions<Data> data)
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        public JiraController( StatisticsContext context, IOptions<Data> data)
         {
             this.data = data;
-            _logger = logger;
             _context = context;
         }
 
@@ -84,7 +83,6 @@ namespace eaSI3Web.Controllers
         {
             DateTime startOfWeek = DateTime.Now;
             DateTime endOfWeek = DateTime.Now;
-            _logger.LogInformation("Usuario " + username + " => clic en el botón de Enviar Jira, Semana elegida : " + selectedWeek);
 
             foreach (var week in calendar.Weeks)
             {
@@ -103,7 +101,7 @@ namespace eaSI3Web.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError("Usuario : " + username + " Semana Elegida : " + selectedWeek + "Error : " + e.Message);
+                logger.Error("Usuario : " + username + " Semana Elegida : " + selectedWeek + "Error : " + e.Message);
                 if (e is InvalidCredentialException || e is UnauthorizedAccessException || e is InvalidOperationException)
                     return StatusCode(401, e.Message);
 
@@ -112,7 +110,6 @@ namespace eaSI3Web.Controllers
 
             WeekJiraIssuesResponse weekJiraIssuesList = new WeekJiraIssuesResponse();
             weekJiraIssuesList.WeekJiraIssues = Convert(currentWorklog);
-            _logger.LogInformation("Worklog devuelto satisfactoriamente a " + username);
             return weekJiraIssuesList;
         }
 
@@ -129,7 +126,7 @@ namespace eaSI3Web.Controllers
             }
             catch (Exception e)
             {
-
+                logger.Error("Username: " + username + " ,Issue: " + jiraKey + " ,Error: " + e.Message);
                 bdStatistics.AddIssueCreation(username, jiraKey, jiraIssue.si3ID, 1, e.Message);
                 if (e is InvalidCredentialException || e is UnauthorizedAccessException || e is InvalidOperationException)
                     return StatusCode(401, e.Message);
@@ -153,6 +150,7 @@ namespace eaSI3Web.Controllers
             }
             catch (Exception e)
             {
+                logger.Error("Username: " + username + " ,Error: " + e.Message);
                 if (e is InvalidCredentialException || e is UnauthorizedAccessException || e is InvalidOperationException)
                     return StatusCode(401, e.Message);
 
@@ -192,6 +190,7 @@ namespace eaSI3Web.Controllers
             }
             catch (Exception e)
             {
+                logger.Error("Username: " + username + " ,Error: " + e.Message);
                 bdStatistics.AddIssueCreation(username, jiraKey, key, 1, e.Message);
 
                 if (e is InvalidCredentialException || e is UnauthorizedAccessException || e is InvalidOperationException)
@@ -219,6 +218,7 @@ namespace eaSI3Web.Controllers
             }
             catch (Exception e)
             {
+                logger.Error("Username: " + username + " ,Error: " + e.Message);
                 bdStatistics.AddIssueCreation(username, jirakey, issueKey, 1, e.Message);
 
                 if (e is InvalidCredentialException || e is UnauthorizedAccessException || e is InvalidOperationException)
