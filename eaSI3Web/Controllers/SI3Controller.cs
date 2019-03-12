@@ -152,27 +152,28 @@ namespace eaSI3Web.Controllers
             }
         }
 
-        [HttpGet("[action]")]
-        public ActionResult ValidateLogin(string username, string password)
+        [HttpPost("[action]")]
+        public ActionResult<int> ValidateLogin([FromBody] BodyData bodyData)
         {
+            int id=-9999;
             try
             {
-                SI3Service si3Service = new SI3Service(username, password, data.Value.Week_Hours, data.Value.Si3_Host_URL);
-                //si3Service.Login();
-                if (!string.IsNullOrEmpty(username))
+                SI3Service si3Service = new SI3Service(bodyData.username, bodyData.password, data.Value.Week_Hours, data.Value.Si3_Host_URL);
+                if (!string.IsNullOrEmpty(bodyData.username))
                 {
                     BdStatistics bdStatistics = new BdStatistics(_context);
-                    bdStatistics.AddUser(username);
-                    bdStatistics.AddLogin(username);
+                    bdStatistics.AddUser(bodyData.username);
+                    bdStatistics.AddLogin(bodyData.username);
+                    id = bdStatistics.GetUserId(bodyData.username);
                 }
             }
             catch (InvalidCredentialException e)
             {
-                logger.Error("Username: " + username + " ,Error: " + e.Message);
+                logger.Error("Username: " +bodyData.username + " ,Error: " + e.Message);
                 return StatusCode(401, e.Message);
             }
 
-            return Ok();
+            return id;
         }
 
         [HttpPost("[action]")]

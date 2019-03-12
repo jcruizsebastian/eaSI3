@@ -9,5 +9,6 @@ namespace eaSI3Web.Controllers.Models
     {
         public string username { get; set; }
         public string password { get; set; }
+        public int userId { get; set; }
     }
 }

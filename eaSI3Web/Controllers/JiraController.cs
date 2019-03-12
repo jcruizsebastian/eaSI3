@@ -36,6 +36,8 @@ namespace eaSI3Web.Controllers
         [HttpGet("[action]")]
         public ActionResult<Models.Calendar> Weeks()
         {
+            logger.Info("prueba");
+
             var version = GetType().Assembly.GetName().Version.ToString();
             calendar.version = version;
             calendar.Weeks = new List<CalendarWeeks>();
@@ -141,16 +143,16 @@ namespace eaSI3Web.Controllers
             return jiraIssue;
 
         }
-        [HttpGet("[action]")]
-        public ActionResult ValidateLogin(string username, string password)
+        [HttpPost("[action]")]
+        public ActionResult ValidateLogin([FromBody] BodyData bodyData)
         {
             try
             {
-                JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(username, password, data.Value.Jira_Host_URL);
+                JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(bodyData.username, bodyData.password, data.Value.Jira_Host_URL);
             }
             catch (Exception e)
             {
-                logger.Error("Username: " + username + " ,Error: " + e.Message);
+                logger.Error("Username: " + bodyData.username + " ,Error: " + e.Message);
                 if (e is InvalidCredentialException || e is UnauthorizedAccessException || e is InvalidOperationException)
                     return StatusCode(401, e.Message);
 

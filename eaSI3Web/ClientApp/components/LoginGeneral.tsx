@@ -39,23 +39,18 @@ export class LoginGeneral extends React.Component<LoginProps, LoginState> {
 
         this.setState({ loading: true });
 
-        let paramsJira : any = { "username": userJira, "password": passJira }
-        let queryJira = Object.keys(paramsJira)
-            .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(paramsJira[k]))
-            .join('&');
-
-        let urlJira = 'api/Jira/validateLogin?' + queryJira;
+        let urlJira = 'api/Jira/validateLogin?';
+        let urlSi3 = 'api/Si3/validateLogin?'
 
 
-        let paramsSi3 : any = { "username": userSi3, "password": passSi3 }
-        let querySi3 = Object.keys(paramsSi3)
-            .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(paramsSi3[k]))
-            .join('&');
-
-        let urlSi3 = 'api/Si3/validateLogin?' + querySi3;
-
-
-        fetch(urlJira)
+        fetch(urlJira, {
+            method: 'post',
+            body: JSON.stringify({ username: userJira, password: passJira, userId: -1 }),
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+        })
             .then(response => {
                 if (!response.ok) {
                     (response.text() as Promise<String>).then(
@@ -65,20 +60,35 @@ export class LoginGeneral extends React.Component<LoginProps, LoginState> {
                 else { this.setState({ userJiraLoaded: true }); }
             })
             .then(data => {
-                fetch(urlSi3)
+                fetch(urlSi3, {
+                    method: 'post',
+                    body: JSON.stringify({ username: userSi3, password: passSi3, userId: -1 }),
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                })
                     .then(response => {
                         if (!response.ok) {
                             (response.text() as Promise<String>).then(
                                 data => { alert(data); this.setState({ userSi3Loaded: false }); }
                             );
                         }
-                        else { this.setState({ userSi3Loaded: true }); }
-                        this.ValidateLogin();
+                        else {
+                            (response.json() as Promise<Number>).then(
+                                data => {
+                                    this.setState({ userSi3Loaded: true });
+                                    this.ValidateLogin(data);
+                                })
+                            
+                        }
+                        
                     });
             });
     }
 
-    public ValidateLogin() {
+    public ValidateLogin(idUser: Number) {
+
         var userJira = (this.refs["tbUserJira"] as HTMLInputElement).value;
         var passJira = (this.refs["tbPassJira"] as HTMLInputElement).value;
         var codUserSi3 = (this.refs["tbCodUserSi3"] as HTMLSelectElement).value;
@@ -92,6 +102,7 @@ export class LoginGeneral extends React.Component<LoginProps, LoginState> {
             var expiration_date = new Date();
             expiration_date.setFullYear(expiration_date.getFullYear() + 1);
 
+            document.cookie = "userId=" + idUser + "; path=/;" + "expires=" + expiration_date;
             document.cookie = "userJira=" + userJira + "; path=/;"+ "expires=" + expiration_date;
             document.cookie = "passJira=" + passJira + "; path=/;" + "expires=" + expiration_date;
             document.cookie = "codUserSi3=" + codUserSi3 + "; path=/;" + "expires=" + expiration_date;

@@ -4,6 +4,7 @@ namespace eaSI3Web.Models
 {
     public class StatisticsContext : DbContext
     {
+
         public StatisticsContext()
         { }
 

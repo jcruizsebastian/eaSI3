@@ -23,7 +23,11 @@ namespace eaSI3Web.Controllers.UsageStatistics
                 _context.SaveChanges();
             }
         }
-
+        public int GetUserId(string usernameSi3)
+        {
+            var users = from u in _context.Users where u.SI3UserName.Equals(usernameSi3) select u;
+            return users.First().UserId;
+        }
         public void AddLogin(string username)
         {
             var users = from u in _context.Users where u.SI3UserName.CompareTo(username) == 0 select u;

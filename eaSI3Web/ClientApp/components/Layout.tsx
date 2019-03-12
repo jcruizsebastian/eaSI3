@@ -47,15 +47,29 @@ export class Layout extends React.Component<LayoutProps, LayoutState> {
         var passJira = this.getCookie("passJira");
         var userSi3 = this.getCookie("userSi3");
         var passSi3 = this.getCookie("passSi3");
-
+        var userId = this.getCookie("userId");
         this.setState({ loaded: false });
 
-        fetch('api/Jira/validateLogin?username=' + userJira + '&password=' + passJira)
+        fetch('api/Jira/validateLogin?', {
+            method: 'post',
+            body: JSON.stringify({ username: userJira, password: passJira, userId: userId }),
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+        })
             .then(response => response.text() as Promise<String>)
             .then(data => {
                 if (data.length == 0) {
 
-                    fetch('api/Si3/validateLogin?username=' + userSi3 + '&password=' + passSi3)
+                    fetch('api/Si3/validateLogin?', {
+                        method: 'post',
+                        body: JSON.stringify({ username: userSi3, password: passSi3, userId: userId }),
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                    })
                         .then(response => response.text() as Promise<String>)
                         .then(data => {
                             if (data.length == 0) { this.setState({ cookiesOk: true, loaded: true }); }
@@ -104,7 +118,6 @@ export class Layout extends React.Component<LayoutProps, LayoutState> {
                 home = <LoginGeneral onLogin={this.onLogin} />
             }
             else if (this.state.cookiesOk) {
-                console.log("cookies ok");
                 var name = localStorage.getItem('name');
 
                 home = <div>
