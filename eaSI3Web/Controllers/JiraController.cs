@@ -36,7 +36,6 @@ namespace eaSI3Web.Controllers
         [HttpGet("[action]")]
         public ActionResult<Models.Calendar> Weeks()
         {
-            logger.Info("prueba");
 
             var version = GetType().Assembly.GetName().Version.ToString();
             calendar.version = version;
@@ -81,7 +80,7 @@ namespace eaSI3Web.Controllers
         }
 
         [HttpGet("[action]")]
-        public ActionResult<WeekJiraIssuesResponse> Worklog(string username, string password, string selectedWeek)
+        public ActionResult<WeekJiraIssuesResponse> Worklog(string selectedWeek)
         {
             DateTime startOfWeek = DateTime.Now;
             DateTime endOfWeek = DateTime.Now;
@@ -95,15 +94,21 @@ namespace eaSI3Web.Controllers
                 }
             }
 
-            JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(username, password, data.Value.Jira_Host_URL);
+            var cookie = Request.Cookies.First(x => x.Key == "userId");
+            var idUser = cookie.Value;
+
+            BdStatistics bdStatistics = new BdStatistics(_context);
+            eaSI3Web.Models.User user = bdStatistics.GetUser(int.Parse(idUser));
+
+            JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(user.JiraUserName, user.JiraPassword, data.Value.Jira_Host_URL);
             var currentWorklog = new List<WorkLog>();
             try
             {
-                currentWorklog = jiraWorkLogService.GetWorklog(startOfWeek, endOfWeek, username);
+                currentWorklog = jiraWorkLogService.GetWorklog(startOfWeek, endOfWeek, user.JiraUserName);
             }
             catch (Exception e)
             {
-                logger.Error("Usuario : " + username + " Semana Elegida : " + selectedWeek + "Error : " + e.Message);
+                logger.Error("Usuario : " + user.JiraUserName + " Semana Elegida : " + selectedWeek + "Error : " + e.Message);
                 if (e is InvalidCredentialException || e is UnauthorizedAccessException || e is InvalidOperationException)
                     return StatusCode(401, e.Message);
 
@@ -116,20 +121,24 @@ namespace eaSI3Web.Controllers
         }
 
         [HttpGet("[action]")]
-        public ActionResult<IssueConveter.Model.Issue> Issue(string username, string password, string jiraKey)
+        public ActionResult<IssueConveter.Model.Issue> Issue(string jiraKey)
         {
             var jiraIssue = new IssueConveter.Model.Issue();
+            var cookie = Request.Cookies.First(x => x.Key == "userId");
+            var idUser = cookie.Value;
+
             BdStatistics bdStatistics = new BdStatistics(_context);
+            eaSI3Web.Models.User user = bdStatistics.GetUser(int.Parse(idUser));
 
             try
             {
-                JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(username, password, data.Value.Jira_Host_URL);
+                JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(user.JiraUserName, user.JiraPassword, data.Value.Jira_Host_URL);
                 jiraIssue = jiraWorkLogService.GetIssue(jiraKey);
             }
             catch (Exception e)
             {
-                logger.Error("Username: " + username + " ,Issue: " + jiraKey + " ,Error: " + e.Message);
-                bdStatistics.AddIssueCreation(username, jiraKey, jiraIssue.si3ID, 1, e.Message);
+                logger.Error("Username: " + user.JiraUserName + " ,Issue: " + jiraKey + " ,Error: " + e.Message);
+                bdStatistics.AddIssueCreation(user.JiraUserName, jiraKey, jiraIssue.si3ID, 1, e.Message);
                 if (e is InvalidCredentialException || e is UnauthorizedAccessException || e is InvalidOperationException)
                     return StatusCode(401, e.Message);
 
@@ -138,21 +147,42 @@ namespace eaSI3Web.Controllers
 
             if (jiraIssue.si3ID != null)
             {
-                bdStatistics.AddIssueCreation(username, jiraKey, jiraIssue.si3ID, 2, "Tarea ya vinculada");
+                bdStatistics.AddIssueCreation(user.JiraUserName, jiraKey, jiraIssue.si3ID, 2, "Tarea ya vinculada");
             }
             return jiraIssue;
 
         }
-        [HttpPost("[action]")]
-        public ActionResult ValidateLogin([FromBody] BodyData bodyData)
-        {
+        [HttpGet("[action]")]
+        public ActionResult ValidateLogin() {
+
+            var cookie = Request.Cookies.First(x => x.Key == "userId");
+            var idUser = cookie.Value;
+
+            BdStatistics bdStatistics = new BdStatistics(_context);
+            eaSI3Web.Models.User user = bdStatistics.GetUser(int.Parse(idUser));
             try
             {
-                JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(bodyData.username, bodyData.password, data.Value.Jira_Host_URL);
+                JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(user.JiraUserName, user.JiraPassword, data.Value.Jira_Host_URL);
             }
             catch (Exception e)
             {
-                logger.Error("Username: " + bodyData.username + " ,Error: " + e.Message);
+                logger.Error("Username: " + user.JiraUserName + " ,Error: " + e.Message);
+                if (e is InvalidCredentialException || e is UnauthorizedAccessException || e is InvalidOperationException)
+                    return StatusCode(401, e.Message);
+            }
+
+            return Ok();
+        }
+        [HttpPost("[action]")]
+        public ActionResult Login([FromBody] BodyData bodyData)
+        {
+            try
+            {
+                JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(bodyData.usernameJira, bodyData.passwordJira, data.Value.Jira_Host_URL);
+            }
+            catch (Exception e)
+            {
+                logger.Error("Username: " + bodyData.usernameJira + " ,Error: " + e.Message);
                 if (e is InvalidCredentialException || e is UnauthorizedAccessException || e is InvalidOperationException)
                     return StatusCode(401, e.Message);
 
@@ -163,9 +193,13 @@ namespace eaSI3Web.Controllers
             return Ok();
         }
         [HttpGet("[action]")]
-        public ActionResult<string> updateIssueSi3Project(string username, string password, string codeProject, string codeMilestone, string jiraKey)
+        public ActionResult<string> updateIssueSi3Project(string codeProject, string codeMilestone, string jiraKey)
         {
+            var cookie = Request.Cookies.First(x => x.Key == "userId");
+            var idUser = cookie.Value;
+
             BdStatistics bdStatistics = new BdStatistics(_context);
+            eaSI3Web.Models.User user = bdStatistics.GetUser(int.Parse(idUser));
 
             Regex regex = new Regex(@"^(H\.[0-9]{1,4}).+$");
             Match match = regex.Match(codeMilestone);
@@ -186,14 +220,14 @@ namespace eaSI3Web.Controllers
 
             try
             {
-                JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(username, password, data.Value.Jira_Host_URL);
+                JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(user.JiraUserName, user.JiraPassword, data.Value.Jira_Host_URL);
                 string body = JsonConvert.SerializeObject(new { fields = new { customfield_10300 = key } });
                 jiraWorkLogService.UpdateIssue(jiraKey, body);
             }
             catch (Exception e)
             {
-                logger.Error("Username: " + username + " ,Error: " + e.Message);
-                bdStatistics.AddIssueCreation(username, jiraKey, key, 1, e.Message);
+                logger.Error("Username: " + user.JiraUserName + " ,Error: " + e.Message);
+                bdStatistics.AddIssueCreation(user.JiraUserName, jiraKey, key, 1, e.Message);
 
                 if (e is InvalidCredentialException || e is UnauthorizedAccessException || e is InvalidOperationException)
                     return StatusCode(401, e.Message);
@@ -201,27 +235,31 @@ namespace eaSI3Web.Controllers
                 return StatusCode(500, e.Message);
             }
 
-            bdStatistics.AddIssueCreation(username, jiraKey, key, 0, "Tarea vinculada correctamente");
+            bdStatistics.AddIssueCreation(user.JiraUserName, jiraKey, key, 0, "Tarea vinculada correctamente");
             return key;
         }
         [HttpGet("[action]")]
-        public ActionResult UpdateIssueSi3CustomField(string username, string password, [RegularExpression("[0-9]+")]string issueKey, [RegularExpression("\\w+-[0-9]+")]string jirakey)
+        public ActionResult UpdateIssueSi3CustomField([RegularExpression("[0-9]+")]string issueKey, [RegularExpression("\\w+-[0-9]+")]string jirakey)
         {
+            var cookie = Request.Cookies.First(x => x.Key == "userId");
+            var idUser = cookie.Value;
+
             BdStatistics bdStatistics = new BdStatistics(_context);
+            eaSI3Web.Models.User user = bdStatistics.GetUser(int.Parse(idUser));
 
             if (!ModelState.IsValid)
                 return StatusCode(400, "");
 
             try
             {
-                JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(username, password, data.Value.Jira_Host_URL);
+                JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(user.JiraUserName, user.JiraPassword, data.Value.Jira_Host_URL);
                 string body = JsonConvert.SerializeObject(new { fields = new { customfield_10300 = issueKey } });
                 jiraWorkLogService.UpdateIssue(jirakey, body);
             }
             catch (Exception e)
             {
-                logger.Error("Username: " + username + " ,Error: " + e.Message);
-                bdStatistics.AddIssueCreation(username, jirakey, issueKey, 1, e.Message);
+                logger.Error("Username: " + user.JiraUserName + " ,Error: " + e.Message);
+                bdStatistics.AddIssueCreation(user.JiraUserName, jirakey, issueKey, 1, e.Message);
 
                 if (e is InvalidCredentialException || e is UnauthorizedAccessException || e is InvalidOperationException)
                     return StatusCode(401, e.Message);
@@ -229,7 +267,7 @@ namespace eaSI3Web.Controllers
                 return StatusCode(500, e.Message);
             }
 
-            bdStatistics.AddIssueCreation(username, jirakey, issueKey, 0, "Tarea vinculada correctamente");
+            bdStatistics.AddIssueCreation(user.JiraUserName, jirakey, issueKey, 0, "Tarea vinculada correctamente");
             return Ok();
         }
 

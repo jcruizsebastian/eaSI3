@@ -1,4 +1,5 @@
-﻿using RestSharp;
+﻿using Microsoft.Extensions.Logging;
+using RestSharp;
 using RestSharp.Authenticators;
 using System;
 using System.Security.Authentication;

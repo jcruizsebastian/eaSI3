@@ -35,8 +35,13 @@ namespace eaSI3Web.Controllers
 
         [HttpGet("[action]")]
         [ResponseCache(Duration = 86400, Location = ResponseCacheLocation.Any, NoStore = false)]
-        public ActionResult<List<Models.Producto>> Products([FromQuery]string username, [FromQuery]string password)
+        public ActionResult<List<Models.Producto>> Products()
         {
+            var cookie = Request.Cookies.First(x => x.Key == "userId");
+            var idUser = cookie.Value;
+
+            BdStatistics bdStatistics = new BdStatistics(_context);
+            eaSI3Web.Models.User user = bdStatistics.GetUser(int.Parse(idUser));
 
             products = new List<Models.Producto>();
             var productos = new Dictionary<String,String>();
@@ -66,7 +71,7 @@ namespace eaSI3Web.Controllers
                     products.Add(new Models.Producto() { name = product.Key, code = product.Value, componentes = components });
                 }
             } catch (InvalidCredentialException e) {
-                logger.Error("Username: " + username + " ,Error: " + e.Message);
+                logger.Error("Username: " + user.SI3UserName + " ,Error: " + e.Message);
                 return StatusCode(401, e.Message);
             }
 
@@ -139,37 +144,62 @@ namespace eaSI3Web.Controllers
             return users.OrderBy(x => x.nombre).ToList();
         }
         [HttpGet("[action]")]
-        public ActionResult<int> AvailableHours(string username, string password) {
+        public ActionResult<int> AvailableHours() {
+
+            var cookie = Request.Cookies.First(x => x.Key == "userId");
+            var idUser = cookie.Value;
+
+            BdStatistics bdStatistics = new BdStatistics(_context);
+            eaSI3Web.Models.User user = bdStatistics.GetUser(int.Parse(idUser));
             try
             {
-                SI3Service Si3Service = new SI3Service(username, password, data.Value.Week_Hours, data.Value.Si3_Host_URL);
+                SI3Service Si3Service = new SI3Service(user.SI3UserName, user.SI3Password, data.Value.Week_Hours, data.Value.Si3_Host_URL);
                 return Si3Service.SpendedHours().Sum(x => x.Value);
             }
             catch (InvalidCredentialException e)
             {
-                logger.Error("Username: " + username + " ,Error: " + e.Message);
+                logger.Error("Username: " + user.SI3UserName + " ,Error: " + e.Message);
                 return StatusCode(401, e.Message);
             }
         }
-
-        [HttpPost("[action]")]
-        public ActionResult<int> ValidateLogin([FromBody] BodyData bodyData)
+        [HttpGet("[action]")]
+        public ActionResult ValidateLogin()
         {
-            int id=-9999;
+            var cookie = Request.Cookies.First(x => x.Key == "userId");
+            var idUser = cookie.Value;
+
+            BdStatistics bdStatistics = new BdStatistics(_context);
+            eaSI3Web.Models.User user = bdStatistics.GetUser(int.Parse(idUser));
             try
             {
-                SI3Service si3Service = new SI3Service(bodyData.username, bodyData.password, data.Value.Week_Hours, data.Value.Si3_Host_URL);
-                if (!string.IsNullOrEmpty(bodyData.username))
+                SI3Service sI3Service = new SI3Service(user.SI3UserName, user.SI3Password, data.Value.Week_Hours, data.Value.Si3_Host_URL);
+            }
+            catch (InvalidCredentialException e)
+            {
+                logger.Error("Username: " + user.JiraUserName + " ,Error: " + e.Message);
+                return StatusCode(401, e.Message);
+            }
+
+            return Ok();
+        }
+        [HttpPost("[action]")]
+        public ActionResult<int> Login([FromBody] BodyData bodyData)
+        {
+            int id=int.MinValue;
+            try
+            {
+                SI3Service si3Service = new SI3Service(bodyData.usernameSi3, bodyData.passwordSi3, data.Value.Week_Hours, data.Value.Si3_Host_URL);
+                if (!string.IsNullOrEmpty(bodyData.usernameSi3))
                 {
                     BdStatistics bdStatistics = new BdStatistics(_context);
-                    bdStatistics.AddUser(bodyData.username);
-                    bdStatistics.AddLogin(bodyData.username);
-                    id = bdStatistics.GetUserId(bodyData.username);
+                    bdStatistics.AddUser(bodyData.usernameJira,bodyData.passwordJira,bodyData.usernameSi3,bodyData.passwordSi3);
+                    bdStatistics.AddLogin(bodyData.usernameSi3);
+                    id = bdStatistics.GetUserId(bodyData.usernameSi3);
                 }
             }
             catch (InvalidCredentialException e)
             {
-                logger.Error("Username: " +bodyData.username + " ,Error: " + e.Message);
+                logger.Error("Username: " +bodyData.usernameJira + " ,Error: " + e.Message);
                 return StatusCode(401, e.Message);
             }
 
@@ -177,14 +207,18 @@ namespace eaSI3Web.Controllers
         }
 
         [HttpPost("[action]")]
-        public ActionResult<string> Linkissue([FromQuery]string username, [FromQuery]string password, [FromBody]BodyIssue data)
+        public ActionResult<string> Linkissue([FromBody]BodyIssue data)
         {
             string NewIssue = "";
+            var cookie = Request.Cookies.First(x => x.Key == "userId");
+            var idUser = cookie.Value;
 
+            BdStatistics bdStatistics = new BdStatistics(_context);
+            eaSI3Web.Models.User user = bdStatistics.GetUser(int.Parse(idUser));
             try
             {
                 SI3.Issues.Issue issue = new SI3.Issues.Issue();
-                SI3Service SI3Service = new SI3Service(username, password, this.data.Value.Week_Hours, this.data.Value.Si3_Host_URL);
+                SI3Service SI3Service = new SI3Service(user.SI3UserName, user.SI3Password, this.data.Value.Week_Hours, this.data.Value.Si3_Host_URL);
                 issue.user = data.CodUserSi3;
                 issue.product = data.Producto;
                 issue.component = data.Componente;
@@ -322,25 +356,23 @@ namespace eaSI3Web.Controllers
             }
             catch (InvalidCredentialException e)
             {
-                logger.Error("Username: " + username + " ,Error: " + e.Message);
+                logger.Error("Username: " + user.SI3UserName + " ,Error: " + e.Message);
                 return StatusCode(401, e.Message);
             }
             return NewIssue;
         }
 
         [HttpGet("[action]")]
-        public ActionResult<Dictionary<int, int>> AvailableHours2([FromQuery]string username, [FromQuery]string password)
-        {
-            SI3Service SI3Service = new SI3Service(username, password, data.Value.Week_Hours, data.Value.Si3_Host_URL);
-            return SI3Service.SpendedHours().ToDictionary(x => (int)x.Key, y => y.Value);
-        }
-
-        [HttpGet("[action]")]
         [ResponseCache(Duration = 86400, Location = ResponseCacheLocation.Any, NoStore = false)]
-        public ActionResult<List<Milestones>> Milestones(string username, string password)
+        public ActionResult<List<Milestones>> Milestones()
         {
+            var cookie = Request.Cookies.First(x => x.Key == "userId");
+            var idUser = cookie.Value;
+
+            BdStatistics bdStatistics = new BdStatistics(_context);
+            eaSI3Web.Models.User user = bdStatistics.GetUser(int.Parse(idUser));
             List<Milestones> milestones = new List<Milestones>();
-            SI3Service Si3Service = new SI3Service(username, password, data.Value.Week_Hours, data.Value.Si3_Host_URL);
+            SI3Service Si3Service = new SI3Service(user.SI3UserName, user.SI3Password, data.Value.Week_Hours, data.Value.Si3_Host_URL);
             Dictionary<string, List<SI3.Projects.Milestone>> milestonesService = Si3Service.GetMilestones();
             foreach (var m in milestonesService)
             {
@@ -356,12 +388,17 @@ namespace eaSI3Web.Controllers
 
         [HttpGet("[action]")]
         [ResponseCache(Duration = 86400, Location = ResponseCacheLocation.Any, NoStore = false)]
-        public ActionResult<List<Models.Project>> Projects(string username, string password)
+        public ActionResult<List<Models.Project>> Projects()
         {
+            var cookie = Request.Cookies.First(x => x.Key == "userId");
+            var idUser = cookie.Value;
+
+            BdStatistics bdStatistics = new BdStatistics(_context);
+            eaSI3Web.Models.User user = bdStatistics.GetUser(int.Parse(idUser));
             List<Models.Project> projects = new List<Models.Project>();
             try
             {
-                SI3Service Si3Service = new SI3Service(username, password, data.Value.Week_Hours, data.Value.Si3_Host_URL);
+                SI3Service Si3Service = new SI3Service(user.SI3UserName, user.SI3Password, data.Value.Week_Hours, data.Value.Si3_Host_URL);
                 List<Project> projectsService = Si3Service.GetProjects();
                 foreach (var proj in projectsService)
                 {
@@ -376,7 +413,7 @@ namespace eaSI3Web.Controllers
             }
             catch (InvalidCredentialException e)
             {
-                logger.Error("Username: " + username + " ,Error: " + e.Message);
+                logger.Error("Username: " + user.SI3UserName + " ,Error: " + e.Message);
                 return StatusCode(401,e.Message);
             }
 
@@ -388,7 +425,7 @@ namespace eaSI3Web.Controllers
         {
             try
             {
-                SI3Service si3Service = new SI3Service(body.username, body.password, data.Value.Week_Hours, data.Value.Si3_Host_URL);
+                SI3Service si3Service = new SI3Service(body.usernameSi3, body.usernameSi3, data.Value.Week_Hours, data.Value.Si3_Host_URL);
                 //si3Service.Submit();
             }
             catch (InvalidCredentialException e)
@@ -399,12 +436,17 @@ namespace eaSI3Web.Controllers
             return Ok();
         }
         [HttpPost("[action]")]
-        public ActionResult Register([FromQuery]string username, [FromQuery]string password, [FromQuery]string selectedWeek, [FromQuery]int totalHours, [FromBody]IEnumerable<WeekJiraIssues> model)
+        public ActionResult Register([FromQuery]string selectedWeek, [FromQuery]int totalHours, [FromBody]IEnumerable<WeekJiraIssues> model)
         {
+            var cookie = Request.Cookies.First(x => x.Key == "userId");
+            var idUser = cookie.Value;
+
             BdStatistics bdStatistics = new BdStatistics(_context);
+            eaSI3Web.Models.User user = bdStatistics.GetUser(int.Parse(idUser));
+
             try
             {
-                SI3Service SI3Service = new SI3Service(username, password, data.Value.Week_Hours, data.Value.Si3_Host_URL);
+                SI3Service SI3Service = new SI3Service(user.SI3UserName, user.SI3Password, data.Value.Week_Hours, data.Value.Si3_Host_URL);
 
                 foreach (var week in model.ToList())
                 {
@@ -462,20 +504,20 @@ namespace eaSI3Web.Controllers
             }
             catch (SI3Exception e)
             {
-                logger.Error("Username: " + username + " ,Error: " + e.Message);
-                bdStatistics.AddWorkTracking(username, int.Parse(selectedWeek), totalHours, 1, e.Message);
+                logger.Error("Username: " + user.SI3UserName + " ,Error: " + e.Message);
+                bdStatistics.AddWorkTracking(user.SI3UserName, int.Parse(selectedWeek), totalHours, 1, e.Message);
                 return StatusCode(400, "Error :" + e.Message);
             }
             catch (Exception e)
             {
-                logger.Error("Username: " + username + " ,Error: " + e.Message);
-                bdStatistics.AddWorkTracking(username, int.Parse(selectedWeek), totalHours, 1, e.Message);
+                logger.Error("Username: " + user.SI3UserName + " ,Error: " + e.Message);
+                bdStatistics.AddWorkTracking(user.SI3UserName, int.Parse(selectedWeek), totalHours, 1, e.Message);
                 if (e is InvalidCredentialException) { return StatusCode(401, e.Message); }
                 return StatusCode(400, "Error :" + e.Message);
             }
 
 
-            bdStatistics.AddWorkTracking(username, int.Parse(selectedWeek), totalHours, 0, "Horas imputadas en Si3 correctamente");
+            bdStatistics.AddWorkTracking(user.SI3UserName, int.Parse(selectedWeek), totalHours, 0, "Horas imputadas en Si3 correctamente");
             return Ok();
         }
 

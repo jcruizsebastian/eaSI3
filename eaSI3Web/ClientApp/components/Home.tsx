@@ -58,7 +58,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
 
         this.setState({ loadingJira: true, loading: true });
 
-        fetch('api/Jira/worklog?username=' + this.getCookie("userJira") + '&password=' + this.getCookie("passJira") + '&selectedWeek=' + this.state.selectedWeek)
+        fetch('api/Jira/worklog?selectedWeek=' + this.state.selectedWeek)
             .then(response => {
                 if (!response.ok) {
                     (response.text() as Promise<String>).then(data => {
@@ -73,7 +73,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
 
                         }
                         else {
-                            fetch('api/Si3/AvailableHours?username=' + this.getCookie("userSi3") + '&password=' + this.getCookie("passSi3")).then(response => {
+                            fetch('api/Si3/AvailableHours').then(response => {
                                 if (!response.ok) {
                                     (response.text() as Promise<String>).then(
                                         data => {
@@ -131,7 +131,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
             }
         }
 
-        fetch('api/Si3/AvailableHours?username=' + this.getCookie("userSi3") + '&password=' + this.getCookie("passSi3")).then(response => {
+        fetch('api/Si3/AvailableHours').then(response => {
             if (!response.ok) {
                 (response.text() as Promise<String>).then(
                     data => {
@@ -144,7 +144,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
                         alert("Se han imputador horas en Si3 mientras utilizabas eaSI3");
                         this.setState({ availableHours: 40 - data, loading: false });
                     } else {
-                        fetch('api/SI3/register?username=' + this.getCookie("userSi3") + '&password=' + this.getCookie("passSi3") + '&selectedWeek=' + this.state.selectedWeek + '&totalHours=' + total, {
+                        fetch('api/SI3/register?selectedWeek=' + this.state.selectedWeek + '&totalHours=' + total, {
                             method: 'post',
                             body: JSON.stringify(agenda.props.weekissues),
                             headers: {

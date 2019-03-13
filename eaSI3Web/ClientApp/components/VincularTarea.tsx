@@ -48,7 +48,7 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
 
         this.setState({ loading: true });
 
-        fetch('api/Si3/products?username=' + this.getCookie("userSi3") + '&password=' + this.getCookie("passSi3"))
+        fetch('api/Si3/products')
             .then(response => {
                 if (!response.ok) {
                     (response.text() as Promise<String>).then(
@@ -62,7 +62,7 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
                     (response.json() as Promise<Product[]>).then(
                         data => {
                             this.setState({ products: data, loadedData: true });
-                            fetch('api/Jira/issue?username=' + this.getCookie("userJira") + '&password=' + this.getCookie("passJira") + '&jiraKey=' + keyJira)
+                            fetch('api/Jira/issue?jiraKey=' + keyJira)
                                 .then(response => {
                                     if (!response.ok) {
                                         (response.text() as Promise<String>).then(
@@ -95,7 +95,7 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
                                                             break
                                                     }
 
-                                                    fetch('api/Si3/Projects?username=' + this.getCookie("userSi3") + '&password=' + this.getCookie("passSi3"))
+                                                    fetch('api/Si3/Projects')
                                                         .then(response => {
                                                             if (!response.ok) {
                                                                 (response.text() as Promise<String>).then(
@@ -108,7 +108,7 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
                                                                 (response.json() as Promise<Project[]>).then(
                                                                     data => {
                                                                         this.setState({ projects: data});
-                                                                        fetch('api/Si3/Milestones?username=' + this.getCookie("userSi3") + "&password=" + this.getCookie("passSi3"))
+                                                                        fetch('api/Si3/Milestones')
                                                                             .then(response => {
                                                                                 if (!response.ok) {
                                                                                     (response.text() as Promise<String>).then(
@@ -177,8 +177,7 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
             key = (this.refs["tbKeyJira"] as HTMLInputElement).value;
         }     
 
-        fetch('api/Jira/updateIssueSi3Project?username=' + this.getCookie("userJira") + '&password=' + this.getCookie("passJira") +
-            '&codeProject=' + this.state.projectSelected + '&codeMilestone=' + this.state.milestoneSelected + '&jiraKey=' + key)
+        fetch('api/Jira/updateIssueSi3Project?codeProject=' + this.state.projectSelected + '&codeMilestone=' + this.state.milestoneSelected + '&jiraKey=' + key)
             .then(response => {
                 if (!response.ok) {
                     (response.text() as Promise<string>).then(data => {
@@ -207,7 +206,7 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
             key = this.props.jiraKey
         } else { key = (this.refs["tbKeyJira"] as HTMLInputElement).value; }
 
-        fetch('api/Si3/Linkissue?username=' + this.getCookie("userSi3") + '&password=' + this.getCookie("passSi3"), {
+        fetch('api/Si3/Linkissue', {
             method: 'post',
             body: JSON.stringify({
                 JiraKey: key, Titulo: this.state.titulo, Prioridad: this.state.prioridad,
@@ -230,7 +229,7 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
                 else {
                     (response.text() as Promise<string>).then(data => {
                         var issueKey = data.split("\"")[1];
-                        fetch('api/Jira/updateissuesi3customfield?username=' + this.getCookie("userJira") + '&password=' + this.getCookie("passJira") + '&issueKey=' + issueKey + '&jirakey=' + key)
+                        fetch('api/Jira/updateissuesi3customfield?issueKey=' + issueKey + '&jirakey=' + key)
                             .then(response => {
                                 if (!response.ok) {
                                     (response.text() as Promise<string>).then(data => {

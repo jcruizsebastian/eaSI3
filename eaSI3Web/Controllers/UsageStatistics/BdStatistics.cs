@@ -1,5 +1,6 @@
 ﻿using eaSI3Web.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace eaSI3Web.Controllers.UsageStatistics
@@ -13,20 +14,35 @@ namespace eaSI3Web.Controllers.UsageStatistics
             _context = context; 
         }
 
-        public void AddUser(string username)
+        public void AddUser(string usernameJira, string passwordJira, string usernameSi3, string passwrodSi3)
         {
-            var users = from u in _context.Users where u.SI3UserName.Equals(username) select u;
+            var users = from u in _context.Users where u.SI3UserName.Equals(usernameSi3) select u;
 
             if (!users.Any())
             {
-                _context.Add(new User() { JiraUserName = username.Substring(2,username.Length - 2) , SI3UserName = username });
+                _context.Add(new User() { JiraUserName = usernameJira , SI3UserName = usernameSi3,JiraPassword = passwordJira,SI3Password= passwrodSi3 });
+                _context.SaveChanges();
+            }else
+            {
+                var user = users.First();
+
+                user.JiraPassword = passwordJira;
+                user.SI3Password = passwrodSi3;
+
+                _context.Update(user);
                 _context.SaveChanges();
             }
         }
+
         public int GetUserId(string usernameSi3)
         {
             var users = from u in _context.Users where u.SI3UserName.Equals(usernameSi3) select u;
             return users.First().UserId;
+        }
+        public User GetUser(int id)
+        {
+            var users = from u in _context.Users where u.UserId == id select u;
+            return users.First();
         }
         public void AddLogin(string username)
         {

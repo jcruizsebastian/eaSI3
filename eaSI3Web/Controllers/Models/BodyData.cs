@@ -7,8 +7,9 @@ namespace eaSI3Web.Controllers.Models
 {
     public class BodyData
     {
-        public string username { get; set; }
-        public string password { get; set; }
-        public int userId { get; set; }
+        public string usernameJira { get; set; }
+        public string passwordJira { get; set; }
+        public string usernameSi3 { get; set; }
+        public string passwordSi3 { get; set; }
     }
 }

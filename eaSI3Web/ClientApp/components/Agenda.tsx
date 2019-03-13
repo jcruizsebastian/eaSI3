@@ -106,7 +106,8 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                 <PopupVincularTarea keyJira={this.state.issueVincular} closePopup={this.closePopup} />
                 : null
             }
-            <table className="table .table-responsive">
+            <div className="table-responsive">
+            <table className="table">
                 <caption>Lista de tareas Jira</caption>
                 <thead className="thead-dark">
                     <tr>
@@ -126,6 +127,7 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                                 </td>
 
                                 <td className="agenda-events" >
+                                    
                                     {Weekissue.issues.filter(issue => issue.issueSI3Code == null).map(
                                         x =>
                                             <div className="agenda-events-id" key={x.issueCode}>
@@ -142,8 +144,8 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                                                 <label className="issue-si3">({issue.issueSI3Code})</label>
                                             </div>
                                     )
-                                    }
-
+                                        }
+                                    
                                 </td>
 
                                 <td className="agenda-events">
@@ -199,7 +201,8 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                         <td><label className="agenda-total">Horas : {total.toString()}/{this.props.availableHours.toString()} </label></td>
                     </tr>
                 </tbody>
-            </table>
+                </table>
+            </div>
             <br />
             
         </div>

@@ -43,44 +43,38 @@ export class Layout extends React.Component<LayoutProps, LayoutState> {
 
     public validate() {
 
-        var userJira = this.getCookie("userJira");
-        var passJira = this.getCookie("passJira");
-        var userSi3 = this.getCookie("userSi3");
-        var passSi3 = this.getCookie("passSi3");
-        var userId = this.getCookie("userId");
         this.setState({ loaded: false });
 
         fetch('api/Jira/validateLogin?', {
             method: 'post',
-            body: JSON.stringify({ username: userJira, password: passJira, userId: userId }),
+            body: JSON.stringify({ username: "", password: "" }),
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
         })
-            .then(response => response.text() as Promise<String>)
-            .then(data => {
-                if (data.length == 0) {
+            .then(response => {
+                if (!response.ok) {
+                    (response.text() as Promise<String>).then(data => { alert(data); this.setState({ loaded: true, cookiesOk: false }); });
+                } else {
 
                     fetch('api/Si3/validateLogin?', {
                         method: 'post',
-                        body: JSON.stringify({ username: userSi3, password: passSi3, userId: userId }),
+                        body: JSON.stringify({ username: "", password: "" }),
                         headers: {
                             'Accept': 'application/json',
                             'Content-Type': 'application/json'
                         },
                     })
-                        .then(response => response.text() as Promise<String>)
-                        .then(data => {
-                            if (data.length == 0) { this.setState({ cookiesOk: true, loaded: true }); }
-                            else { this.setState({ cookiesOk: false, loaded: true }); }
-                        });
-                } else {
-                    this.setState({ cookiesOk: false, loaded: true });
-                }
-            });
-
-
+                        .then(response => {
+                            if (!response.ok) {
+                                this.setState({ cookiesOk: false, loaded: true });
+                            } else {
+                                this.setState({ cookiesOk: true, loaded: true });
+                            }
+                        });                       
+                }             
+            });             
     }
 
     //función para cambiar una cookie
@@ -99,10 +93,7 @@ export class Layout extends React.Component<LayoutProps, LayoutState> {
 
     public logout() {
 
-        this.setCookie("userJira", "", 0);
-        this.setCookie("passJira", "", 0);
-        this.setCookie("userSi3", "", 0);
-        this.setCookie("passSi3", "", 0);
+        this.setCookie("userId", "", 0);
         this.setCookie("codUserSi3", "", 0);
 
         this.setState({ logged: false });

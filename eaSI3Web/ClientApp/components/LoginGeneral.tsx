@@ -39,13 +39,13 @@ export class LoginGeneral extends React.Component<LoginProps, LoginState> {
 
         this.setState({ loading: true });
 
-        let urlJira = 'api/Jira/validateLogin?';
-        let urlSi3 = 'api/Si3/validateLogin?'
+        let urlJira = 'api/Jira/Login?';
+        let urlSi3 = 'api/Si3/Login?'
 
 
         fetch(urlJira, {
             method: 'post',
-            body: JSON.stringify({ username: userJira, password: passJira, userId: -1 }),
+            body: JSON.stringify({ usernameJira: userJira, passwordJira: passJira, usernameSi3: userSi3, passwordSi3: passSi3}),
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
@@ -54,7 +54,7 @@ export class LoginGeneral extends React.Component<LoginProps, LoginState> {
             .then(response => {
                 if (!response.ok) {
                     (response.text() as Promise<String>).then(
-                        data => { alert(data); this.setState({ userJiraLoaded: false }); }
+                        data => { alert(data); this.setState({ userJiraLoaded: false, loading: false }); }
                     );
                 }
                 else { this.setState({ userJiraLoaded: true }); }
@@ -62,7 +62,7 @@ export class LoginGeneral extends React.Component<LoginProps, LoginState> {
             .then(data => {
                 fetch(urlSi3, {
                     method: 'post',
-                    body: JSON.stringify({ username: userSi3, password: passSi3, userId: -1 }),
+                    body: JSON.stringify({ usernameJira: userJira, passwordJira: passJira,usernameSi3: userSi3, passwordSi3: passSi3}),
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
@@ -71,7 +71,7 @@ export class LoginGeneral extends React.Component<LoginProps, LoginState> {
                     .then(response => {
                         if (!response.ok) {
                             (response.text() as Promise<String>).then(
-                                data => { alert(data); this.setState({ userSi3Loaded: false }); }
+                                data => { alert(data); this.setState({ userSi3Loaded: false, loading: false }); }
                             );
                         }
                         else {
@@ -89,11 +89,7 @@ export class LoginGeneral extends React.Component<LoginProps, LoginState> {
 
     public ValidateLogin(idUser: Number) {
 
-        var userJira = (this.refs["tbUserJira"] as HTMLInputElement).value;
-        var passJira = (this.refs["tbPassJira"] as HTMLInputElement).value;
         var codUserSi3 = (this.refs["tbCodUserSi3"] as HTMLSelectElement).value;
-        var userSi3 = (this.refs["tbUserSi3"] as HTMLInputElement).value;
-        var passSi3 = (this.refs["tbPassSi3"] as HTMLInputElement).value;
         var name = (((this.refs["tbCodUserSi3"] as HTMLSelectElement).children.item((this.refs["tbCodUserSi3"] as HTMLSelectElement).selectedIndex)) as HTMLOptionElement).innerText;
 
         if (this.state.userJiraLoaded && this.state.userSi3Loaded && codUserSi3 != "default") {
@@ -103,11 +99,8 @@ export class LoginGeneral extends React.Component<LoginProps, LoginState> {
             expiration_date.setFullYear(expiration_date.getFullYear() + 1);
 
             document.cookie = "userId=" + idUser + "; path=/;" + "expires=" + expiration_date;
-            document.cookie = "userJira=" + userJira + "; path=/;"+ "expires=" + expiration_date;
-            document.cookie = "passJira=" + passJira + "; path=/;" + "expires=" + expiration_date;
             document.cookie = "codUserSi3=" + codUserSi3 + "; path=/;" + "expires=" + expiration_date;
-            document.cookie = "userSi3=" + userSi3 + "; path=/;" + "expires=" + expiration_date;
-            document.cookie = "passSi3=" + passSi3 + "; path=/;" + "expires=" + expiration_date;
+
 
             this.props.onLogin(name);
 

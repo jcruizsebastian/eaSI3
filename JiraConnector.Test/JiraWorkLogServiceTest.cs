@@ -19,7 +19,7 @@ namespace JiraConnector.Test
         public void InitializeTests()
         {
             username = "jcruiz";
-            password = "_*_d1d4ct1c97";
+            password = "_*_d1d4ct1c98";
             jiraUrl = "https://jira.openfinance.es/";
 
             jiraWorkLogService = new JiraWorkLogService(username, password,jiraUrl);
