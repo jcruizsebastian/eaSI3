@@ -4,6 +4,7 @@ import '../css/agenda.css';
 import { WeekJiraIssuesProps } from './Model/Props/WeekJiraIssuesProps';
 import { AgendaState } from './Model/States/AgendaState';
 import { PopupVincularTarea } from './popupVincularTarea';
+import { Checkbox } from 'react-inputs-validation';
 
 export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
 
@@ -15,7 +16,8 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
         this.calculateTotalHours = this.calculateTotalHours.bind(this);
         this.vincular = this.vincular.bind(this);
         this.closePopup = this.closePopup.bind(this);
-        this.state = { weekissues: this.props.weekissues, link: "https://jira.openfinance.es/browse/", vincular: false, issueVincular:"" };
+        this.checkBoxChanged = this.checkBoxChanged.bind(this);
+        this.state = { weekissues: this.props.weekissues, link: "https://jira.openfinance.es/browse/", vincular: false, issueVincular: "", checked: false };
     }
 
     componentDidMount() {
@@ -97,18 +99,24 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
         }
         this.setState({ vincular: false });
     }
+    public checkBoxChanged(event: React.ChangeEvent<HTMLInputElement>) {
+        this.setState({ checked: event.target.checked });
+    }
     public render() {
 
         let total: number = this.calculateTotalHours();
-    
         return <div>
             {this.state.vincular ?
                 <PopupVincularTarea keyJira={this.state.issueVincular} closePopup={this.closePopup} />
                 : null
             }
+
             <div className="table-responsive">
-            <table className="table">
-                <caption>Lista de tareas Jira</caption>
+                <hr></hr>
+                <input type="checkbox" className="custom-control-input" id="defaultUnchecked" onChange={this.checkBoxChanged} />
+                <label className="custom-control-label">Mostrar tipo de tarea</label>
+                <table className="table">
+                    <caption>Lista de tareas Jira</caption>
                 <thead className="thead-dark">
                     <tr>
                         <th>Fecha</th>
@@ -133,7 +141,7 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                                             <div className="agenda-events-id" key={x.issueCode}>
                                                 <a target="_blank" href={this.state.link.concat(x.issueKey)}>{x.issueKey}</a>
                                                 <button type="button" id="btn-vincular" className="btn btn-danger btn-sm" onClick={() => { this.vincular(x.issueKey) }} >Vincular</button>
-                                               
+                                                {this.state.checked ? <label> Prueba </label> : null} 
                                             </div>
                                     )}
 
@@ -142,6 +150,7 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                                             <div className="agenda-events-id" key={issue.issueCode}>
                                                 <a target="_blank" href={this.state.link.concat(issue.issueKey)}>{issue.issueKey}</a>
                                                 <label className="issue-si3">({issue.issueSI3Code})</label>
+                                                {this.state.checked ? <label> Prueba </label> : null} 
                                             </div>
                                     )
                                         }
@@ -204,7 +213,7 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                 </table>
             </div>
             <br />
-            
+            <hr></hr>
         </div>
     }
 }

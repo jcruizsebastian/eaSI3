@@ -5,4 +5,5 @@ export interface AgendaState {
     link: String;
     vincular: boolean;
     issueVincular: string;
+    checked: boolean;
 }
