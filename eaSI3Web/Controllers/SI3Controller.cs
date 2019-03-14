@@ -17,6 +17,7 @@ using eaSI3Web.Controllers.Models;
 using Project = SI3Connector.Model.Project;
 using Microsoft.Extensions.Options;
 using eaSI3Web.Configs;
+using System.Net.Http;
 
 namespace eaSI3Web.Controllers
 {
@@ -155,6 +156,10 @@ namespace eaSI3Web.Controllers
             {
                 SI3Service Si3Service = new SI3Service(user.SI3UserName, user.SI3Password, data.Value.Week_Hours, data.Value.Si3_Host_URL);
                 return Si3Service.SpendedHours().Sum(x => x.Value);
+            }
+            catch (HttpRequestException ex)
+            {
+                return StatusCode(500, ex.Message);
             }
             catch (InvalidCredentialException e)
             {

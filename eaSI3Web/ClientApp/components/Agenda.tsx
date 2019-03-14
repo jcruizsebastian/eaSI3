@@ -126,7 +126,7 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                                     <div className="shortdate text-muted" > {new Date(Weekissue.fecha.toString()).toLocaleDateString()}</div>
                                 </td>
 
-                                <td className="agenda-events" >
+                                <td className="agenda-events-td-id" >
                                     
                                     {Weekissue.issues.filter(issue => issue.issueSI3Code == null).map(
                                         x =>
@@ -148,7 +148,7 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                                     
                                 </td>
 
-                                <td className="agenda-events">
+                                <td className="agenda-events-title">
                                     {Weekissue.issues.filter(issue => issue.issueSI3Code == null).map(
                                         issue =>
 

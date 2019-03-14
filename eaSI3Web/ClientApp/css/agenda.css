@@ -9,19 +9,20 @@
     margin: 3px;
 }
 .agenda-events-label {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    width:400px;
+   width:500px; 
+   height:40px;
+   margin-bottom: 0px;
 }
 
 .agenda-events-id {
     height: 40px;
-    min-width: 200px;
+    min-width: 190px;
 }
 .agenda-events-title {
-    height: 40px;
-    width:100%
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
 }
 .agenda-events-hours {
     height: 40px;
