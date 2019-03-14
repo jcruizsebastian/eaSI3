@@ -13,6 +13,7 @@ namespace eaSI3Web.Controllers.Models
         public string Titulo { get; set; }
         public double Tiempo { get; set; }
 
+        public string Tipo { get; set; }
         public object Clone()
         {
             return (JiraIssues)this.MemberwiseClone();

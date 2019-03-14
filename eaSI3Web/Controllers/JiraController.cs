@@ -288,7 +288,7 @@ namespace eaSI3Web.Controllers
                     if (issue != null)
                         issue.Tiempo += (work.TimeSpentSeconds / 3600.0);
                     else
-                        dateIssues.Issues.Add(new JiraIssues() { Titulo = work.Summary + " - " + work.Comment, IssueKey = work.Key, IssueCode = work.IssueId, Tiempo = (work.TimeSpentSeconds / 3600.0), IssueSI3Code = work.si3ID });
+                        dateIssues.Issues.Add(new JiraIssues() { Titulo = work.Summary + " - " + work.Comment, IssueKey = work.Key, IssueCode = work.IssueId, Tiempo = (work.TimeSpentSeconds / 3600.0), IssueSI3Code = work.si3ID, Tipo = work.Type });
                 }
                 weekJiraIssues.Add(dateIssues);
             }

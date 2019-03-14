@@ -14,17 +14,20 @@
    margin-bottom: 0px;
 }
 .agenda-events-td-id {
-    width:260px;
+   
 }
 .agenda-events-id {
     height: 40px;
-    min-width: 250px;
+    min-width: 280px;
 }
 .agenda-events-title {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     max-width: 100%;
+}
+.label-type {
+    margin-left: 5px;
 }
 .agenda-events-hours {
     height: 40px;

@@ -5,4 +5,5 @@
     titulo: string;
     tiempo: number;
     tiempoCorregido: number;
+    tipo: string;
 }

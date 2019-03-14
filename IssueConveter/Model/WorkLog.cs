@@ -13,5 +13,6 @@ namespace IssueConveter.Model
         public string Key { get; set; }
         public string Summary { get; set; }
         public string si3ID { get; set; }
+        public string Type { get; set; }
     }
 }

@@ -141,7 +141,7 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                                             <div className="agenda-events-id" key={x.issueCode}>
                                                 <a target="_blank" href={this.state.link.concat(x.issueKey)}>{x.issueKey}</a>
                                                 <button type="button" id="btn-vincular" className="btn btn-danger btn-sm" onClick={() => { this.vincular(x.issueKey) }} >Vincular</button>
-                                                {this.state.checked ? <label> Prueba </label> : null} 
+                                                {this.state.checked ? <label> {x.tipo} </label> : null} 
                                             </div>
                                     )}
 
@@ -150,7 +150,7 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                                             <div className="agenda-events-id" key={issue.issueCode}>
                                                 <a target="_blank" href={this.state.link.concat(issue.issueKey)}>{issue.issueKey}</a>
                                                 <label className="issue-si3">({issue.issueSI3Code})</label>
-                                                {this.state.checked ? <label> Prueba </label> : null} 
+                                                {this.state.checked ? <label className="label-type"> {issue.tipo} </label> : null} 
                                             </div>
                                     )
                                         }
