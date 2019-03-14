@@ -119,9 +119,10 @@ export class Home extends React.Component<{}, UserCredentialsState> {
     private onLoginSi3(e: { preventDefault: () => void; }) {
         e.preventDefault();
         // si el radio button está seleccionado o no
-        var submit = (this.refs["radioBtn"] as HTMLInputElement).checked;
+        //var submit = (this.refs["radioBtn"] as HTMLInputElement).checked;
 
         this.setState({ loading: true });
+
         let agenda = (this.refs["agenda1"] as React.Component<WeekJiraIssuesProps, AgendaState>);
         let total = 0;
         let WeekJiraIssues = agenda.state.weekissues;
@@ -156,10 +157,6 @@ export class Home extends React.Component<{}, UserCredentialsState> {
                                 if (!response.ok) {
                                     (response.text() as Promise<String>).then(data => { alert(data); this.setState({ loading: false }); });
                                 } else {
-                                    if (submit) {
-                                        //hacer submit en Si3
-                                        //fetch('api/Si3/Submit').then()
-                                    }
                                     alert("Horas imputadas en SI3");
                                     this.setState({ loading: false, todoOk: true });
                                 }
