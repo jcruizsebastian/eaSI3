@@ -1,6 +1,6 @@
 {
   "ConnectionStrings": {
-    "DefaultConnection": "User ID=sa; Password=S4nch0;Initial Catalog=easi3;Data Source=LAPTOP104;timeout=40;Pooling=False;Connection Lifetime=1;"
+    "DefaultConnection": "User ID=easi3; Password=easi3easi3;Initial Catalog=easi3;Data Source=SRVSQL02\\SQL_DEV_2017;timeout=40;Pooling=False;Connection Lifetime=1;"
   },
   "Data": {
     "Week_Hours": 40,
