@@ -5,7 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace eaSI3Web
+namespace eaSI3Web.GlobalErrorHandling
 {
     public class HttpStatusContentResult : ActionResult
     {       
