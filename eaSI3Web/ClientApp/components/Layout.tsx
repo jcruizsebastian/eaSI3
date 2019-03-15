@@ -42,7 +42,8 @@ export class Layout extends React.Component<LayoutProps, LayoutState> {
     }
 
     public validate() {
-        if (this.getCookie("codUserSi3") == "" || this.getCookie("userId") == ""    ) {
+        if (this.getCookie("codUserSi3") == "" || this.getCookie("userId") == "") {
+            this.setCookie("_ga", "", 0);
             this.setCookie("userJira", "", 0);
             this.setCookie("passJira", "", 0);
             this.setCookie("userSi3", "", 0);
