@@ -114,7 +114,7 @@ export class Layout extends React.Component<LayoutProps, LayoutState> {
         let home;
 
         if (this.state.loaded) {
-            if (document.cookie.length == 0) {
+            if (this.getCookie("codUserSi3") == "" || this.getCookie("userId") == "") {
                 home = <LoginGeneral onLogin={this.onLogin} />
             }
             else if (this.state.cookiesOk) {
