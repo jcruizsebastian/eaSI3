@@ -456,7 +456,7 @@ namespace eaSI3Web.Controllers
                 foreach (var week in model.ToList())
                 {
                     week.Issues.RemoveAll(x => x.Tiempo == 0 || string.IsNullOrEmpty(x.IssueSI3Code));
-                    week.Issues.ForEach(x => x.IssueSI3Code = x.IssueSI3Code.Trim().Split(';')[x.IssueSI3Code.Trim().Split(';').Length -1]);
+                    week.Issues.ForEach(x => x.IssueSI3Code = x.IssueSI3Code.Trim().Split(';')[x.IssueSI3Code.Trim().Split(';').Length -1].Trim());
                 }
 
                 if (!model.SelectMany(x => x.Issues).Any())
