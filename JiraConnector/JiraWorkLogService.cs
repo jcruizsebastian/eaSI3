@@ -45,12 +45,14 @@ namespace JiraConnector
                 log.Summary = issue.Summary;
                 log.Key = issue.Key;
                 log.Type = issue.Issuetype;
+                
                 var fields = response.Data.Issues.First(x => x.id == log.IssueId)?.fields;
                 var properties = fields.GetType().GetProperties();
                 log.si3ID = properties.First(p => p.Name == "customfield_10300")?.GetValue(fields)?.ToString().Trim();
 
                 if (string.IsNullOrEmpty(log.si3ID))
-                {                   
+                {                
+                  
                     string epicJiraKey = properties.First(p => p.Name == "customfield_10006")?.GetValue(fields)?.ToString().Trim();
                     if (!string.IsNullOrEmpty(epicJiraKey))
                     {

@@ -1,8 +1,6 @@
 # eaSI3
 
 ## TODO
-* Excepciones globales (https://code-maze.com/global-error-handling-aspnetcore/)
-* Identificar IDSI3 compuestos y coger el útlimo elemento (separador ;)
 * Subtareas deben coger el IDSI3 de su tarea si la tuviera. (Cómo las tareas que dependen de una épica)
 
 
