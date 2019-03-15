@@ -193,6 +193,8 @@ namespace SI3Connector
         public bool IsIssueOpened(string issueid)
         {
             //Login();
+            string[] ids = issueid.Trim().Split(';');
+
             Regex regex = new Regex(@"^[0-9]+$");
             Match match = regex.Match(issueid);
 
