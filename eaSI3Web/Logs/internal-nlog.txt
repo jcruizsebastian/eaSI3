@@ -259,3 +259,16 @@
 2019-03-15 12:45:31.1214 Info Adding target File Target[ownFile-web]
 2019-03-15 12:45:31.1562 Info Configured from an XML element in C:\Proyectos\eaSI3\eaSI3Web\bin\Debug\netcoreapp2.2\nlog.config...
 2019-03-15 12:45:31.2152 Info Found 41 configuration items
+2019-03-15 12:53:30.5011 Info Message Template Auto Format enabled
+2019-03-15 12:53:30.5267 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-15 12:53:30.8756 Info Adding target File Target[allfile]
+2019-03-15 12:53:30.9139 Info Adding target File Target[ownFile-web]
+2019-03-15 12:53:30.9260 Info Configured from an XML element in C:\Proyectos\eaSI3\eaSI3Web\bin\Debug\netcoreapp2.2\nlog.config...
+2019-03-15 12:53:30.9989 Info Found 41 configuration items
+2019-03-15 13:10:03.8184 Info Message Template Auto Format enabled
+2019-03-15 13:10:03.8330 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-15 13:10:03.9127 Info Adding target File Target[allfile]
+2019-03-15 13:10:03.9127 Info Adding target File Target[ownFile-web]
+2019-03-15 13:10:03.9284 Info Configured from an XML element in C:\Proyectos\eaSI3\eaSI3Web\bin\Debug\netcoreapp2.2\nlog.config...
+2019-03-15 13:10:03.9634 Info Found 41 configuration items
+2019-03-15 13:10:53.6884 Warn Attempt #0 to open C:\Proyectos\eaSI3\eaSI3Web\bin\Debug\netcoreapp2.2\.\Logs\nlog-all-2019-03-15.log failed. Sleeping for 0ms

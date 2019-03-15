@@ -197,7 +197,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
             </div>
         }
 
-        if (this.state.loadedJira && this.state.availableHours > 0) {
+        if (this.state.loadedJira) {
 
             agenda = <Agenda weekissues={this.state.Weekissues} ref="agenda1" isTodoOk={this.isTodoOk} availableHours={this.state.availableHours} />
             si3 = <div>

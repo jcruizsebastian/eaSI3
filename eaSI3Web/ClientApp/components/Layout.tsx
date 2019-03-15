@@ -42,10 +42,15 @@ export class Layout extends React.Component<LayoutProps, LayoutState> {
     }
 
     public validate() {
-        this.setCookie("userJira","",0);
-        this.setCookie("passJira", "", 0);
-        this.setCookie("userSi3", "", 0);
-        this.setCookie("passSi3", "", 0)
+        if (this.getCookie("codUserSi3") == "" || this.getCookie("userId") == ""    ) {
+            this.setCookie("userJira", "", 0);
+            this.setCookie("passJira", "", 0);
+            this.setCookie("userSi3", "", 0);
+            this.setCookie("passSi3", "", 0);
+            this.setCookie("codUserSi3", "", 0);
+            this.setCookie("userId", "", 0);
+        }
+
         this.setState({ loaded: false });
 
         fetch('api/Jira/validateLogin?', {
