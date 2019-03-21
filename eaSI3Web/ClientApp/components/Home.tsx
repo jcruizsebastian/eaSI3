@@ -23,7 +23,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
         this.confirmLoadedJira = this.confirmLoadedJira.bind(this);
         this.isTodoOk = this.isTodoOk.bind(this);
         this.getWeekofYear = this.getWeekofYear.bind(this);
-        this.handleChangeWeek = this.handleChangeWeek.bind(this);
+        //this.handleChangeWeek = this.handleChangeWeek.bind(this);
         this.getCookie = this.getCookie.bind(this);
 
         this.state = {
@@ -169,9 +169,6 @@ export class Home extends React.Component<{}, UserCredentialsState> {
 
     }
 
-    public handleChangeWeek(event: React.FormEvent<HTMLSelectElement>) {
-        this.setState({ selectedWeek: event.currentTarget.value });
-    }
 
     public isTodoOk(val: boolean) { this.setState({ todoOk: val }); }
 
@@ -185,8 +182,8 @@ export class Home extends React.Component<{}, UserCredentialsState> {
             jira = <input type="button" value="Obtener issues" className="btn btn-primary" onClick={this.onLoginJira} />
 
             calendar = <div className="select-calendar">
-                <label>Elija semana de trabajo :</label>
-                <select className="custom-select" onChange={this.handleChangeWeek} >
+                <label className="oculto">Elija semana de trabajo :</label>
+                <select className="custom-select" /*onChange={this.handleChangeWeek}*/>
                     {
                         this.state.calendar.weeks.map(week =>
                             <option value={week.numberWeek} key={week.numberWeek} selected={week.numberWeek == this.state.calendar.weeks.length ? true : false}>
