@@ -97,6 +97,9 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                 }
             }
         }
+        var todoOk = this.isDisabledBtnSi3();
+        this.props.isTodoOk(todoOk)
+
         this.setState({ vincular: false });
     }
     public checkBoxChanged(event: React.ChangeEvent<HTMLInputElement>) {

@@ -278,3 +278,31 @@
 2019-03-15 13:38:43.1193 Info Adding target File Target[ownFile-web]
 2019-03-15 13:38:43.1399 Info Configured from an XML element in C:\Proyectos\eaSI3\eaSI3Web\bin\Debug\netcoreapp2.2\nlog.config...
 2019-03-15 13:38:43.1997 Info Found 41 configuration items
+2019-03-20 08:25:51.8613 Info Message Template Auto Format enabled
+2019-03-20 08:25:51.8973 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-20 08:25:52.1997 Info Adding target File Target[allfile]
+2019-03-20 08:25:52.2603 Info Adding target File Target[ownFile-web]
+2019-03-20 08:25:52.2931 Info Configured from an XML element in C:\Proyectos\eaSI3\eaSI3Web\bin\Debug\netcoreapp2.2\nlog.config...
+2019-03-20 08:25:52.3630 Info Found 41 configuration items
+2019-03-20 08:38:50.0075 Info Message Template Auto Format enabled
+2019-03-20 08:38:50.0264 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-20 08:38:50.2056 Info Adding target File Target[allfile]
+2019-03-20 08:38:50.2798 Info Adding target File Target[ownFile-web]
+2019-03-20 08:38:50.3003 Info Configured from an XML element in C:\Proyectos\eaSI3\eaSI3Web\bin\Debug\netcoreapp2.2\nlog.config...
+2019-03-20 08:38:50.3410 Info Found 41 configuration items
+2019-03-20 08:45:12.8518 Info Message Template Auto Format enabled
+2019-03-20 08:45:12.8764 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-20 08:45:13.0059 Info Adding target File Target[allfile]
+2019-03-20 08:45:13.0193 Info Adding target File Target[ownFile-web]
+2019-03-20 08:45:17.8239 Info Message Template Auto Format enabled
+2019-03-20 08:45:17.8433 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-20 08:45:18.0064 Info Adding target File Target[allfile]
+2019-03-20 08:45:18.0064 Info Adding target File Target[ownFile-web]
+2019-03-20 08:45:18.0228 Info Configured from an XML element in C:\Proyectos\eaSI3\eaSI3Web\bin\Debug\netcoreapp2.2\nlog.config...
+2019-03-20 08:45:18.0720 Info Found 41 configuration items
+2019-03-20 08:45:27.0659 Info Message Template Auto Format enabled
+2019-03-20 08:45:27.0865 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-20 08:45:27.3663 Info Adding target File Target[allfile]
+2019-03-20 08:45:27.4081 Info Adding target File Target[ownFile-web]
+2019-03-20 08:45:27.4259 Info Configured from an XML element in C:\Proyectos\eaSI3\eaSI3Web\bin\Debug\netcoreapp2.2\nlog.config...
+2019-03-20 08:45:27.4711 Info Found 41 configuration items

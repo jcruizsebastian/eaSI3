@@ -25,10 +25,13 @@ namespace eaSI3Web.Controllers
         public IOptions<Data> data;
         private readonly StatisticsContext _context;
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-        public JiraController( StatisticsContext context, IOptions<Data> data)
+        private JiraWorkLogService jiraWorkLogService;
+        private readonly ILogger<JiraController> _logger;
+        public JiraController( StatisticsContext context, IOptions<Data> data, ILogger<JiraController> logger)
         {
             this.data = data;
             _context = context;
+            _logger = logger;
         }
 
         static Models.Calendar calendar = new Models.Calendar();
