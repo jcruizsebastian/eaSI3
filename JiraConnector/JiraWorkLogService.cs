@@ -50,7 +50,7 @@ namespace JiraConnector
                 var properties = fields.GetType().GetProperties();
                 log.si3ID = properties.First(p => p.Name == "customfield_10300")?.GetValue(fields)?.ToString().Trim();
 
-                if (fields.parent != null)
+                if (fields.parent != null && string.IsNullOrEmpty(log.si3ID))
                 {
                     var worklogIssueEpica = GetIssue(fields.parent.id);
                     log.si3ID = worklogIssueEpica.si3ID;

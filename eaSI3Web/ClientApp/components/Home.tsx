@@ -82,12 +82,12 @@ export class Home extends React.Component<{}, UserCredentialsState> {
                                     );
                                 } else {
                                     (response.json() as Promise<number>).then(data => {
-                                        this.setState({ availableHours: 40 - data, loading: false });
+                                        this.setState({ availableHours: 40 - data, loading: false, loadedJira: true });
                                     });
                                 }
                             });
 
-                            this.setState({ Weekissues: data.weekJiraIssues }, this.confirmLoadedJira);
+                            this.setState({ Weekissues: data.weekJiraIssues });
                         }
                     })
             })

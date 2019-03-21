@@ -19,7 +19,7 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
         this.checkBoxChanged = this.checkBoxChanged.bind(this);
         this.state = { weekissues: this.props.weekissues, link: "https://jira.openfinance.es/browse/", vincular: false, issueVincular: "", checked: false };
     }
-
+    
     componentDidMount() {
         var todoOk = this.isDisabledBtnSi3();
         this.props.isTodoOk(todoOk);
@@ -63,8 +63,14 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
             }
         }
 
-        if (total <= this.props.availableHours) { return false; }
-        else { return true; }
+        if (total <= this.props.availableHours)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
 
     public vincular(issuekey: string) {
