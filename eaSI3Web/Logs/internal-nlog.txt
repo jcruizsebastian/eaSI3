@@ -306,3 +306,27 @@
 2019-03-20 08:45:27.4081 Info Adding target File Target[ownFile-web]
 2019-03-20 08:45:27.4259 Info Configured from an XML element in C:\Proyectos\eaSI3\eaSI3Web\bin\Debug\netcoreapp2.2\nlog.config...
 2019-03-20 08:45:27.4711 Info Found 41 configuration items
+2019-03-21 09:32:54.7652 Info Message Template Auto Format enabled
+2019-03-21 09:32:54.7932 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-21 09:32:55.0682 Info Adding target File Target[allfile]
+2019-03-21 09:32:55.1042 Info Adding target File Target[ownFile-web]
+2019-03-21 09:32:55.1262 Info Configured from an XML element in C:\Proyectos\eaSI3\eaSI3Web\bin\Debug\netcoreapp2.2\nlog.config...
+2019-03-21 09:32:55.1643 Info Found 41 configuration items
+2019-03-21 09:35:54.2656 Info Message Template Auto Format enabled
+2019-03-21 09:35:54.3397 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-21 09:35:54.5815 Info Adding target File Target[allfile]
+2019-03-21 09:35:54.6395 Info Adding target File Target[ownFile-web]
+2019-03-21 09:35:54.6625 Info Configured from an XML element in C:\Proyectos\eaSI3\eaSI3Web\bin\Debug\netcoreapp2.2\nlog.config...
+2019-03-21 09:35:54.7309 Info Found 41 configuration items
+2019-03-21 09:36:37.9771 Info Message Template Auto Format enabled
+2019-03-21 09:36:38.0061 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-21 09:36:38.3767 Info Adding target File Target[allfile]
+2019-03-21 09:36:38.3949 Info Adding target File Target[ownFile-web]
+2019-03-21 09:36:38.4164 Info Configured from an XML element in C:\Proyectos\eaSI3\eaSI3Web\bin\Debug\netcoreapp2.2\nlog.config...
+2019-03-21 09:36:38.4729 Info Found 41 configuration items
+2019-03-21 09:38:56.4339 Info Message Template Auto Format enabled
+2019-03-21 09:38:56.4562 Info Loading assembly: NLog.Web.AspNetCore
+2019-03-21 09:38:56.7330 Info Adding target File Target[allfile]
+2019-03-21 09:38:56.7516 Info Adding target File Target[ownFile-web]
+2019-03-21 09:38:56.7941 Info Configured from an XML element in C:\Proyectos\eaSI3\eaSI3Web\bin\Debug\netcoreapp2.2\nlog.config...
+2019-03-21 09:38:56.8425 Info Found 41 configuration items
