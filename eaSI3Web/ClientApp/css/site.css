@@ -166,4 +166,6 @@ hr {
 .custom-select {
     display:none;
 }
-
+#btnJira {
+    margin-top:15px;
+}

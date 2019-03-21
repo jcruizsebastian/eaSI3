@@ -179,7 +179,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
         let calendar;
 
         if (this.state.calendarLoaded) {
-            jira = <input type="button" value="Obtener issues" className="btn btn-primary" onClick={this.onLoginJira} />
+            jira = <input type="button" id="btnJira" value="Obtener issues" className="btn btn-primary" onClick={this.onLoginJira} />
 
             calendar = <div className="select-calendar">
                 <label className="oculto">Elija semana de trabajo :</label>
