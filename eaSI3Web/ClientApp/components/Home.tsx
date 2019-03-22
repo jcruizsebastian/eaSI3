@@ -183,7 +183,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
 
             calendar = <div className="select-calendar">
                 <label className="oculto">Elija semana de trabajo :</label>
-                <select className="custom-select" /*onChange={this.handleChangeWeek}*/>
+                <select className="custom-select-oculto" /*onChange={this.handleChangeWeek}*/>
                     {
                         this.state.calendar.weeks.map(week =>
                             <option value={week.numberWeek} key={week.numberWeek} selected={week.numberWeek == this.state.calendar.weeks.length ? true : false}>
