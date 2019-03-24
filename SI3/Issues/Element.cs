@@ -2,11 +2,11 @@
 
 namespace SI3.Issues
 {
-    public class Producto
+    public class BasicElement : IElement
     {
         [XmlElement("nombre")]
-        public string Nombre { get; set; }
+        public string Name { get; set; }
         [XmlElement("codigo")]
-        public string Codigo { get; set; }
+        public string Code { get; set; }
     }
 }

@@ -2,14 +2,14 @@
 
 namespace SI3.Issues
 {
-    public class Usuario
+    public class UserElement : IElement
     {
         [XmlElement("nombre")]
-        public string Nombre { get; set; }
+        public string Name { get; set; }
         [XmlElement("codigo")]
-        public string Codigo { get; set; }
+        public string Code { get; set; }
         [XmlElement("codcompose")]
-        public string Codcompose { get; set; }
+        public string CodCompose { get; set; }
         [XmlElement("codib")]
         public string Codib { get; set; }
     }

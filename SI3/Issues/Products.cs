@@ -4,9 +4,9 @@ using System.Xml.Serialization;
 namespace SI3.Issues
 {
     [XmlRoot("productos")]
-    public class Productos
+    public class Products : IRepositoryXML<BasicElement>
     {
         [XmlElement("producto")]
-        public List<Producto> producto { get; set; }
+        public List<BasicElement> elements { get; set; }
     }
 }
