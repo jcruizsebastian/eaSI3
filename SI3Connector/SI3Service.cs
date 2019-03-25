@@ -146,27 +146,11 @@ namespace SI3Connector
             var weekNumber = GetIso8601WeekOfYear(DateTime.Today);
             var weekCode = GetWeekCode(weekNumber);
 
-            var x_www_form_url_encoded = new Dictionary<string, string>();
-            x_www_form_url_encoded.Clear();
-            x_www_form_url_encoded.Add("modificaval", "YES");
-            x_www_form_url_encoded.Add("fweek", string.Empty);
+            var x_www_form_url_encoded = GetAlreadyRecordedWork(weekNumber, weekCode);
 
             foreach (var work in weekWork)
             {
                 x_www_form_url_encoded.Add($"{projectCode}+++-{weekNumber}-{((int)work.Key)}", work.Value.ToString());
-            }
-
-            var justAddedWork = GetJustAddeProjectWork(weekCode);
-            foreach (var addedWork in justAddedWork)
-            {
-                foreach (var work in addedWork.Value)
-                {
-                    var key = $"{addedWork.Key}+++-{weekNumber}-{((int)work.Key)}";
-                    if (x_www_form_url_encoded.ContainsKey(key))
-                        x_www_form_url_encoded[key] = (Convert.ToInt32(x_www_form_url_encoded[key]) + Convert.ToInt32(work.Value)).ToString();
-                    else
-                        x_www_form_url_encoded.Add(key, work.Value.ToString());
-                }
             }
 
             x_www_form_url_encoded.Add($"COMM{projectCode}+++", string.Empty);
@@ -177,7 +161,7 @@ namespace SI3Connector
             return request.Result;
         }
 
-        public Dictionary<string, Dictionary<DayOfWeek, int>> GetJustAddeProjectWork(string weekCode)
+        public Dictionary<string, Dictionary<DayOfWeek, int>> GetAlreadyTimeRecorded(string weekCode)
         {
             var request = _si3HttpRequest.Post(new Uri($"{_si3Url}Si3/treport/asp/weeklyreport.asp?cod={weekCode}&aa={DateTime.Today.Year}&pn=Resumen"));
             request.Wait();
@@ -204,7 +188,6 @@ namespace SI3Connector
                     throw new SI3Exception("El ID SI3 del proyecto: " + issueid + " es incorrecto!");
 
                 GetMilestone(issueid);
-
             }
             catch (SI3Exception si3Exception)
             {
@@ -252,7 +235,7 @@ namespace SI3Connector
                 return milestone;
             }
         }
-        //Método para sacar todos los hitos
+
         public Dictionary<string, List<Milestone>> GetMilestones()
         {
             Dictionary<string, List<Milestone>> milestones = new Dictionary<string, List<Milestone>>();
@@ -276,7 +259,7 @@ namespace SI3Connector
             }
             return milestones;
         }
-        //Método para sacar todos los proyectos
+
         public List<Project> GetProjects()
         {
             List<Project> projects = new List<Project>();
@@ -353,7 +336,6 @@ namespace SI3Connector
 
             var weekNumber = GetIso8601WeekOfYear(DateTime.Today);
             var weekCode = GetWeekCode(weekNumber);
-            //var weekCode = "47806-9";
 
             var request = _si3HttpRequest.Post(new Uri($"{_si3Url}Si3/treport/asp/weeklyreport.asp?cod={weekCode}&aa={DateTime.Today.Year}&pn=Resumen"));
             request.Wait();
@@ -398,14 +380,45 @@ namespace SI3Connector
             throw new Exception("Semana no dada de alta");
         }
 
+        //TODO: Verificar que esto funciona.
         public void Submit()
         {
             var spendedHours = SpendedHours().Sum(x => x.Value);
             if (spendedHours != _workHours)
                 throw new SI3Exception($"No se pueden consignar menos de {_workHours} horas.");
 
-            var request = _si3HttpRequest.Post(new Uri($""), null);
+            var weekNumber = GetIso8601WeekOfYear(DateTime.Today);
+            var weekCode = GetWeekCode(weekNumber);
+
+            Dictionary<string, string> x_www_form_url_encoded = GetAlreadyRecordedWork(weekNumber, weekCode);
+
+            x_www_form_url_encoded.Add("transition", "2");
+
+            var request = _si3HttpRequest.Post(new Uri($"{_si3Url}Si3/treport/asp/saveWReport.asp?cod={weekCode}&stchange=0&initst=1&usercode={_userCode}&aa={DateTime.Today.Year}&pn=Resumen"), x_www_form_url_encoded);
             request.Wait();
+        }
+
+        private Dictionary<string, string> GetAlreadyRecordedWork(int weekNumber, string weekCode)
+        {
+            var x_www_form_url_encoded = new Dictionary<string, string>();
+            x_www_form_url_encoded.Clear();
+            x_www_form_url_encoded.Add("modificaval", "YES");
+            x_www_form_url_encoded.Add("fweek", string.Empty);
+
+            var alreadyTimeRecorded = GetAlreadyTimeRecorded(weekCode);
+            foreach (var addedWork in alreadyTimeRecorded)
+            {
+                foreach (var work in addedWork.Value)
+                {
+                    var key = $"{addedWork.Key}+++-{weekNumber}-{((int)work.Key)}";
+                    if (x_www_form_url_encoded.ContainsKey(key))
+                        x_www_form_url_encoded[key] = (Convert.ToInt32(x_www_form_url_encoded[key]) + Convert.ToInt32(work.Value)).ToString();
+                    else
+                        x_www_form_url_encoded.Add(key, work.Value.ToString());
+                }
+            }
+
+            return x_www_form_url_encoded;
         }
 
         public Dictionary<string, string> GetByXml<T>(string uri) where T : IRepositoryXML<BasicElement>

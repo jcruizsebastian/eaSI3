@@ -149,7 +149,7 @@ namespace SI3Connector.Test
         public void GetJustAddeProjectWorkTest()
         {
             SI3Service service = new SI3Service("ofjcruiz", "_*_d1d4ct1c", 40, "http://si3.infobolsa.es/");
-            var a = service.GetJustAddeProjectWork("47983-10");
+            var a = service.GetAlreadyTimeRecorded("47983-10");
         }
     }
     
