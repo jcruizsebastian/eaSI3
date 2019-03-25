@@ -441,7 +441,7 @@ namespace eaSI3Web.Controllers
             return Ok();
         }
         [HttpPost("[action]")]
-        public ActionResult Register([FromQuery]string selectedWeek, [FromQuery]int totalHours, [FromBody]IEnumerable<WeekJiraIssues> model)
+        public ActionResult Register([FromQuery]string selectedWeek, [FromQuery]int totalHours, [FromBody]IEnumerable<WeekJiraIssues> model, bool submit)
         {
             var cookie = Request.Cookies.First(x => x.Key == "userId");
             var idUser = cookie.Value;
@@ -507,6 +507,9 @@ namespace eaSI3Web.Controllers
                 {
                     SI3Service.AddProjectWork(week.Key, week.Value);
                 }
+
+                if(submit)
+                    SI3Service.Submit();
             }
             catch (SI3Exception e)
             {
@@ -521,7 +524,6 @@ namespace eaSI3Web.Controllers
                 if (e is InvalidCredentialException) { return StatusCode(401, e.Message); }
                 return StatusCode(400, "Error :" + e.Message);
             }
-
 
             bdStatistics.AddWorkTracking(user.SI3UserName, int.Parse(selectedWeek), totalHours, 0, "Horas imputadas en Si3 correctamente");
             return Ok();

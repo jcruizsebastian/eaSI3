@@ -390,11 +390,13 @@ namespace SI3Connector
             var weekNumber = GetIso8601WeekOfYear(DateTime.Today);
             var weekCode = GetWeekCode(weekNumber);
 
-            Dictionary<string, string> x_www_form_url_encoded = GetAlreadyRecordedWork(weekNumber, weekCode);
-
+            var x_www_form_url_encoded = new Dictionary<string, string>();
+            x_www_form_url_encoded.Clear();
+            x_www_form_url_encoded.Add("modificaval", "NO");
             x_www_form_url_encoded.Add("transition", "2");
+            x_www_form_url_encoded.Add("fweek", string.Empty);
 
-            var request = _si3HttpRequest.Post(new Uri($"{_si3Url}Si3/treport/asp/saveWReport.asp?cod={weekCode}&stchange=0&initst=1&usercode={_userCode}&aa={DateTime.Today.Year}&pn=Resumen"), x_www_form_url_encoded);
+            var request = _si3HttpRequest.Post(new Uri($"{_si3Url}Si3/treport/asp/saveWReport.asp?cod={weekCode}&stchange=2&initst=1&usercode={_userCode}&aa={DateTime.Today.Year}&pn=Resumen"), x_www_form_url_encoded);
             request.Wait();
         }
 
