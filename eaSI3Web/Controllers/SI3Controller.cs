@@ -19,6 +19,7 @@ using Microsoft.Extensions.Options;
 using eaSI3Web.Configs;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace eaSI3Web.Controllers
 {
@@ -476,6 +477,8 @@ namespace eaSI3Web.Controllers
 
                 Dictionary<string, Dictionary<DayOfWeek, int>> weekWork = new Dictionary<string, Dictionary<DayOfWeek, int>>();
 
+                Stopwatch sp = new Stopwatch();
+                sp.Start();
 
                 List<Task> tasks = new List<Task>();
                 foreach (var dateIssue in model)
@@ -488,7 +491,7 @@ namespace eaSI3Web.Controllers
                         if (Int32.TryParse(issue.IssueSI3Code, out idNumber))
                         {
 
-                            tasks.Add(Task.Run(()=> SI3Service.AddIssueWork(issue.IssueSI3Code, dateIssue.Fecha, timeToInt)));
+                            tasks.Add(Task.Run(() =>SI3Service.AddIssueWork(issue.IssueSI3Code, dateIssue.Fecha, timeToInt)));
                         }
                         else
                         {
@@ -517,6 +520,9 @@ namespace eaSI3Web.Controllers
                 }
 
                 Task.WhenAll(tasks).Wait();
+
+                sp.Stop();
+                var aaa = sp.ElapsedMilliseconds;
 
                 if (submit && a.IsCompletedSuccessfully)
                     SI3Service.Submit();
