@@ -18,6 +18,7 @@ using Project = SI3Connector.Model.Project;
 using Microsoft.Extensions.Options;
 using eaSI3Web.Configs;
 using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace eaSI3Web.Controllers
 {
@@ -155,7 +156,8 @@ namespace eaSI3Web.Controllers
             try
             {
                 SI3Service Si3Service = new SI3Service(user.SI3UserName, user.SI3Password, data.Value.Week_Hours, data.Value.Si3_Host_URL);
-                return Si3Service.SpendedHours().Sum(x => x.Value);
+                var a = Si3Service.SpendedHours().Sum(x => x.Value);
+                return a;
             }
             catch (HttpRequestException ex)
             {
@@ -462,7 +464,11 @@ namespace eaSI3Web.Controllers
                 if (!model.SelectMany(x => x.Issues).Any())
                     throw new Exception("No existen tareas con id de SI a imputar.");
 
-                var validacion = ValidarImputación(SI3Service, model);
+                var a = ValidarImputación(SI3Service, model);
+                a.Wait();
+
+                var validacion = a.Result;
+
                 if (!string.IsNullOrEmpty(validacion))
                     throw new SI3Exception(validacion);
 
@@ -470,9 +476,10 @@ namespace eaSI3Web.Controllers
 
                 Dictionary<string, Dictionary<DayOfWeek, int>> weekWork = new Dictionary<string, Dictionary<DayOfWeek, int>>();
 
+
+                List<Task> tasks = new List<Task>();
                 foreach (var dateIssue in model)
                 {
-
                     foreach (var issue in dateIssue.Issues)
                     {
                         int timeToInt = (int)issue.Tiempo; //SI3 no permite horas parciales, solo horas enteras.
@@ -480,7 +487,8 @@ namespace eaSI3Web.Controllers
 
                         if (Int32.TryParse(issue.IssueSI3Code, out idNumber))
                         {
-                            SI3Service.AddIssueWork(issue.IssueSI3Code, dateIssue.Fecha, timeToInt);
+
+                            tasks.Add(Task.Run(()=> SI3Service.AddIssueWork(issue.IssueSI3Code, dateIssue.Fecha, timeToInt)));
                         }
                         else
                         {
@@ -505,10 +513,12 @@ namespace eaSI3Web.Controllers
 
                 foreach (var week in weekWork)
                 {
-                    SI3Service.AddProjectWork(week.Key, week.Value);
+                    tasks.Add(Task.Run(() => SI3Service.AddProjectWork(week.Key, week.Value)));
                 }
 
-                if(submit)
+                Task.WhenAll(tasks).Wait();
+
+                if (submit && a.IsCompletedSuccessfully)
                     SI3Service.Submit();
             }
             catch (SI3Exception e)
@@ -529,9 +539,10 @@ namespace eaSI3Web.Controllers
             return Ok();
         }
 
-        private string ValidarImputación(SI3Service sI3Service, IEnumerable<WeekJiraIssues> model)
+        private async Task<string> ValidarImputación(SI3Service sI3Service, IEnumerable<WeekJiraIssues> model)
         {
             StringBuilder sb = new StringBuilder();
+            List<Task> tasks = new List<Task>();
 
             var issuesIds = model.SelectMany(x => x.Issues).Where(z => z.Tiempo > 0).Select(y => y.IssueSI3Code);
 
@@ -539,15 +550,23 @@ namespace eaSI3Web.Controllers
             {                
                 if (double.TryParse(issueid, out var a))
                 {
-                    if (!sI3Service.IsIssueOpened(issueid))
-                        sb.AppendLine($"La issue con id {issueid} no existe o está cerrada.");
+                    tasks.Add(Task.Run(() =>
+                    {
+                        if (!sI3Service.IsIssueOpened(issueid))
+                            sb.AppendLine($"La issue con id {issueid} no existe o está cerrada.");
+                    }));
                 }
                 else
                 {
-                    if (!sI3Service.IsProjectOpened(issueid))
-                        sb.AppendLine($"El proyecto con id {issueid} no existe o está cerrado.");
+                    tasks.Add(Task.Run(() =>
+                    {
+                        if (!sI3Service.IsProjectOpened(issueid))
+                            sb.AppendLine($"El proyecto con id {issueid} no existe o está cerrado.");
+                    }));
                 }
             }
+
+            await Task.WhenAll(tasks);
 
             return sb.ToString();
         }
