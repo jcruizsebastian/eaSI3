@@ -4,8 +4,10 @@ using Jira;
 using RestSharp;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace JiraConnector
 {
@@ -39,38 +41,55 @@ namespace JiraConnector
 
             workLog.RemoveAll(x => (x.RecordDate < startDate || x.RecordDate > endDate) || x.Author != username);
 
+            List<Task> issuetasks = new List<Task>();
             foreach (var log in workLog)
             {
-                var issue = GetIssue(log.IssueId);
-                log.Summary = issue.Summary;
-                log.Key = issue.Key;
-                log.Type = issue.Issuetype;
-                
-                var fields = response.Data.Issues.First(x => x.id == log.IssueId)?.fields;
-                var properties = fields.GetType().GetProperties();
-                log.si3ID = properties.First(p => p.Name == "customfield_10300")?.GetValue(fields)?.ToString().Trim();
-
-                if (fields.parent != null && string.IsNullOrEmpty(log.si3ID))
+                issuetasks.Add(Task.Run(() =>
                 {
-                    var worklogIssueEpica = GetIssue(fields.parent.id);
-                    log.si3ID = worklogIssueEpica.si3ID;
-                }
+                    var issue = GetIssue(log.IssueId);
+                    log.Summary = issue.Summary;
+                    log.Key = issue.Key;
+                    log.Type = issue.Issuetype;
 
-                if (string.IsNullOrEmpty(log.si3ID))
-                {                                  
-                    string epicJiraKey = properties.First(p => p.Name == "customfield_10006")?.GetValue(fields)?.ToString().Trim();
-                    if (!string.IsNullOrEmpty(epicJiraKey))
+                    var fields = response.Data.Issues.First(x => x.id == log.IssueId)?.fields;
+                    var properties = fields.GetType().GetProperties();
+                    log.si3ID = properties.First(p => p.Name == "customfield_10300")?.GetValue(fields)?.ToString().Trim();
+
+                    List<Task> tasks = new List<Task>();
+
+                    if (fields.parent != null && string.IsNullOrEmpty(log.si3ID))
                     {
-                        var worklogIssueEpica = GetIssue(epicJiraKey);
-                        log.si3ID = worklogIssueEpica.si3ID;
+                        tasks.Add(Task.Run(() =>
+                        {
+                            var worklogIssueEpica = GetIssue(fields.parent.id);
+                            log.si3ID = worklogIssueEpica.si3ID;
+                        }));
                     }
-                }
-                if (!string.IsNullOrEmpty(log.si3ID) && log.si3ID.EndsWith(";"))
-                {
-                    log.si3ID = null;
-                }
+
+                    if (string.IsNullOrEmpty(log.si3ID))
+                    {
+                        string epicJiraKey = properties.First(p => p.Name == "customfield_10006")?.GetValue(fields)?.ToString().Trim();
+                        if (!string.IsNullOrEmpty(epicJiraKey))
+                        {
+                            tasks.Add(Task.Run(() =>
+                            {
+                                var worklogIssueEpica = GetIssue(epicJiraKey);
+                                log.si3ID = worklogIssueEpica.si3ID;
+                            }));
+                        }
+                    }
+                    
+                    if (!string.IsNullOrEmpty(log.si3ID) && log.si3ID.EndsWith(";"))
+                    {
+                        log.si3ID = null;
+                    }
+
+                    Task.WhenAll(tasks).Wait();
+                }));
             }
-            //workLog.RemoveAll(x => string.IsNullOrEmpty(x.si3ID));
+
+            Task.WhenAll(issuetasks).Wait();
+
             return workLog;
         }
 

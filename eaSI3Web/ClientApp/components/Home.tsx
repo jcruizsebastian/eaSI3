@@ -119,7 +119,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
     private onLoginSi3(e: { preventDefault: () => void; }) {
         e.preventDefault();
         // si el radio button está seleccionado o no
-        //var submit = (this.refs["radioBtn"] as HTMLInputElement).checked;
+        var submit = (this.refs["submitRadioBtn"] as HTMLInputElement).checked;
 
         this.setState({ loading: true });
 
@@ -145,7 +145,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
                         alert("Se han imputador horas en Si3 mientras utilizabas eaSI3");
                         this.setState({ availableHours: 40 - data, loading: false });
                     } else {
-                        fetch('api/SI3/register?selectedWeek=' + this.state.selectedWeek + '&totalHours=' + total, {
+                        fetch('api/SI3/register?selectedWeek=' + this.state.selectedWeek + '&totalHours=' + total + '&submit=' + submit, {
                             method: 'post',
                             body: JSON.stringify(agenda.props.weekissues),
                             headers: {
@@ -198,7 +198,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
 
             agenda = <Agenda weekissues={this.state.Weekissues} ref="agenda1" isTodoOk={this.isTodoOk} availableHours={this.state.availableHours} />
             si3 = <div>
-                <input id="radiobtn" className="form-check-input" type="radio" ref="submitRadioBtn" value="option1" disabled />
+                <input id="radiobtn" className="form-check-input" type="radio" ref="submitRadioBtn" value="option1" />
                 <label className="form-check-label">
                     Submit en Si3
                 </label>
