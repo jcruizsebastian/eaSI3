@@ -150,7 +150,16 @@ namespace SI3Connector
 
             foreach (var work in weekWork)
             {
-                x_www_form_url_encoded.Add($"{projectCode}+++-{weekNumber}-{((int)work.Key)}", work.Value.ToString());
+                string key = $"{projectCode}+++-{weekNumber}-{((int)work.Key)}";
+
+                if (x_www_form_url_encoded.ContainsKey(key))
+                {
+                    x_www_form_url_encoded[key] = (int.Parse(x_www_form_url_encoded.First(x => x.Key == key).Value) + work.Value).ToString();
+                }
+                else
+                {
+                    x_www_form_url_encoded.Add($"{projectCode}+++-{weekNumber}-{((int)work.Key)}", work.Value.ToString());
+                }
             }
 
             x_www_form_url_encoded.Add($"COMM{projectCode}+++", string.Empty);

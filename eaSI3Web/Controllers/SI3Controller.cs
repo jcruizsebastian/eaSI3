@@ -170,7 +170,7 @@ namespace eaSI3Web.Controllers
                 return StatusCode(401, e.Message);
             }
         }
-        [HttpGet("[action]")]
+        [HttpPost("[action]")]
         public ActionResult ValidateLogin()
         {
             var cookie = Request.Cookies.First(x => x.Key == "userId");

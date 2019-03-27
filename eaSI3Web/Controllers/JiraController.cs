@@ -152,7 +152,7 @@ namespace eaSI3Web.Controllers
             return jiraIssue;
 
         }
-        [HttpGet("[action]")]
+        [HttpPost("[action]")]
         public ActionResult ValidateLogin() {
 
             var cookie = Request.Cookies.First(x => x.Key == "userId");
