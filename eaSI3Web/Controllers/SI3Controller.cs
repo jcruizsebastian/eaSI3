@@ -228,7 +228,7 @@ namespace eaSI3Web.Controllers
                 issue.product = data.Producto;
                 issue.component = data.Componente;
                 if (data.Modulo != "default") { issue.module = data.Modulo; }
-                issue.title = data.JiraKey.ToUpper();
+                issue.title = data.JiraKey.ToUpper() + " - " + data.Titulo;
                 issue.cause = data.Titulo;
 
                 switch (data.Prioridad)

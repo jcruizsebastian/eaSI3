@@ -193,7 +193,7 @@ namespace eaSI3Web.Controllers
             return Ok();
         }
         [HttpGet("[action]")]
-        public ActionResult<string> updateIssueSi3Project(string codeProject, string codeMilestone, string jiraKey)
+        public ActionResult<string> updateIssueSi3Project(string codeProject, string codeMilestone, string jiraKey, string idSi3)
         {
             var cookie = Request.Cookies.First(x => x.Key == "userId");
             var idUser = cookie.Value;
@@ -221,6 +221,10 @@ namespace eaSI3Web.Controllers
             try
             {
                 JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(user.JiraUserName, user.JiraPassword, data.Value.Jira_Host_URL);
+                if (!string.IsNullOrEmpty(idSi3))
+                {
+                    key = idSi3 + key;
+                }
                 string body = JsonConvert.SerializeObject(new { fields = new { customfield_10300 = key } });
                 jiraWorkLogService.UpdateIssue(jiraKey, body);
             }

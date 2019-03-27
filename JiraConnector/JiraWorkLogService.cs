@@ -64,7 +64,11 @@ namespace JiraConnector
                         var worklogIssueEpica = GetIssue(epicJiraKey);
                         log.si3ID = worklogIssueEpica.si3ID;
                     }
-                }               
+                }
+                if (!string.IsNullOrEmpty(log.si3ID) && log.si3ID.EndsWith(";"))
+                {
+                    log.si3ID = null;
+                }
             }
             //workLog.RemoveAll(x => string.IsNullOrEmpty(x.si3ID));
             return workLog;

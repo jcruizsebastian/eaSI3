@@ -20,4 +20,5 @@ export interface VincularState {
     projectSelected: string;
     milestones: Milestones[];
     milestoneSelected: string;
+    idSi3: string;
 }
