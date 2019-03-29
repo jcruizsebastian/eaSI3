@@ -477,9 +477,6 @@ namespace eaSI3Web.Controllers
 
                 Dictionary<string, Dictionary<DayOfWeek, int>> weekWork = new Dictionary<string, Dictionary<DayOfWeek, int>>();
 
-                Stopwatch sp = new Stopwatch();
-                sp.Start();
-
                 List<Task> tasks = new List<Task>();
                 foreach (var dateIssue in model)
                 {
@@ -514,15 +511,12 @@ namespace eaSI3Web.Controllers
                     }
                 }
 
-                foreach (var week in weekWork)
-                {
-                    tasks.Add(Task.Run(() => SI3Service.AddProjectWork(week.Key, week.Value)));
-                }
-
                 Task.WhenAll(tasks).Wait();
 
-                sp.Stop();
-                var aaa = sp.ElapsedMilliseconds;
+                foreach (var week in weekWork)
+                {
+                    SI3Service.AddProjectWork(week.Key, week.Value);
+                }
 
                 if (submit && a.IsCompletedSuccessfully)
                     SI3Service.Submit();
