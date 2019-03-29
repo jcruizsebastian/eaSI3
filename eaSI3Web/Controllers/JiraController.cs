@@ -221,10 +221,12 @@ namespace eaSI3Web.Controllers
             try
             {
                 JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(user.JiraUserName, user.JiraPassword, data.Value.Jira_Host_URL);
-                if (!string.IsNullOrEmpty(idSi3))
+
+                if (idSi3 != "null")
                 {
                     key = idSi3 + key;
                 }
+
                 string body = JsonConvert.SerializeObject(new { fields = new { customfield_10300 = key } });
                 jiraWorkLogService.UpdateIssue(jiraKey, body);
             }
