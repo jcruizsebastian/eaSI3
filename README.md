@@ -14,3 +14,7 @@
 * Añadir Logging de un modo elegante.
 ** Usar log en los módulos.
 * Falta añadir la configuracion del connectionString en StatisticsContext.OnConfiguring.
+
+## Beneficios
+* ¿Hemos conseguido que la gente impute el viernes?
+* ¿Cuantas horas estimamos que hemos ahorrado a la gente según las estadísticas en BBDD de eaSI3 viendo las tareas creadas y los partes de horas ingresados?
