@@ -32,7 +32,7 @@ namespace eaSI3Web.Controllers
         }
 
         static Models.Calendar calendar = new Models.Calendar();
-
+        
         [HttpGet("[action]")]
         public ActionResult<Models.Calendar> Weeks()
         {
@@ -63,6 +63,12 @@ namespace eaSI3Web.Controllers
                     intMonth += 1;
                 }
 
+                if (intDay + aSumar == CultureInfo.InvariantCulture.Calendar.GetDaysInMonth(DateTime.Now.Year, day.Month))
+                {
+                    intDay =  CultureInfo.InvariantCulture.Calendar.GetDaysInMonth(DateTime.Now.Year, day.Month);
+                    aSumar = 0;
+                }
+
                 string description = day.Day + "/" + day.Month + "/" + DateTime.Now.Year + " to " + (intDay + aSumar) + "/" + intMonth + "/" + DateTime.Now.Year;
 
 
@@ -73,11 +79,19 @@ namespace eaSI3Web.Controllers
                     startOfWeek = new DateTime(DateTime.Now.Year, day.Month, day.Day),
                     endOfWeek = new DateTime(DateTime.Now.Year, intMonth, (intDay + aSumar))
                 });
+
                 intDay += aSumar + 1;
+                if (intDay > CultureInfo.InvariantCulture.Calendar.GetDaysInMonth(DateTime.Now.Year, day.Month))
+                {
+                    intDay = 1;
+                    intMonth += 1;
+                }
+                
             }
 
             return calendar;
         }
+        
 
         [HttpGet("[action]")]
         public ActionResult<WeekJiraIssuesResponse> Worklog(string selectedWeek)
