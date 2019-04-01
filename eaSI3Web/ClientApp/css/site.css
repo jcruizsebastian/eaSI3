@@ -163,4 +163,9 @@ hr {
 .oculto {
     display:none;
 }
-
+.custom-select-oculto {
+    display:none;
+}
+#btnJira {
+    margin-top:15px;
+}

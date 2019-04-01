@@ -16,100 +16,37 @@ namespace SI3Connector
 {
     public class SI3Service
     {
-        private string usercode { get; set; }
-        private SI3HttpRequest SI3HttpRequest { get; set; }
-        private int Work_Hours { get; set; }
-        private string si3Url { get; set; }
-        public SI3Service(string username, string password, int Work_Hours, string si3Url)
+        private string _userCode { get; set; }
+        private SI3HttpRequest _si3HttpRequest { get; set; }
+        private int _workHours { get; set; }
+        private string _si3Url { get; set; }
+
+        public SI3Service(string username, string password, int workHours, string si3Url)
         {
-            SI3HttpRequest = new SI3HttpRequest();
-            this.Work_Hours = Work_Hours;
-            this.si3Url = si3Url;
+            _si3HttpRequest = new SI3HttpRequest();
+            _workHours = workHours;
+            _si3Url = si3Url;
             Login(username, password);
         }
 
-        private static Dictionary<string, string> products { get; set; }
         public Dictionary<string, string> GetProducts()
         {
-            if (products != null)
-                return products;
-
-            var request = SI3HttpRequest.Post(new Uri($"{si3Url}Si3/its/asp/ProductosActivosXML.asp"), null);
-            request.Wait();
-
-            var productos = GetGeneric<Productos>(request.Result);
-
-            products = productos.producto.ToDictionary(x => x.Nombre, y => y.Codigo);
-
-            return products;
+            return GetByXml<Products>($"{_si3Url}Si3/its/asp/ProductosActivosXML.asp");
         }
 
-        public void Submit()
+        public Dictionary<string, string> GetComponents(string product)
         {
-            int WORK_HOURS = Work_Hours;
-
-            var spendedHours = SpendedHours().Sum(x => x.Value);
-            if (spendedHours != WORK_HOURS)
-                throw new SI3Exception($"No se pueden consignar menos de {WORK_HOURS} horas.");
-
-            var request = SI3HttpRequest.Post(new Uri($""), null);
-            request.Wait();
+            return GetByXml<Components>($"{_si3Url}Si3/its/asp/ComponentesXML.asp?cod={product}");
         }
 
-        private static Dictionary<string, Dictionary<string, string>> components { get; set; }
-        public Dictionary<string, string> GetComponents(string producto)
-        {
-            if (components != null && components.ContainsKey(producto))
-                return components[producto];
-
-            if(components == null)
-                components = new Dictionary<string, Dictionary<string, string>>();
-
-            var request = SI3HttpRequest.Post(new Uri($"{si3Url}Si3/its/asp/ComponentesXML.asp?cod={producto}"), null);
-            request.Wait();
-
-            var componentes = GetGeneric<Componentes>(request.Result);
-
-            components[producto] = componentes.componente.ToDictionary(x => x.Nombre, y => y.Codigo);
-
-            return components[producto];
-        }
-
-        private static Dictionary<string, Dictionary<string, string>> modules { get; set; }
         public Dictionary<string, string> GetModules(string component)
         {
-            if (modules != null && modules.ContainsKey(component))
-                return modules[component];
-
-            if (modules == null)
-                modules = new Dictionary<string, Dictionary<string, string>>();
-
-            var request = SI3HttpRequest.Post(new Uri($"{si3Url}Si3/its/asp/ModulesXML.asp?cod={component}"), null);
-            request.Wait();
-
-            var modulos = GetGeneric<Modules>(request.Result);
-
-            modules[component] = modulos.modules.ToDictionary(x => x.Nombre, y => y.Codigo);
-
-            return modules[component];
+            return GetByXml<Modules>($"{_si3Url}Si3/its/asp/ModulesXML.asp?cod={component}");
         }
 
-        private static Dictionary<string, string> users { get; set; }
         public Dictionary<string, string> GetUsers()
         {
-            if (users != null)
-                return users;
-
-            //Login();
-
-            var request = SI3HttpRequest.Post(new Uri($"{si3Url}Si3/its/asp/usuariosFiltradosXML.asp"), null);
-            request.Wait();
-
-            var usuarios = GetGeneric<Usuarios>(request.Result);
-
-            users = usuarios.usuario.ToDictionary(x => x.Nombre, y => y.Codigo);
-
-            return users;
+            return GetByXml<Users>($"{_si3Url}Si3/its/asp/usuariosFiltradosXML.asp");
         }
 
         public void Login(string username, string password)
@@ -119,18 +56,17 @@ namespace SI3Connector
             x_www_form_url_encoded.Add("pwd", password);
             x_www_form_url_encoded.Add("DSN", "GESOPENFINANCE");
 
-            var request = SI3HttpRequest.Post(new Uri($"{si3Url}si3/asp/identificacion.asp"), x_www_form_url_encoded);
+            var request = _si3HttpRequest.Post(new Uri($"{_si3Url}si3/asp/identificacion.asp"), x_www_form_url_encoded);
             request.Wait();
 
             if (request.Result.Contains("denegado.htm"))
                 throw new InvalidCredentialException("Usuario y/o contraseña de SI3 incorrectos.");
 
-            usercode = request.Result.Split("code!='")[1].Split("'")[0];
+            _userCode = request.Result.Split("code!='")[1].Split("'")[0];
         }
 
         public string NewIssue(Issue newIssueData)
         {
-            //Login();
             var x_www_form_url_encoded = new Dictionary<string, string>();
             x_www_form_url_encoded.Clear();
             x_www_form_url_encoded.Add("product", newIssueData.product);
@@ -149,27 +85,23 @@ namespace SI3Connector
             x_www_form_url_encoded.Add("title", newIssueData.title);
             x_www_form_url_encoded.Add("cause", newIssueData.cause);
 
-            var request = SI3HttpRequest.Post(new Uri($"{si3Url}Si3/its/asp/CreateIssue.asp"), x_www_form_url_encoded);
+            var request = _si3HttpRequest.Post(new Uri($"{_si3Url}Si3/its/asp/CreateIssue.asp"), x_www_form_url_encoded);
             request.Wait();
 
             var idSi3 = request.Result.Split("viewToEdit('")[1].Split("'")[0];
-
-            //Login();
 
             x_www_form_url_encoded.Clear();
             x_www_form_url_encoded.Add("isid", idSi3);
             x_www_form_url_encoded.Add("asign", newIssueData.user);
 
-            var request2 = SI3HttpRequest.Post(new Uri($"{si3Url}Si3/its/asp/saveIssue.asp"), x_www_form_url_encoded);
+            var request2 = _si3HttpRequest.Post(new Uri($"{_si3Url}Si3/its/asp/saveIssue.asp"), x_www_form_url_encoded);
             request2.Wait();
-
-            //Login();
 
             x_www_form_url_encoded.Clear();
             x_www_form_url_encoded.Add("isid", idSi3);
             x_www_form_url_encoded.Add("actions", newIssueData.actions);
 
-            var request3 = SI3HttpRequest.Post(new Uri($"{si3Url}Si3/its/asp/saveIssue.asp"), x_www_form_url_encoded);
+            var request3 = _si3HttpRequest.Post(new Uri($"{_si3Url}Si3/its/asp/saveIssue.asp"), x_www_form_url_encoded);
             request3.Wait();
 
             return idSi3;
@@ -177,14 +109,13 @@ namespace SI3Connector
 
         public string AddIssueWork(string issueid, DateTime date, int time)
         {
-            //Login();
             var x_www_form_url_encoded = new Dictionary<string, string>();
             x_www_form_url_encoded.Clear();
             x_www_form_url_encoded.Add("newTimeRecord", time.ToString());
             x_www_form_url_encoded.Add("newDate", $"{date.Day.ToString("D2")}/{date.Month.ToString("D2")}/{date.Year - 2000}");
             x_www_form_url_encoded.Add("timerecordtype", "R");
 
-            var request = SI3HttpRequest.Post(new Uri($"{si3Url}Si3/its/asp/newTimeRecord.asp?cod={issueid}&type=1"), x_www_form_url_encoded);
+            var request = _si3HttpRequest.Post(new Uri($"{_si3Url}Si3/its/asp/newTimeRecord.asp?cod={issueid}&type=1"), x_www_form_url_encoded);
             request.Wait();
 
             return request.Result;
@@ -192,7 +123,6 @@ namespace SI3Connector
 
         public bool IsIssueOpened(string issueid)
         {
-            //Login();
             string[] ids = issueid.Trim().Split(';');
 
             Regex regex = new Regex(@"^[0-9]+$");
@@ -204,7 +134,7 @@ namespace SI3Connector
             var x_www_form_url_encoded = new Dictionary<string, string>();
             x_www_form_url_encoded.Clear();
 
-            var request = SI3HttpRequest.Post(new Uri($"{si3Url}Si3/its/asp/viewIssue.asp?cod={issueid}"), x_www_form_url_encoded);
+            var request = _si3HttpRequest.Post(new Uri($"{_si3Url}Si3/its/asp/viewIssue.asp?cod={issueid}"), x_www_form_url_encoded);
             request.Wait();
 
             return request.Result.Contains("Open&nbsp;&nbsp");
@@ -216,42 +146,33 @@ namespace SI3Connector
             var weekNumber = GetIso8601WeekOfYear(DateTime.Today);
             var weekCode = GetWeekCode(weekNumber);
 
-            var x_www_form_url_encoded = new Dictionary<string, string>();
-            x_www_form_url_encoded.Clear();
-            x_www_form_url_encoded.Add("modificaval", "YES");
-            x_www_form_url_encoded.Add("fweek", string.Empty);
+            var x_www_form_url_encoded = GetAlreadyRecordedWork(weekNumber, weekCode);
 
             foreach (var work in weekWork)
             {
-                x_www_form_url_encoded.Add($"{projectCode}+++-{weekNumber}-{((int)work.Key)}", work.Value.ToString());
-            }
+                string key = $"{projectCode}+++-{weekNumber}-{((int)work.Key)}";
 
-            var justAddedWork = GetJustAddeProjectWork(weekCode);
-            foreach (var addedWork in justAddedWork)
-            {
-                foreach(var work in addedWork.Value)
+                if (x_www_form_url_encoded.ContainsKey(key))
                 {
-                    var key = $"{addedWork.Key}+++-{weekNumber}-{((int)work.Key)}";
-                    if (x_www_form_url_encoded.ContainsKey(key))
-                        x_www_form_url_encoded[key] = (Convert.ToInt32(x_www_form_url_encoded[key]) + Convert.ToInt32(work.Value)).ToString();
-                    else
-                        x_www_form_url_encoded.Add(key, work.Value.ToString());
+                    x_www_form_url_encoded[key] = (int.Parse(x_www_form_url_encoded.First(x => x.Key == key).Value) + work.Value).ToString();
+                }
+                else
+                {
+                    x_www_form_url_encoded.Add($"{projectCode}+++-{weekNumber}-{((int)work.Key)}", work.Value.ToString());
                 }
             }
 
             x_www_form_url_encoded.Add($"COMM{projectCode}+++", string.Empty);
 
-            //Login();
-
-            var request = SI3HttpRequest.Post(new Uri($"{si3Url}Si3/treport/asp/saveWReport.asp?cod={weekCode}&stchange=0&initst=1&usercode={usercode}&aa={DateTime.Today.Year}&pn=Resumen"), x_www_form_url_encoded);
+            var request = _si3HttpRequest.Post(new Uri($"{_si3Url}Si3/treport/asp/saveWReport.asp?cod={weekCode}&stchange=0&initst=1&usercode={_userCode}&aa={DateTime.Today.Year}&pn=Resumen"), x_www_form_url_encoded);
             request.Wait();
 
             return request.Result;
         }
 
-        public Dictionary<string, Dictionary<DayOfWeek, int>> GetJustAddeProjectWork(string weekCode)
+        public Dictionary<string, Dictionary<DayOfWeek, int>> GetAlreadyTimeRecorded(string weekCode)
         {
-            var request = SI3HttpRequest.Post(new Uri($"{si3Url}Si3/treport/asp/weeklyreport.asp?cod={weekCode}&aa={DateTime.Today.Year}&pn=Resumen"));
+            var request = _si3HttpRequest.Post(new Uri($"{_si3Url}Si3/treport/asp/weeklyreport.asp?cod={weekCode}&aa={DateTime.Today.Year}&pn=Resumen"));
             request.Wait();
 
             var doc = new HtmlDocument();
@@ -261,8 +182,8 @@ namespace SI3Connector
             return documentMilestones
                 .Where(x => x.Attributes["value"].Value != "0")
                 .GroupBy(y => y.Attributes["id"].Value.Split("-")[0])
-                .ToDictionary(  z => z.Key.Trim(), 
-                                s => s.ToDictionary(p => (DayOfWeek)Int32.Parse(p.Attributes["id"].Value.Split("-")[2]), 
+                .ToDictionary(z => z.Key.Trim(),
+                                s => s.ToDictionary(p => (DayOfWeek)Int32.Parse(p.Attributes["id"].Value.Split("-")[2]),
                                                     h => Int32.Parse(h.Attributes["value"].Value)));
         }
 
@@ -276,8 +197,8 @@ namespace SI3Connector
                     throw new SI3Exception("El ID SI3 del proyecto: " + issueid + " es incorrecto!");
 
                 GetMilestone(issueid);
-
-            }catch(SI3Exception si3Exception)
+            }
+            catch (SI3Exception si3Exception)
             {
                 return false;
             }
@@ -290,30 +211,16 @@ namespace SI3Connector
             var projectCode = milestoneProjectCode.Split(",")[0].Replace("-", "");
             var milestoneCode = milestoneProjectCode.Split(",")[1].Replace("-", ".");
 
-            //Login();
-
-            var request = SI3HttpRequest.Post(new Uri($"{si3Url}Si3/gestion/asp/PlanSistemas.asp"), null);
+            var request = _si3HttpRequest.Post(new Uri($"{_si3Url}Si3/gestion/asp/PlanSistemas.asp"), null);
             request.Wait();
 
             string projectID = GetProjectId(projectCode, request.Result);
 
-            //Login();
-
-            request = SI3HttpRequest.Post(new Uri($"{si3Url}Si3/gestion/asp/MilestonesXML.asp?cod={projectID}"), null);
+            request = _si3HttpRequest.Post(new Uri($"{_si3Url}Si3/gestion/asp/MilestonesXML.asp?cod={projectID}"), null);
             request.Wait();
             var result = request.Result;
 
             return GetMilestone(milestoneProjectCode, milestoneCode, result);
-        }
-
-
-        private static T GetGeneric<T>(string result)
-        {
-            XmlSerializer serializer = new XmlSerializer(typeof(T));
-            using (TextReader reader = new StringReader(result.Replace("\r\n<?xml version=\"1.0\" encoding=\"ISO-8859-1\" ?>\r\n", "").Replace("<?xml-stylesheet type=\"text/xsl\" href=\"usuarios.xsl\"?>", "").Replace("<?xml version='1.0'?>", "")))
-            {
-                return (T)serializer.Deserialize(reader);
-            }
         }
 
         private static Milestone GetMilestone(string milestoneProjectCode, string projectCode, string result)
@@ -337,14 +244,14 @@ namespace SI3Connector
                 return milestone;
             }
         }
-        //Método para sacar todos los hitos
-        public Dictionary<string,List<Milestone>> GetMilestones()
+
+        public Dictionary<string, List<Milestone>> GetMilestones()
         {
-            Dictionary<string,List<Milestone>> milestones = new Dictionary<string, List<Milestone>>();
+            Dictionary<string, List<Milestone>> milestones = new Dictionary<string, List<Milestone>>();
             List<Project> projects = GetProjects();
             foreach (var project in projects)
             {
-                var request = SI3HttpRequest.Post(new Uri($"{si3Url}Si3/gestion/asp/MilestonesXML.asp?cod={project.Id}"), null);
+                var request = _si3HttpRequest.Post(new Uri($"{_si3Url}Si3/gestion/asp/MilestonesXML.asp?cod={project.Id}"), null);
                 request.Wait();
 
                 XmlSerializer serializer = new XmlSerializer(typeof(Milestones));
@@ -357,23 +264,23 @@ namespace SI3Connector
                     {
                         milestones.Add(project.Code, milestone);
                     }
-                }                
+                }
             }
             return milestones;
         }
-        //Método para sacar todos los proyectos
+
         public List<Project> GetProjects()
         {
             List<Project> projects = new List<Project>();
 
-            var request = SI3HttpRequest.Post(new Uri($"{si3Url}Si3/gestion/asp/PlanSistemas.asp"), null);
+            var request = _si3HttpRequest.Post(new Uri($"{_si3Url}Si3/gestion/asp/PlanSistemas.asp"), null);
             request.Wait();
 
             var doc = new HtmlDocument();
             doc.LoadHtml(request.Result);
 
             var documentMilestones = doc.DocumentNode.SelectNodes("//*[@id=\"TableExcel\"]/tr/td/table/tr/td/a[@onclick]");
-            for (int i = 4; i < documentMilestones.Count; i = i+2)
+            for (int i = 4; i < documentMilestones.Count; i = i + 2)
             {
                 var milestone = doc.DocumentNode.SelectSingleNode($"//*[@id=\"TableExcel\"]/tr/td/table/tr[{i}][not(@valign)]/td[2]");
                 if (milestone != null)
@@ -438,9 +345,8 @@ namespace SI3Connector
 
             var weekNumber = GetIso8601WeekOfYear(DateTime.Today);
             var weekCode = GetWeekCode(weekNumber);
-            //var weekCode = "47806-9";
 
-            var request = SI3HttpRequest.Post(new Uri($"{si3Url}Si3/treport/asp/weeklyreport.asp?cod={weekCode}&aa={DateTime.Today.Year}&pn=Resumen"));
+            var request = _si3HttpRequest.Post(new Uri($"{_si3Url}Si3/treport/asp/weeklyreport.asp?cod={weekCode}&aa={DateTime.Today.Year}&pn=Resumen"));
             request.Wait();
 
             var doc = new HtmlDocument();
@@ -448,7 +354,7 @@ namespace SI3Connector
 
             var weekHours = doc.DocumentNode.SelectNodes("//td[@colspan=2][contains(text(),'Totals')]/parent::*/td[not(@colspan)]/input");
 
-            for(int contador = 0; contador < 5; contador++)
+            for (int contador = 0; contador < 5; contador++)
             {
                 availableHours.Add((DayOfWeek)contador + 1, Convert.ToInt32(weekHours[contador].Attributes["value"].Value));
             }
@@ -458,7 +364,7 @@ namespace SI3Connector
 
         internal string GetWeekCode(int weekNumber)
         {
-            var request = SI3HttpRequest.Post(new Uri($"{si3Url}Si3/treport/asp/resumen.asp"));
+            var request = _si3HttpRequest.Post(new Uri($"{_si3Url}Si3/treport/asp/resumen.asp"));
             request.Wait();
 
             var doc = new HtmlDocument();
@@ -481,6 +387,61 @@ namespace SI3Connector
             }
 
             throw new Exception("Semana no dada de alta");
+        }
+
+        //TODO: Verificar que esto funciona.
+        public void Submit()
+        {
+            var spendedHours = SpendedHours().Sum(x => x.Value);
+            if (spendedHours != _workHours)
+                throw new SI3Exception($"No se pueden consignar menos de {_workHours} horas.");
+
+            var weekNumber = GetIso8601WeekOfYear(DateTime.Today);
+            var weekCode = GetWeekCode(weekNumber);
+
+            var x_www_form_url_encoded = new Dictionary<string, string>();
+            x_www_form_url_encoded.Clear();
+            x_www_form_url_encoded.Add("modificaval", "NO");
+            x_www_form_url_encoded.Add("transition", "2");
+            x_www_form_url_encoded.Add("fweek", string.Empty);
+
+            var request = _si3HttpRequest.Post(new Uri($"{_si3Url}Si3/treport/asp/saveWReport.asp?cod={weekCode}&stchange=2&initst=1&usercode={_userCode}&aa={DateTime.Today.Year}&pn=Resumen"), x_www_form_url_encoded);
+            request.Wait();
+        }
+
+        private Dictionary<string, string> GetAlreadyRecordedWork(int weekNumber, string weekCode)
+        {
+            var x_www_form_url_encoded = new Dictionary<string, string>();
+            x_www_form_url_encoded.Clear();
+            x_www_form_url_encoded.Add("modificaval", "YES");
+            x_www_form_url_encoded.Add("fweek", string.Empty);
+
+            var alreadyTimeRecorded = GetAlreadyTimeRecorded(weekCode);
+            foreach (var addedWork in alreadyTimeRecorded)
+            {
+                foreach (var work in addedWork.Value)
+                {
+                    var key = $"{addedWork.Key}+++-{weekNumber}-{((int)work.Key)}";
+                    if (x_www_form_url_encoded.ContainsKey(key))
+                        x_www_form_url_encoded[key] = (Convert.ToInt32(x_www_form_url_encoded[key]) + Convert.ToInt32(work.Value)).ToString();
+                    else
+                        x_www_form_url_encoded.Add(key, work.Value.ToString());
+                }
+            }
+
+            return x_www_form_url_encoded;
+        }
+
+        public Dictionary<string, string> GetByXml<T>(string uri) where T : IRepositoryXML<BasicElement>
+        {
+            var request = _si3HttpRequest.Post(new Uri(uri), null);
+            request.Wait();
+
+            XmlSerializer serializer = new XmlSerializer(typeof(T));
+            using (TextReader reader = new StringReader(request.Result.Replace("\r\n<?xml version=\"1.0\" encoding=\"ISO-8859-1\" ?>\r\n", "").Replace("<?xml-stylesheet type=\"text/xsl\" href=\"usuarios.xsl\"?>", "").Replace("<?xml version='1.0'?>", "")))
+            {
+                return ((T)serializer.Deserialize(reader)).elements.ToDictionary(x => x.Name, y => y.Code);
+            }
         }
     }
 }

@@ -28,7 +28,11 @@ namespace eaSI3Web.Controllers
         public JiraController( StatisticsContext context, IOptions<Data> data)
         {
             this.data = data;
+<<<<<<< HEAD
             _context = context;   
+=======
+            _context = context;
+>>>>>>> production
         }
 
         static Models.Calendar calendar = new Models.Calendar();

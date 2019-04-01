@@ -54,7 +54,7 @@ export class Layout extends React.Component<LayoutProps, LayoutState> {
 
         this.setState({ loaded: false });
 
-        fetch('api/Jira/validateLogin?', {
+        fetch('api/Jira/ValidateLogin', {
             method: 'post',
             body: JSON.stringify({ username: "", password: "" }),
             headers: {
@@ -64,10 +64,15 @@ export class Layout extends React.Component<LayoutProps, LayoutState> {
         })
             .then(response => {
                 if (!response.ok) {
-                    (response.text() as Promise<String>).then(data => { alert(data); this.setState({ loaded: true, cookiesOk: false }); });
+                    (response.text() as Promise<String>).then(data =>
+                    {
+                        alert(data);
+                        this.setState({ loaded: true, cookiesOk: false });
+                        this.logout();
+                    });
                 } else {
 
-                    fetch('api/Si3/validateLogin?', {
+                    fetch('api/Si3/ValidateLogin?', {
                         method: 'post',
                         body: JSON.stringify({ username: "", password: "" }),
                         headers: {
@@ -78,6 +83,7 @@ export class Layout extends React.Component<LayoutProps, LayoutState> {
                         .then(response => {
                             if (!response.ok) {
                                 this.setState({ cookiesOk: false, loaded: true });
+                                this.logout();
                             } else {
                                 this.setState({ cookiesOk: true, loaded: true });
                             }

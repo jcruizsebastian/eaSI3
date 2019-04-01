@@ -16,7 +16,7 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
         this.state = {
             products: [], productSelected: "", componentSelected: "", moduleSelected: "", loadedData: false,
             loadedDataJira: false, titulo: "", prioridad: "", tipo: "", loading: false, responsable: "", todoOk: false, todoOkProject: false,
-            projects: [], milestones: [], projectSelected: "", milestoneSelected:""
+            projects: [], milestones: [], projectSelected: "", milestoneSelected: "", idSi3:""
         };
 
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -75,7 +75,7 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
                                     else {
                                         (response.json() as Promise<Issue>).then(
                                             data => {
-                                                if (data.si3ID == null) {
+                                                if (data.si3ID == null || data.si3ID.charAt(data.si3ID.length -1) ==";") {
                                                     var prioridad_: string = "";
                                                     switch (data.priority) {
                                                         case 1:
@@ -130,7 +130,7 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
 
                                                     this.setState({
                                                         titulo: data.summary, prioridad: prioridad_,
-                                                        tipo: data.issuetype, responsable: data.assignee,
+                                                        tipo: data.issuetype, responsable: data.assignee, idSi3: data.si3ID
                                                     });
                                                 } else {
                                                     alert("Esta tarea ya está vinculada en SI3");
@@ -175,9 +175,10 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
             key = this.props.jiraKey
         } else {
             key = (this.refs["tbKeyJira"] as HTMLInputElement).value;
-        }     
+        }
+        
 
-        fetch('api/Jira/updateIssueSi3Project?codeProject=' + this.state.projectSelected + '&codeMilestone=' + this.state.milestoneSelected + '&jiraKey=' + key)
+        fetch('api/Jira/updateIssueSi3Project?codeProject=' + this.state.projectSelected + '&codeMilestone=' + this.state.milestoneSelected + '&jiraKey=' + key + '&idSi3=' + this.state.idSi3)
             .then(response => {
                 if (!response.ok) {
                     (response.text() as Promise<string>).then(data => {
@@ -206,6 +207,7 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
             key = this.props.jiraKey
         } else { key = (this.refs["tbKeyJira"] as HTMLInputElement).value; }
 
+        
         fetch('api/Si3/Linkissue', {
             method: 'post',
             body: JSON.stringify({
@@ -229,6 +231,9 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
                 else {
                     (response.text() as Promise<string>).then(data => {
                         var issueKey = data.split("\"")[1];
+                        if (this.state.idSi3 != null) {
+                            issueKey = this.state.idSi3 + issueKey;
+                        }
                         fetch('api/Jira/updateissuesi3customfield?issueKey=' + issueKey + '&jirakey=' + key)
                             .then(response => {
                                 if (!response.ok) {

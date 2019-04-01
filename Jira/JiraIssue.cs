@@ -455,8 +455,17 @@ namespace Jira
             public List<object> worklogs { get; set; }
         }
 
+        public class Parent
+        {
+            public string id { get; set; }
+            public string key { get; set; }
+            public string self { get; set; }
+            public Fields2 fields { get; set; }
+        }
+
         public class Fields
         {
+            public Parent parent { get; set; }
             public Aggregateprogress aggregateprogress { get; set; }
             public Int64 aggregatetimeestimate { get; set; }
             public object aggregatetimeoriginalestimate { get; set; }

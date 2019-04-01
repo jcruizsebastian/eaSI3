@@ -23,7 +23,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
         this.confirmLoadedJira = this.confirmLoadedJira.bind(this);
         this.isTodoOk = this.isTodoOk.bind(this);
         this.getWeekofYear = this.getWeekofYear.bind(this);
-        this.handleChangeWeek = this.handleChangeWeek.bind(this);
+        this.isDisabledBtnSi3 = this.isDisabledBtnSi3.bind(this);
         this.getCookie = this.getCookie.bind(this);
 
         this.state = {
@@ -82,12 +82,13 @@ export class Home extends React.Component<{}, UserCredentialsState> {
                                     );
                                 } else {
                                     (response.json() as Promise<number>).then(data => {
-                                        this.setState({ availableHours: 40 - data, loading: false });
+                                        this.setState({ availableHours: 40 - data, loading: false, loadedJira: true });
+                                        this.isDisabledBtnSi3();
                                     });
                                 }
                             });
 
-                            this.setState({ Weekissues: data.weekJiraIssues }, this.confirmLoadedJira);
+                            this.setState({ Weekissues: data.weekJiraIssues });
                         }
                     })
             })
@@ -98,7 +99,32 @@ export class Home extends React.Component<{}, UserCredentialsState> {
 
 
     }
+    private isDisabledBtnSi3() {
 
+        let total = 0;
+        let tiempo: number;
+        let errores = 0;
+
+        let WeekJiraIssues = this.state.Weekissues;
+        for (let weekIssue of WeekJiraIssues) {
+            for (let Issue of weekIssue.issues) {
+                tiempo = Number(Issue.tiempo);
+                total += tiempo;
+                if ((tiempo % 1 != 0) || (Issue.issueSI3Code == null && Issue.tiempo > 0)) {
+                    this.setState({ todoOk: true });
+                    errores += 1;
+                }
+            }
+        }
+        if (errores == 0) {
+            if (total <= this.state.availableHours) {
+                this.setState({ todoOk: false });
+            }
+            else {
+                this.setState({ todoOk: true });
+            }
+        }
+    }
     //función para sacar las cookies, cname => userJira, passJira ... etc.
     public getCookie(cname: String) {
         var name = cname + "=";
@@ -119,7 +145,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
     private onLoginSi3(e: { preventDefault: () => void; }) {
         e.preventDefault();
         // si el radio button está seleccionado o no
-        //var submit = (this.refs["radioBtn"] as HTMLInputElement).checked;
+        var submit = (this.refs["submitRadioBtn"] as HTMLInputElement).checked;
 
         this.setState({ loading: true });
 
@@ -145,7 +171,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
                         alert("Se han imputador horas en Si3 mientras utilizabas eaSI3");
                         this.setState({ availableHours: 40 - data, loading: false });
                     } else {
-                        fetch('api/SI3/register?selectedWeek=' + this.state.selectedWeek + '&totalHours=' + total, {
+                        fetch('api/SI3/register?selectedWeek=' + this.state.selectedWeek + '&totalHours=' + total + '&submit=' + submit, {
                             method: 'post',
                             body: JSON.stringify(agenda.props.weekissues),
                             headers: {
@@ -169,9 +195,6 @@ export class Home extends React.Component<{}, UserCredentialsState> {
 
     }
 
-    public handleChangeWeek(event: React.FormEvent<HTMLSelectElement>) {
-        this.setState({ selectedWeek: event.currentTarget.value });
-    }
 
     public isTodoOk(val: boolean) { this.setState({ todoOk: val }); }
 
@@ -182,11 +205,11 @@ export class Home extends React.Component<{}, UserCredentialsState> {
         let calendar;
 
         if (this.state.calendarLoaded) {
-            jira = <input type="button" value="Obtener issues" className="btn btn-primary" onClick={this.onLoginJira} />
+            jira = <input type="button" id="btnJira" value="Obtener issues" className="btn btn-primary" onClick={this.onLoginJira} />
 
             calendar = <div className="select-calendar">
-                <label>Elija semana de trabajo :</label>
-                <select className="custom-select" onChange={this.handleChangeWeek} >
+                <label className="oculto">Elija semana de trabajo :</label>
+                <select className="custom-select-oculto" /*onChange={this.handleChangeWeek}*/>
                     {
                         this.state.calendar.weeks.map(week =>
                             <option value={week.numberWeek} key={week.numberWeek} selected={week.numberWeek == this.state.calendar.weeks.length ? true : false}>
@@ -201,7 +224,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
 
             agenda = <Agenda weekissues={this.state.Weekissues} ref="agenda1" isTodoOk={this.isTodoOk} availableHours={this.state.availableHours} />
             si3 = <div>
-                <input id="radiobtn" className="form-check-input" type="radio" ref="submitRadioBtn" value="option1" disabled />
+                <input id="radiobtn" className="form-check-input" type="radio" ref="submitRadioBtn" value="option1" />
                 <label className="form-check-label">
                     Submit en Si3
                 </label>
