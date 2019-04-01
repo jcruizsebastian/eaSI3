@@ -23,7 +23,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
         this.confirmLoadedJira = this.confirmLoadedJira.bind(this);
         this.isTodoOk = this.isTodoOk.bind(this);
         this.getWeekofYear = this.getWeekofYear.bind(this);
-        //this.handleChangeWeek = this.handleChangeWeek.bind(this);
+        this.isDisabledBtnSi3 = this.isDisabledBtnSi3.bind(this);
         this.getCookie = this.getCookie.bind(this);
 
         this.state = {
@@ -83,6 +83,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
                                 } else {
                                     (response.json() as Promise<number>).then(data => {
                                         this.setState({ availableHours: 40 - data, loading: false, loadedJira: true });
+                                        this.isDisabledBtnSi3();
                                     });
                                 }
                             });
@@ -98,7 +99,32 @@ export class Home extends React.Component<{}, UserCredentialsState> {
 
 
     }
+    private isDisabledBtnSi3() {
 
+        let total = 0;
+        let tiempo: number;
+        let errores = 0;
+
+        let WeekJiraIssues = this.state.Weekissues;
+        for (let weekIssue of WeekJiraIssues) {
+            for (let Issue of weekIssue.issues) {
+                tiempo = Number(Issue.tiempo);
+                total += tiempo;
+                if ((tiempo % 1 != 0) || (Issue.issueSI3Code == null && Issue.tiempo > 0)) {
+                    this.setState({ todoOk: true });
+                    errores += 1;
+                }
+            }
+        }
+        if (errores == 0) {
+            if (total <= this.state.availableHours) {
+                this.setState({ todoOk: false });
+            }
+            else {
+                this.setState({ todoOk: true });
+            }
+        }
+    }
     //función para sacar las cookies, cname => userJira, passJira ... etc.
     public getCookie(cname: String) {
         var name = cname + "=";

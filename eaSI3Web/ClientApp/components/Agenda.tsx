@@ -22,8 +22,7 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
     
     componentDidMount() {
         var todoOk = this.isDisabledBtnSi3();
-        this.props.isTodoOk(todoOk);
-        
+        this.props.isTodoOk(todoOk); 
     }
 
     public timeReassignment(event: React.ChangeEvent<HTMLInputElement>) {
@@ -111,7 +110,7 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
     public checkBoxChanged(event: React.ChangeEvent<HTMLInputElement>) {
         this.setState({ checked: event.target.checked });
     }
-    public render() {
+    public render() { 
 
         let total: number = this.calculateTotalHours();
         return <div>
