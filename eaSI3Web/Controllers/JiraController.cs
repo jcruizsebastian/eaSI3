@@ -168,9 +168,17 @@ namespace eaSI3Web.Controllers
         }
         [HttpPost("[action]")]
         public ActionResult ValidateLogin() {
+            var idUser = "";
 
-            var cookie = Request.Cookies.First(x => x.Key == "userId");
-            var idUser = cookie.Value;
+            if (Request.Cookies.ContainsKey("userId"))
+            {
+                var cookie = Request.Cookies.First(x => x.Key == "userId");
+                idUser = cookie.Value;
+            }
+            else
+            {
+                return StatusCode(400,"Por favor, inicia sesión de nuevo");
+            }
 
             BdStatistics bdStatistics = new BdStatistics(_context);
             eaSI3Web.Models.User user = bdStatistics.GetUser(int.Parse(idUser));
