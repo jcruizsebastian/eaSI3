@@ -2,6 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using System.Text;
+using System.Security.Cryptography;
+using System.IO;
 
 namespace eaSI3Web.Controllers.UsageStatistics
 {
@@ -11,7 +15,7 @@ namespace eaSI3Web.Controllers.UsageStatistics
 
         public BdStatistics(StatisticsContext context)
         {
-            _context = context; 
+            _context = context;
         }
 
         public void AddUser(string usernameJira, string passwordJira, string usernameSi3, string passwrodSi3)
@@ -20,17 +24,17 @@ namespace eaSI3Web.Controllers.UsageStatistics
 
             if (!users.Any())
             {
-                _context.Add(new User() { JiraUserName = usernameJira , SI3UserName = usernameSi3,JiraPassword = passwordJira,SI3Password= passwrodSi3 });
+                _context.Add(new User() { JiraUserName = usernameJira, SI3UserName = usernameSi3});
+                Encrypt( usernameJira,  passwordJira,  usernameSi3,  passwrodSi3);
                 _context.SaveChanges();
-            }else
+            }
+            else
             {
                 var user = users.First();
-
-                user.JiraPassword = passwordJira;
-                user.SI3Password = passwrodSi3;
-
-                _context.Update(user);
-                _context.SaveChanges();
+                Encrypt(usernameJira, passwordJira, usernameSi3, passwrodSi3);
+                //no se si es necesario hacer Update ahora
+                //_context.Update(user);
+                //_context.SaveChanges();
             }
         }
 
@@ -85,6 +89,174 @@ namespace eaSI3Web.Controllers.UsageStatistics
 
             _context.Add(workTracking);
             _context.SaveChanges();
+        }
+
+        public void Encrypt(string jiraUserName,string jiraPassword,string Si3UserName, string Si3Password)
+        {
+            var users = from u in _context.Users where u.JiraUserName.Equals(jiraUserName) select u;
+            var user = users.First();
+
+            using (RijndaelManaged myRijndael = new RijndaelManaged())
+            {
+                Byte[] myArray = new byte[32];
+                Byte[] myArray2 = new byte[16];
+                var x = Encoding.ASCII.GetBytes("akjdbaspidbq9p83hgde9'1386546546+521398yue91kjb7t621q21yg62gp8'0");
+                var ms = new MemoryStream(myArray);
+                var ms2 = new MemoryStream(myArray2);
+                ms.Write(x, 0, 32);
+                ms.Flush();
+                ms2.Write(x, 0, 16);
+                ms.Flush();
+
+                myRijndael.Key = ms.ToArray();
+                myRijndael.IV = ms2.ToArray();
+
+                byte[] JiraPassEncrypted = EncryptStringToBytes(jiraPassword, myRijndael.Key, myRijndael.IV);
+                byte[] Si3PassEncrypted = EncryptStringToBytes(Si3Password, myRijndael.Key, myRijndael.IV);
+
+                user.Password_Encrypted = JiraPassEncrypted;
+                user.PasswordSi3_Encrypted = Si3PassEncrypted;
+
+                _context.Update(user);
+                _context.SaveChanges();
+                
+            }
+        }
+
+        public string DecryptJiraPassword(string JiraUserName)
+        {
+            var password = string.Empty;
+            var users = from u in _context.Users where u.JiraUserName.Equals(JiraUserName) select u;
+            var user = users.First();
+            using (RijndaelManaged myRijndael = new RijndaelManaged())
+            {
+                Byte[] myArray = new byte[32];
+                Byte[] myArray2 = new byte[16];
+                var x = Encoding.ASCII.GetBytes("akjdbaspidbq9p83hgde9'1386546546+521398yue91kjb7t621q21yg62gp8'0");
+                var ms = new MemoryStream(myArray);
+                var ms2 = new MemoryStream(myArray2);
+                ms.Write(x, 0, 32);
+                ms.Flush();
+                ms2.Write(x, 0, 16);
+                ms.Flush();
+
+                myRijndael.Key = ms.ToArray();
+                myRijndael.IV = ms2.ToArray();
+
+                password = DecryptStringFromBytes(user.Password_Encrypted, myRijndael.Key, myRijndael.IV);
+            }
+                return password;
+        }
+        public string DecryptSi3Password(string Si3UserName)
+        {
+            var password = string.Empty;
+            var users = from u in _context.Users where u.SI3UserName.Equals(Si3UserName) select u;
+            var user = users.First();
+            using (RijndaelManaged myRijndael = new RijndaelManaged())
+            {
+                Byte[] myArray = new byte[32];
+                Byte[] myArray2 = new byte[16];
+                var x = Encoding.ASCII.GetBytes("akjdbaspidbq9p83hgde9'1386546546+521398yue91kjb7t621q21yg62gp8'0");
+                var ms = new MemoryStream(myArray);
+                var ms2 = new MemoryStream(myArray2);
+                ms.Write(x, 0, 32);
+                ms.Flush();
+                ms2.Write(x, 0, 16);
+                ms.Flush();
+
+                myRijndael.Key = ms.ToArray();
+                myRijndael.IV = ms2.ToArray();
+
+                password = DecryptStringFromBytes(user.PasswordSi3_Encrypted, myRijndael.Key, myRijndael.IV);
+            }
+            return password;
+        }
+
+        static byte[] EncryptStringToBytes(string plainText, byte[] Key, byte[] IV)
+        {
+            // Check arguments. 
+            if (plainText == null || plainText.Length <= 0)
+                throw new ArgumentNullException("plainText");
+            if (Key == null || Key.Length <= 0)
+                throw new ArgumentNullException("Key");
+            if (IV == null || IV.Length <= 0)
+                throw new ArgumentNullException("IV");
+            byte[] encrypted;
+            // Create an RijndaelManaged object 
+            // with the specified key and IV. 
+            using (RijndaelManaged rijAlg = new RijndaelManaged())
+            {
+                rijAlg.Key = Key;
+                rijAlg.IV = IV;
+
+                // Create a decryptor to perform the stream transform.
+                ICryptoTransform encryptor = rijAlg.CreateEncryptor(rijAlg.Key, rijAlg.IV);
+
+                // Create the streams used for encryption. 
+                using (MemoryStream msEncrypt = new MemoryStream())
+                {
+                    using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+                    {
+                        using (StreamWriter swEncrypt = new StreamWriter(csEncrypt))
+                        {
+
+                            //Write all data to the stream.
+                            swEncrypt.Write(plainText);
+                        }
+                        encrypted = msEncrypt.ToArray();
+                    }
+                }
+            }
+
+
+            // Return the encrypted bytes from the memory stream. 
+            return encrypted;
+
+        }
+
+        static string DecryptStringFromBytes(byte[] cipherText, byte[] Key, byte[] IV)
+        {
+            // Check arguments. 
+            if (cipherText == null || cipherText.Length <= 0)
+                throw new ArgumentNullException("cipherText");
+            if (Key == null || Key.Length <= 0)
+                throw new ArgumentNullException("Key");
+            if (IV == null || IV.Length <= 0)
+                throw new ArgumentNullException("IV");
+
+            // Declare the string used to hold 
+            // the decrypted text. 
+            string plaintext = null;
+
+            // Create an RijndaelManaged object 
+            // with the specified key and IV. 
+            using (RijndaelManaged rijAlg = new RijndaelManaged())
+            {
+                rijAlg.Key = Key;
+                rijAlg.IV = IV;
+
+                // Create a decrytor to perform the stream transform.
+                ICryptoTransform decryptor = rijAlg.CreateDecryptor(rijAlg.Key, rijAlg.IV);
+
+                // Create the streams used for decryption. 
+                using (MemoryStream msDecrypt = new MemoryStream(cipherText))
+                {
+                    using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+                    {
+                        using (StreamReader srDecrypt = new StreamReader(csDecrypt))
+                        {
+
+                            // Read the decrypted bytes from the decrypting stream 
+                            // and place them in a string.
+                            plaintext = srDecrypt.ReadToEnd();
+                        }
+                    }
+                }
+
+            }
+
+            return plaintext;
+
         }
     }
 }

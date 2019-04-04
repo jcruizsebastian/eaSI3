@@ -114,7 +114,7 @@ namespace eaSI3Web.Controllers
             BdStatistics bdStatistics = new BdStatistics(_context);
             eaSI3Web.Models.User user = bdStatistics.GetUser(int.Parse(idUser));
 
-            JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(user.JiraUserName, user.JiraPassword, data.Value.Jira_Host_URL);
+            JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(user.JiraUserName, bdStatistics.DecryptJiraPassword(user.JiraUserName), data.Value.Jira_Host_URL);
             var currentWorklog = new List<WorkLog>();
             try
             {
@@ -146,7 +146,7 @@ namespace eaSI3Web.Controllers
 
             try
             {
-                JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(user.JiraUserName, user.JiraPassword, data.Value.Jira_Host_URL);
+                JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(user.JiraUserName, bdStatistics.DecryptJiraPassword(user.JiraUserName), data.Value.Jira_Host_URL);
                 jiraIssue = jiraWorkLogService.GetIssue(jiraKey);
             }
             catch (Exception e)
@@ -182,9 +182,10 @@ namespace eaSI3Web.Controllers
 
             BdStatistics bdStatistics = new BdStatistics(_context);
             eaSI3Web.Models.User user = bdStatistics.GetUser(int.Parse(idUser));
+
             try
             {
-                JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(user.JiraUserName, user.JiraPassword, data.Value.Jira_Host_URL);
+                JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(user.JiraUserName, bdStatistics.DecryptJiraPassword(user.JiraUserName), data.Value.Jira_Host_URL);
             }
             catch (Exception e)
             {
@@ -242,7 +243,7 @@ namespace eaSI3Web.Controllers
 
             try
             {
-                JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(user.JiraUserName, user.JiraPassword, data.Value.Jira_Host_URL);
+                JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(user.JiraUserName, bdStatistics.DecryptJiraPassword(user.JiraUserName), data.Value.Jira_Host_URL);
 
                 if (idSi3 != "null")
                 {
@@ -280,7 +281,7 @@ namespace eaSI3Web.Controllers
 
             try
             {
-                JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(user.JiraUserName, user.JiraPassword, data.Value.Jira_Host_URL);
+                JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(user.JiraUserName, bdStatistics.DecryptJiraPassword(user.JiraUserName), data.Value.Jira_Host_URL);
                 string body = JsonConvert.SerializeObject(new { fields = new { customfield_10300 = issueKey } });
                 jiraWorkLogService.UpdateIssue(jirakey, body);
             }

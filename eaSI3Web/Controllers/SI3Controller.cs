@@ -156,7 +156,7 @@ namespace eaSI3Web.Controllers
             eaSI3Web.Models.User user = bdStatistics.GetUser(int.Parse(idUser));
             try
             {
-                SI3Service Si3Service = new SI3Service(user.SI3UserName, user.SI3Password, data.Value.Week_Hours, data.Value.Si3_Host_URL);
+                SI3Service Si3Service = new SI3Service(user.SI3UserName, bdStatistics.DecryptSi3Password(user.SI3UserName), data.Value.Week_Hours, data.Value.Si3_Host_URL);
                 var a = Si3Service.SpendedHours().Sum(x => x.Value);
                 return a;
             }
@@ -189,7 +189,7 @@ namespace eaSI3Web.Controllers
             eaSI3Web.Models.User user = bdStatistics.GetUser(int.Parse(idUser));
             try
             {
-                SI3Service sI3Service = new SI3Service(user.SI3UserName, user.SI3Password, data.Value.Week_Hours, data.Value.Si3_Host_URL);
+                SI3Service sI3Service = new SI3Service(user.SI3UserName, bdStatistics.DecryptSi3Password(user.SI3UserName), data.Value.Week_Hours, data.Value.Si3_Host_URL);
             }
             catch (InvalidCredentialException e)
             {
@@ -235,7 +235,7 @@ namespace eaSI3Web.Controllers
             try
             {
                 SI3.Issues.Issue issue = new SI3.Issues.Issue();
-                SI3Service SI3Service = new SI3Service(user.SI3UserName, user.SI3Password, this.data.Value.Week_Hours, this.data.Value.Si3_Host_URL);
+                SI3Service SI3Service = new SI3Service(user.SI3UserName, bdStatistics.DecryptSi3Password(user.SI3UserName), this.data.Value.Week_Hours, this.data.Value.Si3_Host_URL);
                 issue.user = data.CodUserSi3;
                 issue.product = data.Producto;
                 issue.component = data.Componente;
@@ -389,7 +389,7 @@ namespace eaSI3Web.Controllers
             BdStatistics bdStatistics = new BdStatistics(_context);
             eaSI3Web.Models.User user = bdStatistics.GetUser(int.Parse(idUser));
             List<Milestones> milestones = new List<Milestones>();
-            SI3Service Si3Service = new SI3Service(user.SI3UserName, user.SI3Password, data.Value.Week_Hours, data.Value.Si3_Host_URL);
+            SI3Service Si3Service = new SI3Service(user.SI3UserName, bdStatistics.DecryptSi3Password(user.SI3UserName), data.Value.Week_Hours, data.Value.Si3_Host_URL);
             Dictionary<string, List<SI3.Projects.Milestone>> milestonesService = Si3Service.GetMilestones();
             foreach (var m in milestonesService)
             {
@@ -415,7 +415,7 @@ namespace eaSI3Web.Controllers
             List<Models.Project> projects = new List<Models.Project>();
             try
             {
-                SI3Service Si3Service = new SI3Service(user.SI3UserName, user.SI3Password, data.Value.Week_Hours, data.Value.Si3_Host_URL);
+                SI3Service Si3Service = new SI3Service(user.SI3UserName, bdStatistics.DecryptSi3Password(user.SI3UserName), data.Value.Week_Hours, data.Value.Si3_Host_URL);
                 List<Project> projectsService = Si3Service.GetProjects();
                 foreach (var proj in projectsService)
                 {
@@ -463,7 +463,7 @@ namespace eaSI3Web.Controllers
 
             try
             {
-                SI3Service SI3Service = new SI3Service(user.SI3UserName, user.SI3Password, data.Value.Week_Hours, data.Value.Si3_Host_URL);
+                SI3Service SI3Service = new SI3Service(user.SI3UserName, bdStatistics.DecryptSi3Password(user.SI3UserName), data.Value.Week_Hours, data.Value.Si3_Host_URL);
 
                 foreach (var week in model.ToList())
                 {

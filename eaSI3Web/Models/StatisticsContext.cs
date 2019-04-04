@@ -14,7 +14,7 @@ namespace eaSI3Web.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("User ID=easi3; Password=easi3easi3;Initial Catalog=easi3;Data Source=SRVSQL02\\SQL_DEV_2017;timeout=40;Pooling=False;Connection Lifetime=1;");
+            optionsBuilder.UseSqlServer("User ID=sa; Password=sancho;Initial Catalog=easi3;Data Source=LAPTOP104;timeout=40;Pooling=False;Connection Lifetime=1;");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -27,5 +27,6 @@ namespace eaSI3Web.Models
         public DbSet<Login> Logins { get; set; }
         public DbSet<IssueCreation> IssuesCreation { get; set; }
         public DbSet<WorkTracking> WorkTracking { get; set; }
+        
     }
 }
