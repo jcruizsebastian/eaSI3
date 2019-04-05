@@ -183,6 +183,12 @@ namespace eaSI3Web.Controllers
             BdStatistics bdStatistics = new BdStatistics(_context);
             eaSI3Web.Models.User user = bdStatistics.GetUser(int.Parse(idUser));
 
+            if (user.Password_Encrypted == null)
+            {
+                return StatusCode(400, "Por favor, inicia sesión de nuevo");
+            }
+
+
             try
             {
                 JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(user.JiraUserName, bdStatistics.DecryptJiraPassword(user.JiraUserName), data.Value.Jira_Host_URL);

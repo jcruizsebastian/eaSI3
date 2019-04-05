@@ -82,7 +82,7 @@ namespace SI3Connector
             x_www_form_url_encoded.Add("phase", ((int)newIssueData.phase).ToString());
             x_www_form_url_encoded.Add("prior", ((int)newIssueData.priority).ToString());
             x_www_form_url_encoded.Add("level", ((int)newIssueData.level).ToString());
-            x_www_form_url_encoded.Add("title", newIssueData.title);
+            x_www_form_url_encoded.Add("title", newIssueData.title.Substring(0, 55));
             x_www_form_url_encoded.Add("cause", newIssueData.cause);
 
             var request = _si3HttpRequest.Post(new Uri($"{_si3Url}Si3/its/asp/CreateIssue.asp"), x_www_form_url_encoded);

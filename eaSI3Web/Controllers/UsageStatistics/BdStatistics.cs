@@ -25,6 +25,7 @@ namespace eaSI3Web.Controllers.UsageStatistics
             if (!users.Any())
             {
                 _context.Add(new User() { JiraUserName = usernameJira, SI3UserName = usernameSi3});
+                _context.SaveChanges();
                 Encrypt( usernameJira,  passwordJira,  usernameSi3,  passwrodSi3);
                 _context.SaveChanges();
             }
