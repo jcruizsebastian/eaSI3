@@ -67,6 +67,12 @@ namespace SI3Connector
 
         public string NewIssue(Issue newIssueData)
         {
+            int max = 55;
+            if (newIssueData.title.Length < 55)
+            {
+                max = newIssueData.title.Length;
+            }
+            
             var x_www_form_url_encoded = new Dictionary<string, string>();
             x_www_form_url_encoded.Clear();
             x_www_form_url_encoded.Add("product", newIssueData.product);
@@ -82,7 +88,7 @@ namespace SI3Connector
             x_www_form_url_encoded.Add("phase", ((int)newIssueData.phase).ToString());
             x_www_form_url_encoded.Add("prior", ((int)newIssueData.priority).ToString());
             x_www_form_url_encoded.Add("level", ((int)newIssueData.level).ToString());
-            x_www_form_url_encoded.Add("title", newIssueData.title.Substring(0, 55));
+            x_www_form_url_encoded.Add("title", newIssueData.title.Substring(0, max));
             x_www_form_url_encoded.Add("cause", newIssueData.cause);
 
             var request = _si3HttpRequest.Post(new Uri($"{_si3Url}Si3/its/asp/CreateIssue.asp"), x_www_form_url_encoded);
