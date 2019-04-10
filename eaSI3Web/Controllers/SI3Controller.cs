@@ -20,6 +20,7 @@ using eaSI3Web.Configs;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using System.ComponentModel.DataAnnotations;
 
 namespace eaSI3Web.Controllers
 {
@@ -202,6 +203,9 @@ namespace eaSI3Web.Controllers
         [HttpPost("[action]")]
         public ActionResult<int> Login([FromBody] BodyData bodyData)
         {
+            if (!ModelState.IsValid)
+                return StatusCode(400, "");
+
             int id=int.MinValue;
             try
             {
@@ -226,6 +230,9 @@ namespace eaSI3Web.Controllers
         [HttpPost("[action]")]
         public ActionResult<string> Linkissue([FromBody]BodyIssue data)
         {
+            if (!ModelState.IsValid)
+                return StatusCode(400, "");
+
             string NewIssue = "";
             var cookie = Request.Cookies.First(x => x.Key == "userId");
             var idUser = cookie.Value;
@@ -440,6 +447,9 @@ namespace eaSI3Web.Controllers
         [HttpPost("[action]")]
         public ActionResult Submit([FromBody] BodyData body)
         {
+            if (!ModelState.IsValid)
+                return StatusCode(400, "");
+
             try
             {
                 SI3Service si3Service = new SI3Service(body.usernameSi3, body.usernameSi3, data.Value.Week_Hours, data.Value.Si3_Host_URL);
@@ -453,8 +463,11 @@ namespace eaSI3Web.Controllers
             return Ok();
         }
         [HttpPost("[action]")]
-        public ActionResult Register([FromQuery]string selectedWeek, [FromQuery]int totalHours, [FromBody]IEnumerable<WeekJiraIssues> model, bool submit)
+        public ActionResult Register([FromQuery][Required][StringLength(2)]string selectedWeek, [FromQuery][Required]int totalHours, [FromBody]IEnumerable<WeekJiraIssues> model, bool submit)
         {
+            if (!ModelState.IsValid)
+                return StatusCode(400, "");
+
             var cookie = Request.Cookies.First(x => x.Key == "userId");
             var idUser = cookie.Value;
 

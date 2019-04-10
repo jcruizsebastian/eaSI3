@@ -94,8 +94,11 @@ namespace eaSI3Web.Controllers
         
 
         [HttpGet("[action]")]
-        public ActionResult<WeekJiraIssuesResponse> Worklog(string selectedWeek)
+        public ActionResult<WeekJiraIssuesResponse> Worklog([Required][StringLength(2)]string selectedWeek)
         {
+            if (!ModelState.IsValid)
+                return StatusCode(400, "");
+
             DateTime startOfWeek = DateTime.Now;
             DateTime endOfWeek = DateTime.Now;
 
@@ -135,8 +138,11 @@ namespace eaSI3Web.Controllers
         }
 
         [HttpGet("[action]")]
-        public ActionResult<IssueConveter.Model.Issue> Issue(string jiraKey)
+        public ActionResult<IssueConveter.Model.Issue> Issue([Required][RegularExpression("[a-zA-Z]+-[0-9]+")]string jiraKey)
         {
+            if (!ModelState.IsValid)
+                return StatusCode(400, "");
+
             var jiraIssue = new IssueConveter.Model.Issue();
             var cookie = Request.Cookies.First(x => x.Key == "userId");
             var idUser = cookie.Value;
@@ -205,6 +211,9 @@ namespace eaSI3Web.Controllers
         [HttpPost("[action]")]
         public ActionResult Login([FromBody] BodyData bodyData)
         {
+            if (!ModelState.IsValid)
+                return StatusCode(400, "");
+
             try
             {
                 JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(bodyData.usernameJira, bodyData.passwordJira, data.Value.Jira_Host_URL);
@@ -222,8 +231,11 @@ namespace eaSI3Web.Controllers
             return Ok();
         }
         [HttpGet("[action]")]
-        public ActionResult<string> updateIssueSi3Project(string codeProject, string codeMilestone, string jiraKey, string idSi3)
+        public ActionResult<string> updateIssueSi3Project([Required][RegularExpression(@"^(O)([0-9]+)$")]string codeProject, [Required][RegularExpression(@"^(H\.[0-9]{1,4}).+$")]string codeMilestone,[RegularExpression("[a-zA-Z]+-[0-9]+")]string jiraKey, string idSi3)
         {
+            if (!ModelState.IsValid)
+                return StatusCode(400, "");
+
             var cookie = Request.Cookies.First(x => x.Key == "userId");
             var idUser = cookie.Value;
 
@@ -274,8 +286,11 @@ namespace eaSI3Web.Controllers
             return key;
         }
         [HttpGet("[action]")]
-        public ActionResult UpdateIssueSi3CustomField([RegularExpression("[0-9]+")]string issueKey, [RegularExpression("\\w+-[0-9]+")]string jirakey)
+        public ActionResult UpdateIssueSi3CustomField([Required][RegularExpression("[0-9]+")]string issueKey, [Required][RegularExpression("[a-zA-Z]+-[0-9]+")]string jirakey)
         {
+            if (!ModelState.IsValid)
+                return StatusCode(400, "");
+
             var cookie = Request.Cookies.First(x => x.Key == "userId");
             var idUser = cookie.Value;
 

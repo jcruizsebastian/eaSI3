@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Swagger;
 using System.Collections.Generic;
 using eaSI3Web.GlobalErrorHandling;
+using Microsoft.AspNetCore.Mvc;
 
 namespace eaSI3Web
 {
@@ -33,7 +34,7 @@ namespace eaSI3Web
             
             services.AddDbContext<StatisticsContext>(options => options.UseSqlServer(connection));
             services.AddOptions();
-            services.AddMvc();
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2); ;
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
             {
