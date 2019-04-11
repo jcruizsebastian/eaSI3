@@ -1,3 +1,77 @@
+
+body {
+    background-image: url(http://193.109.229.235/wp-content/uploads/2016/03/openworkplace_enterprise_banner.jpg);
+    background-size: auto 100% !important;
+    background-repeat: no-repeat !important;
+    background-position: right -600px top;
+    background-attachment: fixed;
+    background-color: rgb(83,177,253);
+    margin: 0;
+    height: 100%;
+    width: auto;
+}
+
+.main-easi3 {
+    text-align: -webkit-center;
+}
+
+.main-h1-1 {
+    font-family: "open sans", "HelveticaNeue-Light","Helvetica Neue Light", "Helvetica Neue", Helvetica,Arial, sans-serif,Arial,'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif, sans-serif;
+    font-size: 32px;
+    font-weight: bold;
+    color: white;
+    letter-spacing: -1px;
+    text-transform: uppercase;
+}
+
+.main-h1-2 {
+    font-family: Fjalla One;
+    line-height: 105%;
+    font-size: 190px;
+    font-weight: 400;
+    margin: 15px 0 0;
+    color: white;
+    letter-spacing: -5px;
+    text-transform: uppercase;
+}
+
+.main-h2 {
+    font-family: "Lora","open sans","HelveticaNeue-Light","Helvetica Neue Light", "Helvetica Neue", Helvetica,>Arial, sans-serif,Arial,'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif, sans-serif;
+    line-height: 145%;
+    font-size: 33px;
+    text-shadow: none;
+    margin-bottom: 45px;
+    font-weight: normal;
+    font-style: italic;
+    margin: 15px 0 0;
+    color: white;
+    text-transform: capitalize;
+}
+
+.main-btn {
+    margin-top: 40px;
+    display: inline-block;
+    width: 250px;
+    color: white;
+    margin-right: 10px;
+    padding: 10px 10px 10px 10px;
+}
+
+    .main-btn a {
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        text-transform: uppercase ;
+        padding: 12px 31px;
+        border-radius: 5px;
+        border: white solid 3px;
+        text-decoration:none;
+    }
+.main-img {
+    width:200px;
+    margin-top: 120px;
+    opacity: 0.5;
+}
 .main-nav li .glyphicon {
     margin-right: 10px;
     margin-top: 5px;
@@ -33,53 +107,59 @@
         height: 100%;
         width: calc(25% - 20px);
     }
-    .main-nav .navbar {
-        border-radius: 0px;
-        border-width: 0px;
-        height: 100%;
-    }
-    .main-nav .navbar-header {
-        float: none;
-    }
-    .main-nav .navbar-collapse {
-        border-top: 1px solid #444;
-        padding: 0px;
-    }
-    .main-nav .navbar ul {
-        float: none;
-    }
-    .main-nav .navbar li {
-        float: none;
-        font-size: 15px;
-        margin: 6px;
-    }
-    .main-nav .navbar li a {
-        padding: 10px 16px;
-        border-radius: 4px;
-    }
-    .main-nav .navbar a {
-        /* If a menu item's text is too long, truncate it */
-        width: 100%;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
+
+        .main-nav .navbar {
+            border-radius: 0px;
+            border-width: 0px;
+            height: 100%;
+        }
+
+        .main-nav .navbar-header {
+            float: none;
+        }
+
+        .main-nav .navbar-collapse {
+            border-top: 1px solid #444;
+            padding: 0px;
+        }
+
+        .main-nav .navbar ul {
+            float: none;
+        }
+
+        .main-nav .navbar li {
+            float: none;
+            font-size: 15px;
+            margin: 6px;
+        }
+
+            .main-nav .navbar li a {
+                padding: 10px 16px;
+                border-radius: 4px;
+            }
+
+        .main-nav .navbar a {
+            /* If a menu item's text is too long, truncate it */
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
 
 
-    .table 
-    {
-        margin-top : 10px;
+    .table {
+        margin-top: 10px;
     }
 
-    .dataForm 
-    {
-        margin-top : 10px;
+    .dataForm {
+        margin-top: 10px;
     }
-
 }
+
 .spinner {
     margin-left: 45%;
 }
+
 .overlay {
     top: 0;
     left: 0;
@@ -88,8 +168,9 @@
     position: fixed !important;
     width: 100%;
     height: 100%;
-    z-index:1;
+    z-index: 1;
 }
+
 .overlay-1 {
     z-index: -1;
     top: 0;
@@ -100,21 +181,25 @@
     width: 100%;
     height: 100%;
 }
+
 #logout {
-    float:right;
+    float: right;
     margin-top: 7px;
 }
+
 #name {
     color: white;
     float: right;
-    margin-top:15px;
-    margin-right:20px;
+    margin-top: 15px;
+    margin-right: 20px;
 }
+
 #btnSi3 {
     margin-bottom: 50px;
 }
+
 .popup {
-    text-align:center;
+    text-align: center;
     display: flex;
     position: fixed;
     width: 100%;
@@ -127,45 +212,54 @@
     background-color: rgba(0,0,0, 0.5);
     z-index: 1;
 }
+
 .popup_inner {
     text-align: left;
-    width:50%;
+    width: 50%;
     margin: auto;
     background: white;
     border: 2px solid #32CD32;
     border-radius: 6px;
     box-shadow: 0px 5px 10px #B5C1C5, 0 0 0 10px #EEF inset;
     padding: 20px;
-
 }
+
 #btn-vincular {
     margin-left: 10px;
     margin-right: 5px;
 }
+
 .titlePopup {
     text-align: center;
     font-family: Arial, Helvetica, sans-serif;
 }
+
 #close {
     float: right;
     display: inline-block;
-    margin-bottom:5px;
+    margin-bottom: 5px;
 }
+
 hr {
     border: 2px solid;
 }
+
 .select-calendar {
     margin: 10px;
 }
+
 #tab {
-    margin-left:10px;
+    margin-left: 10px;
 }
+
 .oculto {
-    display:none;
+    display: none;
 }
+
 .custom-select-oculto {
-    display:none;
+    display: none;
 }
+
 #btnJira {
-    margin-top:15px;
+    margin-top: 15px;
 }

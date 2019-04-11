@@ -8,5 +8,4 @@ import { LoginGeneral } from './components/LoginGeneral';
 export const routes = <Layout>
     <Route exact path='/' render={() => <Home />} />
     <Route exact path="/vincular" render={() => <VincularTarea jiraKey="" vincular={() => { }} />} />
-    
 </Layout>;

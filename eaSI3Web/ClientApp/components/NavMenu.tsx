@@ -4,31 +4,25 @@ import { Link, NavLink } from 'react-router-dom';
 export class NavMenu extends React.Component<{}, {}> {
     public render() {
 
-        return <div className='main-nav'>
-            <div className='navbar navbar-inverse'>
-                <div className='navbar-header'>
-                    <button type='button' className='navbar-toggle' data-toggle='collapse' data-target='.navbar-collapse'>
-                        <span className='sr-only'>Toggle navigation</span>
-                        <span className='icon-bar'></span>
-                        <span className='icon-bar'></span>
-                        <span className='icon-bar'></span>
-                    </button>
-                    <Link className='navbar-brand' to={'/'}>eaSI3Web</Link>
+        return <div className=''>
+
+
+            <div className='main-easi3'>
+                <h1 className="main-h1-1">IMPUTA FÁCIL CON...</h1>
+                <h1 className="main-h1-2">-EASI3-</h1>
+                <h2 className="main-h2">Y disfruta Del Fin De Semana</h2>
+                <div className="main-btn">
+                <NavLink to={'/'} exact activeClassName='active' id='imputarHoras'>
+                    <span className='glyphicon glyphicon-home'></span> Imputar Horas
+                </NavLink>
                 </div>
-                <div className='clearfix'></div>
-                <div className='navbar-collapse collapse'>
-                    <ul className='nav navbar-nav'>
-                        <li>
-                            <NavLink to={'/'} exact activeClassName='active'>
-                                <span className='glyphicon glyphicon-home'></span> Imputar Horas
-                            </NavLink>
-
-                            <NavLink to={'/vincular'} exact activeClassName='active'>
-                                <span className='glyphicon glyphicon-plus'></span> Vincular Tarea
-                            </NavLink>
-
-                        </li>
-                    </ul>
+                <div className="main-btn">
+                    <NavLink to={'/vincular'} exact activeClassName='active' id='vincularTarea'>
+                    <span className='glyphicon glyphicon-plus'></span> Vincular Tarea
+                </NavLink>
+                </div >
+                <div className="main-img">
+                <img src="http://www.openfinance.es/wp-content/uploads/thegem-logos/logo_1bb293e7e736d552df6e313662c968df_1x.png" />
                 </div>
             </div>
         </div>;

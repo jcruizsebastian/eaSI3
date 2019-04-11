@@ -116,7 +116,6 @@ export class Layout extends React.Component<LayoutProps, LayoutState> {
 
     public render() {
 
-        var style = { backgroundColor: '#222', height: '50px' };
         let home;
 
         if (this.state.loaded) {
@@ -128,17 +127,17 @@ export class Layout extends React.Component<LayoutProps, LayoutState> {
 
                 home = <div>
                     <div className='row'>
-                        <div className='col-sm-12' style={style}>
+                        <div className='col-sm-12'>
                             <input type="button" className="btn btn-secondary" id="logout" value="Log out" onClick={this.logout} />
                             <label id="name">{name}</label>
                         </div>
                     </div>
 
                     <div className='row'>
-                        <div className='col-sm-3'>
+                        <div className=''>
                             <NavMenu />
                         </div>
-                        <div className='col-sm-9'>
+                        <div className=''>
                             {this.props.children}
                         </div>
                     </div>
@@ -148,9 +147,7 @@ export class Layout extends React.Component<LayoutProps, LayoutState> {
         }
         const spinner = <span><ReactLoading color='#fff' type='spin' className="spinner" height={128} width={128} /></span>
         return <div className='container-fluid' >
-
             {home}
-
         </div>
 
     }
