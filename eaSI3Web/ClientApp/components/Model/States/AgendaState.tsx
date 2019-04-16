@@ -6,4 +6,5 @@ export interface AgendaState {
     vincular: boolean;
     issueVincular: string;
     checked: boolean;
+    expand: Number;
 }

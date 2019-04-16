@@ -374,11 +374,11 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
 
         let formulario;
         if (this.props.jiraKey.length == 0) {
-            formulario = <div>
+            formulario = <div className="container-vincular">
                 <form className="dataForm" onSubmit={this.handleSubmit}>
                     <label className="text">Key Jira :</label>
                     <input type="text" id="keyJira" className="form-control" name="key" ref="tbKeyJira" placeholder="Introduzca Key Jira" autoComplete="off" />
-                    <input type="submit" className="btn btn-primary" value="Generar información" />
+                    <input type="submit" className="btnVincular" value="Generar información" />
                 </form>
                 <br></br>
             </div>;

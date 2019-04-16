@@ -205,7 +205,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
         let calendar;
 
         if (this.state.calendarLoaded) {
-            jira = <input type="button" id="btnJira" value="Obtener issues" className="btn btn-primary" onClick={this.onLoginJira} />
+            jira = <input type="button" className="btnJira" value="Obtener issues" onClick={this.onLoginJira} />
 
             calendar = <div className="select-calendar">
                 <label className="oculto">Elija semana de trabajo :</label>
@@ -223,17 +223,26 @@ export class Home extends React.Component<{}, UserCredentialsState> {
         if (this.state.loadedJira) {
 
             agenda = <Agenda weekissues={this.state.Weekissues} ref="agenda1" isTodoOk={this.isTodoOk} availableHours={this.state.availableHours} />
-            si3 = <div>
+            si3 = <div className="container-si3">
                 <input id="radiobtn" className="form-check-input" type="radio" ref="submitRadioBtn" value="option1" />
                 <label className="form-check-label">
                     Submit en Si3
                 </label>
                 <br></br>
-                <input type="button" id="btnSi3" value="Imputar tareas en Si3" className="btn btn-primary" disabled={this.state.todoOk} onClick={this.onLoginSi3} /></div>;
+                <input type="button" className="btnSi3" value="Imputar tareas en Si3" disabled={this.state.todoOk} onClick={this.onLoginSi3} /></div>;
 
         }
 
-        const spinner = <span><ReactLoading color='#fff' type='spin' className="spinner" height={128} width={128} /></span>
+        const cube = <div className="wrap">
+            <div className="cube">
+                <div className="front"><img width="140px" className="imgCubeBme" src="https://www.bolsasymercados.es/images/Base/Logo.svg"/></div>
+                <div className="back"><img width="140px" className="imgCubeBme" src="https://www.bolsasymercados.es/images/Base/Logo.svg"/></div>
+                <div className="top"></div>
+                <div className="bottom"></div>
+                <div className="left"><img width="140px" className="imgCubeOpen" src="http://www.openfinance.es/wp-content/uploads/thegem-logos/logo_1bb293e7e736d552df6e313662c968df_1x.png" /></div>
+                <div className="right"><img width="140px" className="imgCubeOpen" src="http://www.openfinance.es/wp-content/uploads/thegem-logos/logo_1bb293e7e736d552df6e313662c968df_1x.png"/></div>
+            </div>
+        </div>
 
         return (
             <div>
@@ -242,7 +251,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
                 {jira}
                 {agenda}
                 {si3}
-                <Loader show={this.state.loading} message={spinner} hideContentOnLoad={false} className={(this.state.loading == true) ? "overlay" : "overlay-1"} />
+                <Loader show={this.state.loading} message={cube} hideContentOnLoad={false} className={(this.state.loading == true) ? "overlay" : "overlay-1"} />
             </div>
         )
     }

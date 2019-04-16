@@ -21,8 +21,8 @@
     min-width: 280px;
 }
 .agenda-events-title {
-    overflow: hidden;
-    text-overflow: ellipsis;
+    //overflow: hidden;
+    //text-overflow: ellipsis;
     white-space: nowrap;
     max-width: 100%;
 }
@@ -32,12 +32,5 @@
 .agenda-events-hours {
     height: 40px;
 }
-.invalid {
-    border-color: red;
-    width: 100px;
-    font-weight:normal;
-}
-.valid {
-    width: 100px;
-    font-weight: normal;
-}
+
+
