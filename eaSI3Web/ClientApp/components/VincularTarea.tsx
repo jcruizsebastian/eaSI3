@@ -397,7 +397,7 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
         return (
             <div>
                 {formulario}
-                <div className="container-vincular">
+                <div className="container-vincular-informacion">
                         {informacion}
                 </div>
 

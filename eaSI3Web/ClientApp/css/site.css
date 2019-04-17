@@ -335,7 +335,9 @@ input[type="button"]:hover {
 .table-th {
     border: 1px solid white !important;
 }
-
+.table-th-tipo {
+    border: 1px solid white !important;
+}
 .table-th-fecha {
     border: 1px solid white !important;
     //border-top-left-radius: 5px;
@@ -369,7 +371,9 @@ input[type="button"]:hover {
 .agenda-events-td-id {
     border: 1px solid white !important;
 }
-
+.agenda-events-td-tipo {
+    border: 1px solid white !important;
+}
 .agenda-events-table-title {
     border: 1px solid white !important;
 }
@@ -391,25 +395,38 @@ input[type="button"]:hover {
     border: 1px solid white !important;
     //border-bottom-right-radius: 5px;
 }
-
+.agenda-events-title {
+    white-space: nowrap;
+    overflow: hidden;
+}
+.agenda-events-label-normal {
+    width: 700px;
+    height: 40px;
+    margin-bottom: 0px;
+}
 .agenda-events-label {
-    width: 800px;
     text-overflow: ellipsis;
     overflow: hidden;
     float: left;
-    -webkit-transition: 0.5s ease-in;
-    -moz-transition: 0.5s ease-in;
-    -o-transition: 0.5s ease-in;
-    transition: 0.5s ease-in;
+    display: inline-block;
+    
 }
 
     .agenda-events-label:hover {
-        -webkit-transition: 4s ease-in;
-        -moz-transition: 4s ease-in;
-        -o-transition: 4s ease-in;
-        transition: 4s ease-in;
-        text-indent: -300px;
+        text-overflow:unset;
+        overflow:unset;
+        animation: marquee 7s linear infinite;
     }
+
+@keyframes marquee {
+    0% {
+        transform: translate(0%, 0);
+    }
+
+    100% {
+        transform: translate(-120%, 0);
+    }
+}
 
 label {
     font-weight: normal;

@@ -8,6 +8,8 @@ import { Checkbox } from 'react-inputs-validation';
 import * as ReactDOM from 'react-dom';
 
 export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
+    public myLabel: HTMLLabelElement | null | undefined;
+    public labels: { [index: number]: { label: HTMLLabelElement  } } = {};
 
     constructor(props: WeekJiraIssuesProps) {
         super(props)
@@ -19,13 +21,29 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
         this.closePopup = this.closePopup.bind(this);
         this.checkBoxChanged = this.checkBoxChanged.bind(this);
         this.menuExpand = this.menuExpand.bind(this);
-        this.state = { weekissues: this.props.weekissues, link: "https://jira.openfinance.es/browse/", vincular: false, issueVincular: "", checked: false, expand: 0};
+        this.state = { weekissues: this.props.weekissues, link: "https://jira.openfinance.es/browse/", vincular: false, issueVincular: "", checked: false, expand: 0 };
     }
-    
+
     componentDidMount() {
+
+        //con esto tengo todos los <label>
+        console.log(ReactDOM.findDOMNode(this).querySelectorAll(".agenda-events-label"));
+        var labels = ReactDOM.findDOMNode(this).querySelectorAll(".agenda-events-label");
+        for (var i = 0; i < labels.length; i++) {
+
+            var label = labels[i] as HTMLLabelElement;
+            var overflowX = label.offsetWidth < label.scrollWidth,
+                overflowY = label.offsetHeight < label.scrollHeight;
+
+            if (!overflowX && !overflowY) {
+                label.className="agenda-events-label-normal"
+            }
+        }
+
         var todoOk = this.isDisabledBtnSi3();
-        this.props.isTodoOk(todoOk); 
-    }
+        this.props.isTodoOk(todoOk);
+}
+
 
     public timeReassignment(event: React.ChangeEvent<HTMLInputElement>) {
         let day = event.currentTarget.id.split('|')[1];
@@ -41,7 +59,7 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                 }
             }
         }
-
+        
         var todoOk = this.isDisabledBtnSi3();
         this.props.isTodoOk(todoOk);
 
@@ -117,7 +135,7 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
        
     }
     public render() { 
-
+        let i: number = 0;
         let total: number = this.calculateTotalHours();
         return <div className="table-container">
             {this.state.vincular ?
@@ -130,8 +148,8 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                 <thead className="thead-dark">
                         <tr>
                             <th className="table-th-fecha">Fecha</th>
-                            <th className="table-th">ID  ( <input type="checkbox" className="custom-control-input" id="defaultUnchecked" onChange={this.checkBoxChanged} />
-                                <label className="custom-control-label">Mostrar tipo de tarea</label> )</th>
+                            <th className="table-th">ID</th>
+                            <th className="table-th-tipo">Tipo de Tarea</th>
                             <th className="table-th">Tareas</th>
                             <th className="table-th-horas">Horas</th>
                     </tr>
@@ -167,7 +185,24 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                                         }
                                     
                                 </td>
+                                    <td className="agenda-events-td-tipo" >
 
+                                        {Weekissue.issues.filter(issue => issue.issueSI3Code == null).map(
+                                            x =>
+                                                <div className="agenda-events-tipo">
+                                                    <label className="issue-si3">{x.tipo}</label>
+                                                </div>
+                                        )}
+
+                                        {Weekissue.issues.filter(issue => issue.issueSI3Code != null).map(
+                                            issue =>
+                                                <div className="agenda-events-tipo">
+                                                    <label className="issue-si3">{issue.tipo}</label>
+                                                </div>
+                                        )
+                                        }
+
+                                    </td>
                                 <td className="agenda-events-table-title">
                                     {Weekissue.issues.filter(issue => issue.issueSI3Code == null).map(
                                         issue =>
@@ -180,7 +215,7 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                                     {Weekissue.issues.filter(issue => issue.issueSI3Code != null).map(
                                         x =>
                                             <div className="agenda-events-title" key={x.titulo + x.issueCode}>
-                                                <label className="agenda-events-label" title={x.titulo}> {x.titulo}</label>
+                                                <label className="agenda-events-label" title={x.titulo} /*ref={c => this.labels[i++] = { label: c } this.myLabel = c}*/ > {x.titulo}</label>
                                             </div>
                                     )}
                                 </td>

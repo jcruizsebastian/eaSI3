@@ -9,16 +9,17 @@
     margin: 3px;
 }
 .agenda-events-label {
-   width:600px; 
+   width:700px; 
    height:40px;
    margin-bottom: 0px;
 }
+.agenda-events-tipo {
+    height: 40px;
+}
 .agenda-events-td-id {
-   
 }
 .agenda-events-id {
     height: 40px;
-    min-width: 280px;
 }
 .agenda-events-title {
     //overflow: hidden;
