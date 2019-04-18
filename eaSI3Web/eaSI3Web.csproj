@@ -33,6 +33,7 @@
 
   <ItemGroup>
     <None Remove="ClientApp\components\Agenda.tsx" />
+    <None Remove="ClientApp\components\Cube.tsx" />
     <None Remove="ClientApp\components\LoginGeneral.tsx" />
     <None Remove="ClientApp\components\Model\Calendar.tsx" />
     <None Remove="ClientApp\components\Model\CalendarWeeks.tsx" />
@@ -70,6 +71,7 @@
 
   <ItemGroup>
     <TypeScriptCompile Include="ClientApp\components\Agenda.tsx" />
+    <TypeScriptCompile Include="ClientApp\components\Cube.tsx" />
     <TypeScriptCompile Include="ClientApp\components\LoginGeneral.tsx" />
     <TypeScriptCompile Include="ClientApp\components\Model\Calendar.tsx" />
     <TypeScriptCompile Include="ClientApp\components\Model\CalendarWeeks.tsx" />

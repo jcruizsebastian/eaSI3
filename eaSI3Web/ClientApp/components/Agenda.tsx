@@ -20,7 +20,7 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
         this.vincular = this.vincular.bind(this);
         this.closePopup = this.closePopup.bind(this);
         this.checkBoxChanged = this.checkBoxChanged.bind(this);
-        this.menuExpand = this.menuExpand.bind(this);
+        
         this.state = { weekissues: this.props.weekissues, link: "https://jira.openfinance.es/browse/", vincular: false, issueVincular: "", checked: false, expand: 0 };
     }
 
@@ -130,10 +130,7 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
     public checkBoxChanged(event: React.ChangeEvent<HTMLInputElement>) {
         this.setState({ checked: event.target.checked });
     }
-    public menuExpand() {
-   
-       
-    }
+
     public render() { 
         let i: number = 0;
         let total: number = this.calculateTotalHours();
@@ -168,18 +165,25 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                                     {Weekissue.issues.filter(issue => issue.issueSI3Code == null).map(
                                         x =>
                                             <div className="agenda-events-id" key={x.issueCode}>
-                                                <a target="_blank" href={this.state.link.concat(x.issueKey)}>{x.issueKey}</a>
-                                                <button type="button" id="btn-vincular" className="btn btn-danger btn-sm" onClick={() => { this.vincular(x.issueKey) }} >Vincular</button>
-                                                {this.state.checked ? <label> {x.tipo} </label> : null}
+                                                <a className="agenda-events-id-link" target="_blank" href={this.state.link.concat(x.issueKey)}>{x.issueKey}
+                                                    <span className="tooltiptext-id">Enlace a Jira</span>
+                                                </a>
+                     
+                                                <a className="arrow" onClick={() => { this.vincular(x.issueKey) }}>
+                                                    <img src="arrow.png" width="35px" height="30px" />
+                                                    <span className="tooltiptext-vincular">Vincular Tarea</span>
+                                                </a>
                                             </div>
                                     )}
 
                                     {Weekissue.issues.filter(issue => issue.issueSI3Code != null).map(
                                         issue =>
                                             <div className="agenda-events-id" key={issue.issueCode}>
-                                                <a target="_blank" href={this.state.link.concat(issue.issueKey)}>{issue.issueKey}</a>
+                                                <a className="agenda-events-id-link" target="_blank" href={this.state.link.concat(issue.issueKey)}>{issue.issueKey}
+                                                    <span className="tooltiptext-id">Enlace a Jira</span>
+                                                </a>
                                                 <label className="issue-si3">({issue.issueSI3Code})</label>
-                                                {this.state.checked ? <label className="label-type"> {issue.tipo} </label> : null} 
+                                                
                                             </div>
                                     )
                                         }
@@ -190,14 +194,14 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                                         {Weekissue.issues.filter(issue => issue.issueSI3Code == null).map(
                                             x =>
                                                 <div className="agenda-events-tipo">
-                                                    <label className="issue-si3">{x.tipo}</label>
+                                                    <label className="issue-tipo">{x.tipo}</label>
                                                 </div>
                                         )}
 
                                         {Weekissue.issues.filter(issue => issue.issueSI3Code != null).map(
                                             issue =>
                                                 <div className="agenda-events-tipo">
-                                                    <label className="issue-si3">{issue.tipo}</label>
+                                                    <label className="issue-tipo">{issue.tipo}</label>
                                                 </div>
                                         )
                                         }
@@ -251,6 +255,7 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
 
                     <tr>
                             <td className="agenda-table-total-first"></td>
+                            <td className="agenda-table-total"></td>
                             <td className="agenda-table-total"></td>
                             <td className="agenda-table-total"></td>
                             <td className="agenda-table-total-last">

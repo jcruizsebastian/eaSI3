@@ -8,6 +8,9 @@ import { WeekJiraIssuesProps } from './Model/Props/WeekJiraIssuesProps';
 import { AgendaState } from './Model/States/AgendaState';
 import { UserCredentialsState } from './Model/States/UserCredentialsState';
 import { WeekJiraIssues } from './Model/WeekJiraIssues';
+import * as ReactDOM from 'react-dom';
+import { Link } from 'react-router-dom';
+import { Cube } from './Cube';
 
 interface WeekJiraIssuesResponse {
     weekJiraIssues: WeekJiraIssues[];
@@ -33,7 +36,6 @@ export class Home extends React.Component<{}, UserCredentialsState> {
     }
 
     componentDidMount() {
-
         this.getWeekofYear();
     }
 
@@ -54,6 +56,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
     }
 
     private onLoginJira(e: { preventDefault: () => void; }) {
+        
         e.preventDefault();
 
         this.setState({ loadingJira: true, loading: true });
@@ -233,17 +236,6 @@ export class Home extends React.Component<{}, UserCredentialsState> {
 
         }
 
-        const cube = <div className="wrap">
-            <div className="cube">
-                <div className="front"><img width="140px" className="imgCubeBme" src="https://www.bolsasymercados.es/images/Base/Logo.svg"/></div>
-                <div className="back"><img width="140px" className="imgCubeBme" src="https://www.bolsasymercados.es/images/Base/Logo.svg"/></div>
-                <div className="top"></div>
-                <div className="bottom"></div>
-                <div className="left"><img width="140px" className="imgCubeOpen" src="http://www.openfinance.es/wp-content/uploads/thegem-logos/logo_1bb293e7e736d552df6e313662c968df_1x.png" /></div>
-                <div className="right"><img width="140px" className="imgCubeOpen" src="http://www.openfinance.es/wp-content/uploads/thegem-logos/logo_1bb293e7e736d552df6e313662c968df_1x.png"/></div>
-            </div>
-        </div>
-
         return (
             <div>
                 <span className="oculto">{this.state.calendar.version}</span>
@@ -251,7 +243,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
                 {jira}
                 {agenda}
                 {si3}
-                <Loader show={this.state.loading} message={cube} hideContentOnLoad={false} className={(this.state.loading == true) ? "overlay" : "overlay-1"} />
+                <Loader show={this.state.loading} message={<Cube/>} hideContentOnLoad={false} className={(this.state.loading == true) ? "overlay" : "overlay-1"} />
             </div>
         )
     }

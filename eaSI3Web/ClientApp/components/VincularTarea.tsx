@@ -8,6 +8,8 @@ import { Issue } from './Model/Issue'
 import { VincularTareaProps } from "./Model/Props/VincularTareaProps";
 import { Project } from "./Model/Project";
 import { Milestones } from "./Model/Milestones";
+import { Link } from "react-router-dom";
+import { Cube } from "./Cube";
 
 export class VincularTarea extends React.Component<VincularTareaProps, VincularState> {
     constructor(props: VincularTareaProps) {
@@ -275,7 +277,8 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
         
         return (
 
-            <div>
+            <div style={{
+                border: "4px solid white", padding: "20px", width: "600px" }}>
                 <label><p className="ptext">Vincular a : </p></label>
                 <div id="tab" className="btn-group" data-toggle="buttons-radio">
                     <a href="#tarea" className="btn btn-large btn-danger active" data-toggle="tab">Tarea</a>
@@ -393,15 +396,15 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
         if (this.state.loadedData && this.state.loadedDataJira) {
             informacion = this.renderInformación();
         }
-        const spinner = <span><ReactLoading color='#fff' type='spin' className="spinner" height={128} width={128} /></span>
+
         return (
             <div>
                 {formulario}
                 <div className="container-vincular-informacion">
-                        {informacion}
+                {informacion}
                 </div>
 
-                <Loader show={this.state.loading} message={spinner} hideContentOnLoad={false} className={(this.state.loading == true) ? "overlay" : "overlay-1"} />
+                <Loader show={this.state.loading} message={<Cube/>} hideContentOnLoad={false} className={(this.state.loading == true) ? "overlay" : "overlay-1"} />
             </div>
         )
     }

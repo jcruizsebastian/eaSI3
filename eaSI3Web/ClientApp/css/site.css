@@ -199,16 +199,17 @@ body {
 
 #logout {
     float: right;
-    margin-top: 7px;
 }
 
 #name {
     color: white;
     float: right;
-    margin-top: 15px;
+    margin-top: 8px;
     margin-right: 20px;
 }
-
+.col-sm-12 {
+    padding: 15px;
+}
 
 
 .popup {
@@ -584,4 +585,65 @@ label {
 .valid {
     width: 100px;
     font-weight: normal;
+}
+.arrow {
+    margin-left: 15px;
+}
+    .arrow:hover {
+        cursor: pointer;
+    }
+        .arrow:hover .tooltiptext-vincular {
+            visibility: visible;
+        }
+.agenda-events-id-link:hover .tooltiptext-id {
+    visibility: visible;
+}
+.link-confluence:hover .tooltiptext-confluence {
+    visibility: visible;
+}
+.tooltiptext-vincular {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 2;
+    left: 24%;
+    margin-top: -30px;
+}
+.tooltiptext-confluence {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 2;
+}
+.tooltiptext-id {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 2;
+    left: 19.5%;
+    margin-top: -30px;
+}
+.issue-si3 {
+    font-style:italic;
+}
+.container-vincular-informacion {
+    margin-left: 282px;
 }
