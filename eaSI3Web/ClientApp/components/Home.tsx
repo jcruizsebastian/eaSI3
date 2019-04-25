@@ -52,12 +52,13 @@ export class Home extends React.Component<{}, UserCredentialsState> {
             .then(response => response.json() as Promise<Calendar>)
             .then(data => {
                 this.setState({ calendar: data, calendarLoaded: true, selectedWeek: data.weeks.length.toString() });
+                this.onLoginJira();
             });
     }
 
-    private onLoginJira(e: { preventDefault: () => void; }) {
+    private onLoginJira() {
         
-        e.preventDefault();
+        //e.preventDefault();
 
         this.setState({ loadingJira: true, loading: true });
 
@@ -207,8 +208,8 @@ export class Home extends React.Component<{}, UserCredentialsState> {
         let jira;
         let calendar;
 
-        if (this.state.calendarLoaded) {
-            jira = <input type="button" className="btnJira" value="Obtener issues" onClick={this.onLoginJira} />
+        if (this.state.loadedJira) {
+            jira = <input type="button" className="btnJira" value="Recargar" onClick={this.onLoginJira} />
 
             calendar = <div className="select-calendar">
                 <label className="oculto">Elija semana de trabajo :</label>
@@ -232,7 +233,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
                     Submit en Si3
                 </label>
                 <br></br>
-                <input type="button" className="btnSi3" value="Imputar tareas en Si3" disabled={this.state.todoOk} onClick={this.onLoginSi3} /></div>;
+                <input type="button" className="btnSi3" value="Enviar a Si3" disabled={this.state.todoOk} onClick={this.onLoginSi3} /></div>;
 
         }
 

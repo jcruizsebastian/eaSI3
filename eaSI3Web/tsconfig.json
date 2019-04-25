@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-      "paths": { "*": ["types/*"] },
+    "paths": { "*": [ "types/*" ] },
     "baseUrl": ".",
     "module": "es2015",
     "moduleResolution": "node",
@@ -9,7 +9,7 @@
     "sourceMap": true,
     "skipDefaultLibCheck": true,
     "strict": true,
-    "types": ["webpack-env"]
+    "types": [ "webpack-env" ]
   },
   "exclude": [
       "bin",

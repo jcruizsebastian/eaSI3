@@ -145,7 +145,8 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                 <thead className="thead-dark">
                         <tr>
                             <th className="table-th-fecha">Fecha</th>
-                            <th className="table-th">ID</th>
+                            <th className="table-th">Tarea</th>
+                            <th className="table-th-idSi3">Id Si3</th>
                             <th className="table-th-tipo">Tipo de Tarea</th>
                             <th className="table-th">Tareas</th>
                             <th className="table-th-horas">Horas</th>
@@ -157,7 +158,7 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
 
                             <tr key={Weekissue.fecha.toString()} >
                                 <td className="agenda-date">
-                                    <div className="shortdate text-muted" > {new Date(Weekissue.fecha.toString()).toLocaleDateString()}</div>
+                                    <div className="shortdate text-dark" > {new Date(Weekissue.fecha.toString()).toLocaleDateString()}</div>
                                 </td>
 
                                 <td className="agenda-events-td-id" >
@@ -168,11 +169,6 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                                                 <a className="agenda-events-id-link" target="_blank" href={this.state.link.concat(x.issueKey)}>{x.issueKey}
                                                     <span className="tooltiptext-id">Enlace a Jira</span>
                                                 </a>
-                     
-                                                <a className="arrow" onClick={() => { this.vincular(x.issueKey) }}>
-                                                    <img src="arrow.png" width="35px" height="30px" />
-                                                    <span className="tooltiptext-vincular">Vincular Tarea</span>
-                                                </a>
                                             </div>
                                     )}
 
@@ -181,14 +177,28 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                                             <div className="agenda-events-id" key={issue.issueCode}>
                                                 <a className="agenda-events-id-link" target="_blank" href={this.state.link.concat(issue.issueKey)}>{issue.issueKey}
                                                     <span className="tooltiptext-id">Enlace a Jira</span>
-                                                </a>
-                                                <label className="issue-si3">({issue.issueSI3Code})</label>
-                                                
+                                                </a>                                                
                                             </div>
                                     )
                                         }
                                     
-                                </td>
+                                    </td>
+                                    <td className="agenda-events-td-idSi3">
+                                        {Weekissue.issues.filter(issue => issue.issueSI3Code == null).map(
+                                            x =>
+                                                <div className="agenda-events-idSi3" key={x.issueCode}>
+                                                    <button type="button" id="btn-vincular" className="btn btn-danger btn-sm" onClick={() => { this.vincular(x.issueKey) }} >Vincular</button>
+                                                </div>
+                                        )}
+
+                                        {Weekissue.issues.filter(issue => issue.issueSI3Code != null).map(
+                                            issue =>
+                                                <div className="agenda-events-idSi3" key={issue.issueCode}>
+                                                    <label className="issue-si3">{issue.issueSI3Code}</label>
+                                                </div>
+                                        )
+                                        }
+                                    </td>
                                     <td className="agenda-events-td-tipo" >
 
                                         {Weekissue.issues.filter(issue => issue.issueSI3Code == null).map(
@@ -255,6 +265,7 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
 
                     <tr>
                             <td className="agenda-table-total-first"></td>
+                            <td className="agenda-table-total"></td>
                             <td className="agenda-table-total"></td>
                             <td className="agenda-table-total"></td>
                             <td className="agenda-table-total"></td>

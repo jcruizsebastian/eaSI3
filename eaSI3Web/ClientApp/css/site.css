@@ -22,7 +22,7 @@ body {
 }
 
 .main-h1-1 {
-    font-family: "open sans", "HelveticaNeue-Light","Helvetica Neue Light", "Helvetica Neue", Helvetica,Arial, sans-serif,Arial,'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif, sans-serif;
+    font-family: "open sans", "HelveticaNeue-Light","Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, sans-serif,Arial,'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif, sans-serif;    
     font-size: 32px;
     font-weight: bold;
     color: white;
@@ -42,7 +42,7 @@ body {
 }
 
 .main-h2 {
-    font-family: "Lora","open sans","HelveticaNeue-Light","Helvetica Neue Light", "Helvetica Neue", Helvetica,>Arial, sans-serif,Arial,'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif, sans-serif;
+    font-family: "Lora","open sans","HelveticaNeue-Light","Helvetica Neue Light", "Helvetica Neue", Helvetica,Arial, sans-serif,Arial,'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif, sans-serif;
     line-height: 145%;
     font-size: 33px;
     text-shadow: none;
@@ -336,6 +336,9 @@ input[type="button"]:hover {
 .table-th {
     border: 1px solid white !important;
 }
+.table-th-idSi3 {
+    border: 1px solid white !important;
+}
 .table-th-tipo {
     border: 1px solid white !important;
 }
@@ -368,7 +371,12 @@ input[type="button"]:hover {
 .agenda-date {
     border: 1px solid white !important;
 }
-
+.agenda-events-idSi3 {
+    height: 40px;
+}
+.agenda-events-td-idSi3 {
+    border: 1px solid white !important;
+}
 .agenda-events-td-id {
     border: 1px solid white !important;
 }
@@ -412,7 +420,6 @@ input[type="button"]:hover {
     display: inline-block;
     
 }
-
     .agenda-events-label:hover {
         text-overflow:unset;
         overflow:unset;
@@ -641,9 +648,11 @@ label {
     left: 19.5%;
     margin-top: -30px;
 }
-.issue-si3 {
-    font-style:italic;
-}
+
 .container-vincular-informacion {
     margin-left: 282px;
+}
+.form-check-label {
+    color:white;
+    font-weight: bold;
 }
