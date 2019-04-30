@@ -241,9 +241,11 @@ export class Home extends React.Component<{}, UserCredentialsState> {
             <div>
                 <span className="oculto">{this.state.calendar.version}</span>
                 {calendar}
+                <div className="container-home">
                 {jira}
                 {agenda}
                 {si3}
+                </div>
                 <Loader show={this.state.loading} message={<Cube/>} hideContentOnLoad={false} className={(this.state.loading == true) ? "overlay" : "overlay-1"} />
             </div>
         )

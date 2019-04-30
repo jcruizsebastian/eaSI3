@@ -334,12 +334,15 @@ input[type="button"]:hover {
 }
 
 .table-th {
+    min-width: 130px;
     border: 1px solid white !important;
 }
 .table-th-idSi3 {
+    min-width: 100px;
     border: 1px solid white !important;
 }
 .table-th-tipo {
+    min-width: 130px;
     border: 1px solid white !important;
 }
 .table-th-fecha {
@@ -359,6 +362,7 @@ input[type="button"]:hover {
 .table-responsive {
     width: 70%;
     margin: auto;
+    overflow-x:unset !important;
 }
 
 .table {
@@ -409,7 +413,7 @@ input[type="button"]:hover {
     overflow: hidden;
 }
 .agenda-events-label-normal {
-    width: 700px;
+    /*width: 700px;*/
     height: 40px;
     margin-bottom: 0px;
 }

@@ -13,9 +13,9 @@ export class NavMenu extends React.Component<{}, {}> {
             <div className='main-easi3'>
                 <a className="link-confluence" target="_blank" href="https://confluence.openfinance.es/display/OP/Manual+eaSI3">
                     <img src="informacio.png" width="45px" height="auto" />
-                    <span className="tooltiptext-confluence">{'GuÌa de Confluence'}</span>
+                    <span className="tooltiptext-confluence">{'Gu√≠a de Confluence'}</span>
                 </a>
-                    <h1 className="main-h1-1">{'IMPUTA F¡CIL CON...'}</h1>
+                    <h1 className="main-h1-1">{'IMPUTA F√ÅCIL CON...'}</h1>
                 <h1 className="main-h1-2">-EASI3-</h1>
                 <h2 className="main-h2">Y disfruta del fin de semana</h2>
                 <div className="main-btn">
