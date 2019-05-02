@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Authentication;
 using System.Text.RegularExpressions;
+using System.Xml;
 using System.Xml.Serialization;
 
 namespace SI3Connector
@@ -31,7 +32,7 @@ namespace SI3Connector
 
         public Dictionary<string, string> GetProducts()
         {
-            return GetByXml<Products>($"{_si3Url}Si3/its/asp/ProductosActivosXML.asp");
+            return GetByXml<Products>($"{_si3Url}si3/its/asp/ProductosActivosXML.asp");
         }
 
         public Dictionary<string, string> GetComponents(string product)

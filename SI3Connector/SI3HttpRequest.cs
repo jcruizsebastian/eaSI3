@@ -29,7 +29,7 @@ namespace SI3Connector
             request.Headers.Add("Accept", "*/*");
             request.Headers.Add("accept-encoding", "gzip, deflate");
             request.Headers.Add("Accept-Language", "es-ES,es;q=0.5");
-
+            request.Headers.Add("Accept-Charset", "Windows-1252;q=0.5");
             if (x_www_form_url_encoded != null)
             {
                 if (x_www_form_url_encoded.ContainsKey("modificaval"))

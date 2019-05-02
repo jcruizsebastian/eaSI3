@@ -20,6 +20,7 @@ using eaSI3Web.Configs;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using System.Globalization;
 
 namespace eaSI3Web.Controllers
 {
@@ -54,6 +55,7 @@ namespace eaSI3Web.Controllers
                 productos = SI3Service.GetProducts();
                 foreach (var product in productos)
                 {
+                 
                     List<Models.Componente> components = new List<Models.Componente>();
 
                     var componentes = SI3Service.GetComponents(product.Value);
@@ -71,13 +73,36 @@ namespace eaSI3Web.Controllers
                         components.Add(new Models.Componente() { name = componente.Key, code = componente.Value, modulos = modules });
                     }
 
-                    products.Add(new Models.Producto() { name = product.Key, code = product.Value, componentes = components });
+                    if (product.Key.StartsWith("F"))
+                    {
+                        products.Add(new Models.Producto()
+                        {
+                            name = "Formación e investigación",
+                            code = product.Value,
+                            componentes = components
+                        });
+                    }
+                    else if (product.Key.StartsWith("Coord"))
+                    {
+                        products.Add(new Models.Producto()
+                        {
+                            name = "Coordinación y gestión",
+                            code = product.Value,
+                            componentes = components
+                        });
+                    }
+                    else {
+                        products.Add(new Models.Producto()
+                        {
+                            name = product.Key, code = product.Value, componentes = components
+                        });
+                    }
                 }
             } catch (InvalidCredentialException e) {
                 logger.Error("Username: " + user.SI3UserName + " ,Error: " + e.Message);
                 return StatusCode(401, e.Message);
             }
-
+            
             return products;
         }
 
@@ -240,8 +265,8 @@ namespace eaSI3Web.Controllers
                 issue.product = data.Producto;
                 issue.component = data.Componente;
                 if (data.Modulo != "default") { issue.module = data.Modulo; }
-                issue.title = data.JiraKey.ToUpper() + " - " + data.Titulo;
-                issue.cause = data.Titulo;
+                issue.title = data.JiraKey.ToUpper() + " - " + RemoveDiacritics(data.Titulo);
+                issue.cause = RemoveDiacritics(data.Titulo);
 
                 switch (data.Prioridad)
                 {
@@ -625,6 +650,22 @@ namespace eaSI3Web.Controllers
         {
             int diff = (7 + (dt.DayOfWeek - startOfWeek)) % 7;
             return dt.AddDays(-1 * diff).Date;
+        }
+        private static string RemoveDiacritics(string text)
+        {
+            string formD = text.Normalize(NormalizationForm.FormD);
+            StringBuilder sb = new StringBuilder();
+
+            foreach (char ch in formD)
+            {
+                UnicodeCategory uc = CharUnicodeInfo.GetUnicodeCategory(ch);
+                if (uc != UnicodeCategory.NonSpacingMark)
+                {
+                    sb.Append(ch);
+                }
+            }
+
+            return sb.ToString().Normalize(NormalizationForm.FormC);
         }
     }
 }
