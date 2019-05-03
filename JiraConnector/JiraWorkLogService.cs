@@ -29,7 +29,7 @@ namespace JiraConnector
         }
 
         public List<WorkLog> GetWorklog(DateTime startDate, DateTime endDate, string username)
-        {
+        {            
             var response = jiraHttpRequest.DoJiraRequest<IssuesList>(JiraURIRepository.GET_WORKLOG(startDate, endDate, username), Method.GET);
 
             List<WorkLog> workLog = new List<WorkLog>();
@@ -38,6 +38,10 @@ namespace JiraConnector
             {
                 workLog.AddRange(GetIssueWorklog(issue.id));
             }
+
+            //HACK.
+            if (username == "csorribes")
+                username = "pcamacho";
 
             workLog.RemoveAll(x => (x.RecordDate < startDate || x.RecordDate > endDate) || x.Author != username);
 
