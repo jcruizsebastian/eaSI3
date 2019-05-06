@@ -273,7 +273,8 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
         return (
 
             <div style={{
-                border: "4px solid white", padding: "20px", width: "600px" }}>
+                border: "4px solid white", padding: "20px", width: "600px", backgroundColor:"rgba(255,255,255,0.5)"
+            }}>
                 <label><p className="ptext">Vincular a : </p></label>
                 <div id="tab" className="btn-group" data-toggle="buttons-radio">
                     <a href="#tarea" className="btn btn-large btn-danger active" data-toggle="tab">Tarea</a>
@@ -377,7 +378,7 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
         if (this.props.jiraKey.length == 0) {
             formulario = <div className="container-vincular">
                 <form className="dataForm" onSubmit={this.handleSubmit}>
-                    <label className="text">Key Jira :</label>
+                    <img className="main-about-jira-logo" src="atlassian-jira-logo-large.png" width="256" id="img-jira" />
                     <input type="text" id="keyJira" className="form-control" name="key" ref="tbKeyJira" placeholder="Introduzca Key Jira" autoComplete="off" />
                     <input type="submit" className="btnVincular" value="Generar información" />
                 </form>
@@ -396,7 +397,7 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
         }
 
         return (
-            <div>
+            <div >
                 {formulario}
                 <div className="container-vincular-informacion">
                 {informacion}
