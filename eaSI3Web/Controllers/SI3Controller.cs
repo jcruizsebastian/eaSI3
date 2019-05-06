@@ -564,7 +564,7 @@ namespace eaSI3Web.Controllers
                     tasks.Add(Task.Run(() =>
                     {
                         if (!sI3Service.IsIssueOpened(issueid))
-                            errors.Add($"La issue con id {issueid} no existe o está cerrada.");
+                            errors.Add($"La issue con id {issueid} no está abierta, revise Si3.");
                             //sb.AppendLine($"La issue con id {issueid} no existe o está cerrada.");
                     }));
                 }
@@ -573,15 +573,13 @@ namespace eaSI3Web.Controllers
                     tasks.Add(Task.Run(() =>
                     {
                         if (!sI3Service.IsProjectOpened(issueid))
-                           errors.Add($"El proyecto con id {issueid} no existe o está cerrado.");
+                           errors.Add($"El proyecto con id {issueid} no está abierto, revise Si3.");
                             //sb.AppendLine($"El proyecto con id {issueid} no existe o está cerrado.");
                     }));
                 }
             }
 
             await Task.WhenAll(tasks);
-            errors.Add("aaaaaaaaaaa");
-            errors.Add("bbbbbbbbbbb");
             return errors.Distinct();
         }
 

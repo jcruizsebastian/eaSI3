@@ -8,7 +8,7 @@ export class Popup extends React.Component<PopupAlertProps, {}>{
     }
     
     public render() {
-        //this.props.data.map(ax => console.log(ax) + "-");
+        this.props.data.map(ax => console.log(ax) + "-");
 
 
         return (
@@ -19,7 +19,7 @@ export class Popup extends React.Component<PopupAlertProps, {}>{
                             <div>
                                 <img src="error.png" width="200" />
                                 <div className="popup_information_text">
-                                    {this.props.data[0]}
+                                    {this.props.data.map(ax => <div>{ax.toString()}</div>)}
                                 </div>
                             </div>
                             :
