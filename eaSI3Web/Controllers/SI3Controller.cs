@@ -476,10 +476,10 @@ namespace eaSI3Web.Controllers
 
                 var a = ValidarImputación(SI3Service, model);
                 a.Wait();
-
+                
                 var validacion = a.Result;
-
-                if (!string.IsNullOrEmpty(validacion))
+                                 
+                if (validacion.Count() != 0)
                     throw new SI3Exception(validacion);
 
                 model = NormalizarHoras(model, SI3Service);
@@ -534,7 +534,7 @@ namespace eaSI3Web.Controllers
             {
                 logger.Error("Username: " + user.SI3UserName + " ,Error: " + e.Message);
                 bdStatistics.AddWorkTracking(user.SI3UserName, int.Parse(selectedWeek), totalHours, 1, e.Message);
-                return StatusCode(400, "Error :" + e.Message);
+                return StatusCode(400, e.errors);
             }
             catch (Exception e)
             {
@@ -548,10 +548,12 @@ namespace eaSI3Web.Controllers
             return Ok();
         }
 
-        private async Task<string> ValidarImputación(SI3Service sI3Service, IEnumerable<WeekJiraIssues> model)
+        private async Task<IEnumerable<string>> ValidarImputación(SI3Service sI3Service, IEnumerable<WeekJiraIssues> model)
         {
-            StringBuilder sb = new StringBuilder();
+            //StringBuilder sb = new StringBuilder();
             List<Task> tasks = new List<Task>();
+
+            IList<string> errors = new List<string>();
 
             var issuesIds = model.SelectMany(x => x.Issues).Where(z => z.Tiempo > 0).Select(y => y.IssueSI3Code);
 
@@ -562,7 +564,8 @@ namespace eaSI3Web.Controllers
                     tasks.Add(Task.Run(() =>
                     {
                         if (!sI3Service.IsIssueOpened(issueid))
-                            sb.AppendLine($"La issue con id {issueid} no existe o está cerrada.");
+                            errors.Add($"La issue con id {issueid} no existe o está cerrada.");
+                            //sb.AppendLine($"La issue con id {issueid} no existe o está cerrada.");
                     }));
                 }
                 else
@@ -570,14 +573,16 @@ namespace eaSI3Web.Controllers
                     tasks.Add(Task.Run(() =>
                     {
                         if (!sI3Service.IsProjectOpened(issueid))
-                            sb.AppendLine($"El proyecto con id {issueid} no existe o está cerrado.");
+                           errors.Add($"El proyecto con id {issueid} no existe o está cerrado.");
+                            //sb.AppendLine($"El proyecto con id {issueid} no existe o está cerrado.");
                     }));
                 }
             }
 
             await Task.WhenAll(tasks);
-
-            return sb.ToString();
+            errors.Add("aaaaaaaaaaa");
+            errors.Add("bbbbbbbbbbb");
+            return errors.Distinct();
         }
 
         private IEnumerable<WeekJiraIssues> NormalizarHoras(IEnumerable<WeekJiraIssues> tareasSinNormalizar, SI3Service SI3Service)

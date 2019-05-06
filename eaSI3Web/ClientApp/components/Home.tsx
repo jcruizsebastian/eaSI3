@@ -11,6 +11,7 @@ import { WeekJiraIssues } from './Model/WeekJiraIssues';
 import * as ReactDOM from 'react-dom';
 import { Link } from 'react-router-dom';
 import { Cube } from './Cube';
+import { Popup } from './Popup';
 
 interface WeekJiraIssuesResponse {
     weekJiraIssues: WeekJiraIssues[];
@@ -21,6 +22,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
     constructor(props: {}) {
         super(props);
 
+        this.closePopup = this.closePopup.bind(this);
         this.onLoginJira = this.onLoginJira.bind(this);
         this.onLoginSi3 = this.onLoginSi3.bind(this);
         this.confirmLoadedJira = this.confirmLoadedJira.bind(this);
@@ -31,7 +33,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
 
         this.state = {
             Weekissues: [], loadedJira: false, loadingJira: false, calendar: { version: "", weeks: [] }, calendarLoaded: false, todoOk: false,
-            loading: false, availableHours: 0
+            loading: false, availableHours: 0, popup: false, popup_error: false, popup_data: []
         };
     }
 
@@ -66,14 +68,12 @@ export class Home extends React.Component<{}, UserCredentialsState> {
             .then(response => {
                 if (!response.ok) {
                     (response.text() as Promise<String>).then(data => {
-                        alert(data);
-                        this.setState({ loadingJira: false, loadedJira: false, loading: false });
+                        this.setState({ loadingJira: false, loadedJira: false, loading: false, popup: true, popup_error: true, popup_data: [data] });
                     });
                 } else
                     (response.json() as Promise<WeekJiraIssuesResponse>).then(data => {
                         if (data.weekJiraIssues.length == 0) {
-                            alert("No hay tareas en Jira");
-                            this.setState({ loadingJira: false, loadedJira: false, loading: false });
+                            this.setState({ loadingJira: false, loadedJira: false, loading: false, popup: true, popup_error: true, popup_data: ["No hay tareas en Jira"] });
 
                         }
                         else {
@@ -81,7 +81,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
                                 if (!response.ok) {
                                     (response.text() as Promise<String>).then(
                                         data => {
-                                            alert(data);
+                                            this.setState({ popup: true, popup_error: true, popup_data: [data] });
                                         }
                                     );
                                 } else {
@@ -166,14 +166,13 @@ export class Home extends React.Component<{}, UserCredentialsState> {
             if (!response.ok) {
                 (response.text() as Promise<String>).then(
                     data => {
-                        alert(data);
+                        this.setState({ popup: true, popup_error: true, popup_data: [data] });
                     }
                 );
             } else {
                 (response.json() as Promise<number>).then(data => {
                     if ((40 - data) != this.state.availableHours) {
-                        alert("Se han imputador horas en Si3 mientras utilizabas eaSI3");
-                        this.setState({ availableHours: 40 - data, loading: false });
+                        this.setState({ availableHours: 40 - data, loading: false, popup: true, popup_error: true, popup_data: ["Se han imputador horas en Si3 mientras utilizabas eaSI3"] });
                     } else {
                         fetch('api/SI3/register?selectedWeek=' + this.state.selectedWeek + '&totalHours=' + total + '&submit=' + submit, {
                             method: 'post',
@@ -185,10 +184,12 @@ export class Home extends React.Component<{}, UserCredentialsState> {
                         })
                             .then(response => {
                                 if (!response.ok) {
-                                    (response.text() as Promise<String>).then(data => { alert(data); this.setState({ loading: false }); });
+                                    (response.json() as Promise<string[]>).then(data =>
+                                    {
+                                        this.setState({ loading: false, popup: true, popup_error: true, popup_data: data });
+                                    });
                                 } else {
-                                    alert("Horas imputadas en SI3");
-                                    this.setState({ loading: false, todoOk: true });
+                                    this.setState({ loading: false, todoOk: true, popup:true, popup_error: false, popup_data:["Horas imputadas correctamente"] });                                                                     
                                 }
                             });
                     }
@@ -201,6 +202,9 @@ export class Home extends React.Component<{}, UserCredentialsState> {
 
 
     public isTodoOk(val: boolean) { this.setState({ todoOk: val }); }
+    public closePopup() {
+        this.setState({ popup: false });
+    }
 
     public render() {
         let agenda;
@@ -246,6 +250,9 @@ export class Home extends React.Component<{}, UserCredentialsState> {
                 {agenda}
                 {si3}
                 </div>
+                {this.state.popup ?
+                    <Popup error={this.state.popup_error} closePopup={this.closePopup} data={this.state.popup_data} /> : null
+                }
                 <Loader show={this.state.loading} message={<Cube/>} hideContentOnLoad={false} className={(this.state.loading == true) ? "overlay" : "overlay-1"} />
             </div>
         )

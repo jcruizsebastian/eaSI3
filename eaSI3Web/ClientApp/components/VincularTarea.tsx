@@ -10,6 +10,7 @@ import { Project } from "./Model/Project";
 import { Milestones } from "./Model/Milestones";
 import { Link } from "react-router-dom";
 import { Cube } from "./Cube";
+import { Popup } from "./Popup";
 
 export class VincularTarea extends React.Component<VincularTareaProps, VincularState> {
     constructor(props: VincularTareaProps) {
@@ -18,9 +19,9 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
         this.state = {
             products: [], productSelected: "", componentSelected: "", moduleSelected: "", loadedData: false,
             loadedDataJira: false, titulo: "", prioridad: "", tipo: "", loading: false, responsable: "", todoOk: false, todoOkProject: false,
-            projects: [], milestones: [], projectSelected: "", milestoneSelected: "", idSi3:""
+            projects: [], milestones: [], projectSelected: "", milestoneSelected: "", idSi3: "", popup: false, popup_error: false, popup_data: []
         };
-
+        this.closePopup = this.closePopup.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.renderInformación = this.renderInformación.bind(this);
         this.handleChangeProducts = this.handleChangeProducts.bind(this);
@@ -55,8 +56,7 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
                 if (!response.ok) {
                     (response.text() as Promise<String>).then(
                         data => {
-                            alert(data);
-                            this.setState({ loadedDataJira: false, loading: false });
+                            this.setState({ loadedDataJira: false, loading: false, popup: true, popup_error: true, popup_data: [data] });
                         }
                     );
                 }
@@ -69,8 +69,7 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
                                     if (!response.ok) {
                                         (response.text() as Promise<String>).then(
                                             data => {
-                                                alert(data);
-                                                this.setState({ loadedDataJira: false, loading: false });
+                                                this.setState({ loadedDataJira: false, loading: false, popup: true, popup_error: true, popup_data: [data] });
                                             }
                                         )
                                     }
@@ -102,8 +101,7 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
                                                             if (!response.ok) {
                                                                 (response.text() as Promise<String>).then(
                                                                     data => {
-                                                                        alert(data);
-                                                                        this.setState({ loadedDataJira: false, loading: false });
+                                                                        this.setState({ loadedDataJira: false, loading: false, popup: true, popup_error: true, popup_data: [data] });
                                                                     }
                                                                 )
                                                             } else {
@@ -115,8 +113,8 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
                                                                                 if (!response.ok) {
                                                                                     (response.text() as Promise<String>).then(
                                                                                         data => {
-                                                                                            alert(data);
-                                                                                            this.setState({ loadedDataJira: false, loading: false });
+                                                                                            
+                                                                                            this.setState({ loadedDataJira: false, loading: false, popup: true, popup_error: true, popup_data: [data] });
                                                                                         }
                                                                                     )
                                                                                 } else {
@@ -135,8 +133,8 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
                                                         tipo: data.issuetype, responsable: data.assignee, idSi3: data.si3ID
                                                     });
                                                 } else {
-                                                    alert("Esta tarea ya está vinculada en SI3");
-                                                    this.setState({ loadedDataJira: false, loading: false });
+                                                    
+                                                    this.setState({ loadedDataJira: false, loading: false, popup: true, popup_error: true, popup_data: ["Esta tarea ya está vinculada en SI3"] });
                                                 }
                                             });
                                     }
@@ -184,15 +182,14 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
             .then(response => {
                 if (!response.ok) {
                     (response.text() as Promise<string>).then(data => {
-                        alert(data);
-                        this.setState({ loading: false });
+                        this.setState({ loading: false, popup: true, popup_error: true, popup_data: [data] });
                     })
                 } else {
                     (response.text() as Promise<string>).then(data => {
                         if (this.props.jiraKey.length > 0) {
                             this.props.vincular( data, key);
                         }
-                        alert("Tarea vinculada"); this.setState({ loading: false });
+                        this.setState({ loading: false, popup: true, popup_error: false, popup_data: ["Tarea vinculada"] });
                     })
                     
                 }
@@ -226,8 +223,7 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
             {
                 if (!response.ok) {
                     (response.text() as Promise<string>).then(data => {
-                        alert(data);
-                        this.setState({ loading: false });
+                        this.setState({ loading: false, popup: true, popup_error: true, popup_data: [data] });
                     })
                 }
                 else {
@@ -240,14 +236,13 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
                             .then(response => {
                                 if (!response.ok) {
                                     (response.text() as Promise<string>).then(data => {
-                                        alert(data);
-                                        this.setState({ loading: false });
+                                        this.setState({ loading: false, popup: true, popup_error: true, popup_data: [data] });
                                     })
                                 } else {
                                     if (this.props.jiraKey.length > 0) {
                                         this.props.vincular(issueKey,key);
                                     }
-                                    alert("Tarea vinculada"); this.setState({ loading: false });
+                                    this.setState({ loading: false,popup: true, popup_error: false, popup_data: ["Tarea Vinculada"] });
                                 }
                             });
                     });
@@ -372,7 +367,10 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
             
         )
     }
-
+    public closePopup() {
+        var prueba = 2;
+        this.setState({ popup: false });
+    }
     public render() {
 
         let formulario;
@@ -403,7 +401,9 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
                 <div className="container-vincular-informacion">
                 {informacion}
                 </div>
-
+                {this.state.popup ?
+                    <Popup error={this.state.popup_error} closePopup={this.closePopup} data={this.state.popup_data} /> : <div></div>
+                }
                 <Loader show={this.state.loading} message={<Cube/>} hideContentOnLoad={false} className={(this.state.loading == true) ? "overlay" : "overlay-1"} />
             </div>
         )

@@ -21,4 +21,7 @@ export interface VincularState {
     milestones: Milestones[];
     milestoneSelected: string;
     idSi3: string;
+    popup: boolean;
+    popup_error: boolean;
+    popup_data: String[];
 }

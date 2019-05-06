@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import * as ReactDOM from 'react-dom';
+import { Popup } from './Popup';
 
 export class NavMenu extends React.Component<{}, {}> {
 
@@ -28,6 +29,7 @@ export class NavMenu extends React.Component<{}, {}> {
                         <span className='glyphicon glyphicon-plus'></span> Vincular Tarea
                     </Link>
                 </div >
+                
             </div>
         </div>;
     }
