@@ -273,7 +273,7 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
         return (
 
             <div style={{
-                border: "4px solid white", padding: "20px", width: "600px", backgroundColor:"rgba(255,255,255,0.5)"
+                border: "4px solid white", padding: "20px", width: "600px", backgroundColor: "rgba(255,255,255,0.5)", margin:"auto"
             }}>
                 <label><p className="ptext">Vincular a : </p></label>
                 <div id="tab" className="btn-group" data-toggle="buttons-radio">

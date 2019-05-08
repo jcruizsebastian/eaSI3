@@ -12,7 +12,7 @@ export class PopupVincularTarea extends React.Component<popupProps, PopupState>{
         this.vincular = this.vincular.bind(this);
     }
     componentDidMount() {
-        var informacion = ReactDOM.findDOMNode(this).querySelector(".container-vincular-informacion") as HTMLDivElement;
+        var informacion = (ReactDOM.findDOMNode(this) as Element).querySelector(".container-vincular-informacion") as HTMLDivElement;
         informacion.style.marginLeft = "0px";
     }
     public vincular(idSi3: string, key: string) {

@@ -11,6 +11,7 @@
     "strict": true,
     "types": [ "webpack-env" ]
   },
+  "compileOnSave": true,
   "exclude": [
       "bin",
       "node_modules"

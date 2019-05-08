@@ -246,7 +246,6 @@ body {
     width: 50%;
     margin: auto;
     background: white;
-    border: 2px solid #32CD32;
     border-radius: 6px;
     box-shadow: 0px 5px 10px #B5C1C5, 0 0 0 10px #EEF inset;
     padding: 20px;
@@ -469,7 +468,7 @@ label {
 }
 
 .dataForm {
-    margin-left: 282px;
+    margin:auto;
     background-color: rgba(255,255,255,0.5);
 }
 
@@ -678,9 +677,6 @@ label {
     margin-top: -30px;
 }
 
-.container-vincular-informacion {
-    margin-left: 282px;
-}
 .form-check-label {
     color:white;
     font-weight: bold;
@@ -715,4 +711,31 @@ label {
     position: relative;
     top: -50px;
     margin-left: 123px;
+}
+.container-vt {
+    text-align:center;
+}
+.container-vincular {
+    margin-top: 50px;
+}
+#btnVincularInf {
+    font-weight: bold;
+    border: 3px solid white;
+    background-color: rgb(0,51,102);
+    text-transform: uppercase;
+}
+.switch-toggle {
+    width: 200px;
+    margin-bottom: 30px;
+    background-color: transparent !important;
+}
+    .switch-toggle label {
+        color:white !important;
+        padding: 1px !important;
+    }
+    .switch-toggle label:not(.disabled) {
+        cursor: pointer;
+    }
+.switch-candy a {
+    background-color: rgb(0,51,102);
 }
