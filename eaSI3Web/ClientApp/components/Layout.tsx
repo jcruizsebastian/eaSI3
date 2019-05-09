@@ -131,7 +131,7 @@ export class Layout extends React.Component<LayoutProps, LayoutState> {
                             <Link to={'/'} style={{ color: "white", marginLeft: "10px", marginBottom: "-20px" }}>
                                 <span className='glyphicon glyphicon-chevron-left' ></span> Volver
                             </Link>
-                            <input type="button" className="btn btn-secondary" id="logout" value="Log out" onClick={this.logout} />
+                            <input type="button" className="btn-logout" id="logout" value="Log out" onClick={this.logout} />
                             <label id="name">{name}</label>
                         </div>
                     </div>

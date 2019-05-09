@@ -243,7 +243,7 @@ body {
 }
 .popup_inner {
     text-align: left;
-    width: 50%;
+    width: 40%;
     margin: auto;
     background: white;
     border-radius: 6px;
@@ -263,7 +263,19 @@ body {
     margin-left: 10px;
     margin-right: 5px;
 }
-
+.btn-vincular {
+    width: 150px;
+    height: 43px;
+    background-color: rgb(0,51,102);
+    border: 3px solid white;
+    border-radius: 5px;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: white;
+}
+    .btn-vincular[disabled] {
+        cursor: not-allowed;
+    }
 .titlePopup {
     text-align: center;
     font-family: Arial, Helvetica, sans-serif;
@@ -304,9 +316,6 @@ hr {
     margin-top: -30px;
 }
 
-#radiobtn {
-    margin-left: 282px;
-}
 
 input[type="button"]:hover {
     background-color: rgb(59,89,152);
@@ -317,7 +326,6 @@ input[type="button"]:hover {
 }
 
 .btnSi3 {
-    margin-left: 285px;
     margin-bottom: 50px;
     width: 200px;
     height: 43px;
@@ -330,7 +338,6 @@ input[type="button"]:hover {
 }
 
 .btnJira {
-    margin-left: 285px;
     margin-top: 15px;
     width: 180px;
     height: 43px;
@@ -384,7 +391,6 @@ input[type="button"]:hover {
 
 .table-responsive {
     width: 70%;
-    margin: auto;
     overflow-x:unset !important;
 }
 
@@ -724,18 +730,61 @@ label {
     background-color: rgb(0,51,102);
     text-transform: uppercase;
 }
-.switch-toggle {
-    width: 200px;
-    margin-bottom: 30px;
-    background-color: transparent !important;
+.container-home {
+    margin: auto;
+    width: fit-content;
 }
-    .switch-toggle label {
-        color:white !important;
-        padding: 1px !important;
+.img-open {
+    float: right;
+    position: relative;
+    top: -10px;
+    opacity: 0.5;
+}
+.btn-tarea {
+    color: red;
+    /* font-size: 16px; */
+    font-weight: bold;
+    text-transform: uppercase;
+    padding: 12px 31px;
+    border-radius: 5px;
+    border: red solid 3px;
+    text-decoration-line: none !important;
+    margin-right: 10px;
+    /*background-color: rgb(0,51,102);*/
+}
+    .btn-tarea:hover {
+        border: rgb(0,51,102) solid 3px;
     }
-    .switch-toggle label:not(.disabled) {
-        cursor: pointer;
+
+
+
+.btn-proyecto {
+    color: rgb(0,51,102);
+    /* font-size: 16px; */
+    font-weight: bold;
+    text-transform: uppercase;
+    padding: 12px 31px;
+    border-radius: 5px;
+    border: rgb(0,51,102) solid 3px;
+    text-decoration-line: none !important;
+    margin-right: 10px;
+    /*background-color: rgb(0,51,102);*/
+}
+    .btn-proyecto:hover {
+        border: rgb(0,51,102) solid 3px;
     }
-.switch-candy a {
-    background-color: rgb(0,51,102);
+
+.btn-logout {
+    margin-top:5px;
+    text-align:center;
+    width: 100px;
+    height: 50px;
+    height:auto;
+    font-weight: bold;
+    text-transform: uppercase;
+    border-radius: 5px;
+    border: white solid 3px;
+    text-decoration: none;
+    background-color: transparent;
+    color: white;
 }

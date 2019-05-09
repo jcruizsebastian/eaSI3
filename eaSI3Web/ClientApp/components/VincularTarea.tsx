@@ -11,6 +11,7 @@ import { Milestones } from "./Model/Milestones";
 import { Link } from "react-router-dom";
 import { Cube } from "./Cube";
 import { Popup } from "./Popup";
+import * as ReactDOM from "react-dom";
 
 export class VincularTarea extends React.Component<VincularTareaProps, VincularState> {
     constructor(props: VincularTareaProps) {
@@ -21,6 +22,8 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
             loadedDataJira: false, titulo: "", prioridad: "", tipo: "", loading: false, responsable: "", todoOk: false, todoOkProject: false,
             projects: [], milestones: [], projectSelected: "", milestoneSelected: "", idSi3: "", popup: false, popup_error: false, popup_data: []
         };
+        this.focusLink = this.focusLink.bind(this);
+        this.focusLinkPro = this.focusLinkPro.bind(this);
         this.closePopup = this.closePopup.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.renderInformación = this.renderInformación.bind(this);
@@ -267,7 +270,28 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
         }
         return "";
     }
-
+    public focusLink(e: { preventDefault: () => void; }) {
+        e.preventDefault();
+        
+        var link = (ReactDOM.findDOMNode(this) as Element).querySelector(".btn-tarea") as HTMLLinkElement;
+        link.style.border = "red solid 3px";
+        link.style.color ="red"
+        var link = (ReactDOM.findDOMNode(this) as Element).querySelector(".btn-proyecto") as HTMLLinkElement;
+        link.style.borderColor = "rgb(0,51,102)";
+        link.style.color = "rgb(0,51,102)";
+        
+    }
+    public focusLinkPro(e: { preventDefault: () => void; }) {
+        
+        e.preventDefault();
+        var link = (ReactDOM.findDOMNode(this) as Element).querySelector(".btn-proyecto") as HTMLLinkElement;
+        link.style.border = "red solid 3px";
+        link.style.color = "red"
+        var link = (ReactDOM.findDOMNode(this) as Element).querySelector(".btn-tarea") as HTMLLinkElement;
+        link.style.borderColor = "rgb(0,51,102)";
+        link.style.color = "rgb(0,51,102)";
+        
+    }
     public renderInformación() {
         
         return (
@@ -275,13 +299,13 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
             <div style={{
                 border: "4px solid white", padding: "20px", width: "600px", backgroundColor: "rgba(255,255,255,0.5)", margin:"auto"
             }}>
-                <label><p className="ptext">Vincular a : </p></label>
-                <div id="tab" className="btn-group" data-toggle="buttons-radio">
-                    <a href="#tarea" className="btn btn-large btn-danger active" data-toggle="tab">Tarea</a>
-                    <a href="#proyecto" className="btn btn-large btn-danger" data-toggle="tab">Proyecto</a>
-
+                <div style={{ textAlign:"center" }}>
+                    <label><p className="ptext">Vincular a : </p></label>
+                    <div id="tab" className="btn-group" data-toggle="buttons-radio" style={{ zIndex: 0 }}>
+                        <a href="#tarea" className="btn-tarea active" data-toggle="tab" onClick={this.focusLink}>Tarea</a>
+                        <a href="#proyecto" className="btn-proyecto" data-toggle="tab" onClick={this.focusLinkPro}>Proyecto</a>
+                    </div>
                 </div>
-
                 <div className="tab-content">
                     <div className="tab-pane active" id="tarea">
                         <hr></hr>
@@ -330,7 +354,8 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
                             }
                         </select>
                         <hr></hr>
-                        <input type="button" value="Vincular" className="btn btn-primary" onClick={this.vincular} disabled={!this.state.todoOk} />
+                        <img src="logo_open.png" width="150" height="auto" className="img-open" />
+                        <input type="button" value="Vincular" className="btn-vincular" onClick={this.vincular} disabled={!this.state.todoOk} />
                     </div>
                     <div className="tab-pane" id="proyecto">
                         <hr></hr>
@@ -361,15 +386,16 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
                             }
                         </select>
                         <hr></hr>
-                        <input type="button" value="Vincular" className="btn btn-primary" onClick={this.vincularProyecto} disabled={!this.state.todoOkProject} />
+                        <img src="logo_open.png" width="150" height="auto" className="img-open" />
+                        <input type="button" value="Vincular" className="btn-vincular" onClick={this.vincularProyecto} disabled={!this.state.todoOkProject} />
                     </div>
                 </div>                            
             </div>
             
         )
+        
     }
     public closePopup() {
-        var prueba = 2;
         this.setState({ popup: false });
     }
     public render() {
@@ -394,6 +420,7 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
         let informacion;
         if (this.state.loadedData && this.state.loadedDataJira) {
             informacion = this.renderInformación();
+            //this.focusLink();
         }
 
         return (

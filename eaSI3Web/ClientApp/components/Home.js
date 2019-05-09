@@ -118,7 +118,7 @@ var Home = /** @class */ (function (_super) {
             }
         }
     };
-    //funci�n para sacar las cookies, cname => userJira, passJira ... etc.
+    //función para sacar las cookies, cname => userJira, passJira ... etc.
     Home.prototype.getCookie = function (cname) {
         var name = cname + "=";
         var decodedCookie = decodeURIComponent(document.cookie);
@@ -137,7 +137,7 @@ var Home = /** @class */ (function (_super) {
     Home.prototype.onLoginSi3 = function (e) {
         var _this = this;
         e.preventDefault();
-        // si el radio button est� seleccionado o no
+        // si el radio button está seleccionado o no
         var submit = this.refs["submitRadioBtn"].checked;
         this.setState({ loading: true });
         var agenda = this.refs["agenda1"];

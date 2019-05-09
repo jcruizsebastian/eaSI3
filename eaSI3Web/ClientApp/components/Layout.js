@@ -73,7 +73,7 @@ var Layout = /** @class */ (function (_super) {
             });
         });
     };
-    //funci�n para sacar las cookies, cname => userJira, passJira ... etc.
+    //función para sacar las cookies, cname => userJira, passJira ... etc.
     Layout.prototype.getCookie = function (cname) {
         var name = cname + "=";
         var decodedCookie = decodeURIComponent(document.cookie);
@@ -138,7 +138,7 @@ var Layout = /** @class */ (function (_super) {
             }
         });
     };
-    //funci�n para cambiar una cookie
+    //función para cambiar una cookie
     Layout.prototype.setCookie = function (cname, cvalue, exdays) {
         var d = new Date();
         d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
@@ -169,7 +169,7 @@ var Layout = /** @class */ (function (_super) {
                             React.createElement(Link, { to: '/', style: { color: "white", marginLeft: "10px", marginBottom: "-20px" } },
                                 React.createElement("span", { className: 'glyphicon glyphicon-chevron-left' }),
                                 " Volver"),
-                            React.createElement("input", { type: "button", className: "btn btn-secondary", id: "logout", value: "Log out", onClick: this.logout }),
+                            React.createElement("input", { type: "button", className: "btn-logout", id: "logout", value: "Log out", onClick: this.logout }),
                             React.createElement("label", { id: "name" }, name))),
                     React.createElement("div", { className: 'row' },
                         React.createElement("div", { className: 'container-fluid-navmenu' }, this.props.children)));

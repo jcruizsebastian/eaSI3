@@ -16,6 +16,7 @@ import Loader from "react-loader-advanced";
 import '../css/vincularTarea.css';
 import { Cube } from "./Cube";
 import { Popup } from "./Popup";
+import * as ReactDOM from "react-dom";
 var VincularTarea = /** @class */ (function (_super) {
     __extends(VincularTarea, _super);
     function VincularTarea(props) {
@@ -25,6 +26,8 @@ var VincularTarea = /** @class */ (function (_super) {
             loadedDataJira: false, titulo: "", prioridad: "", tipo: "", loading: false, responsable: "", todoOk: false, todoOkProject: false,
             projects: [], milestones: [], projectSelected: "", milestoneSelected: "", idSi3: "", popup: false, popup_error: false, popup_data: []
         };
+        _this.focusLink = _this.focusLink.bind(_this);
+        _this.focusLinkPro = _this.focusLinkPro.bind(_this);
         _this.closePopup = _this.closePopup.bind(_this);
         _this.handleSubmit = _this.handleSubmit.bind(_this);
         _this.renderInformación = _this.renderInformación.bind(_this);
@@ -250,16 +253,35 @@ var VincularTarea = /** @class */ (function (_super) {
         }
         return "";
     };
+    VincularTarea.prototype.focusLink = function (e) {
+        e.preventDefault();
+        var link = ReactDOM.findDOMNode(this).querySelector(".btn-tarea");
+        link.style.border = "red solid 3px";
+        link.style.color = "red";
+        var link = ReactDOM.findDOMNode(this).querySelector(".btn-proyecto");
+        link.style.borderColor = "rgb(0,51,102)";
+        link.style.color = "rgb(0,51,102)";
+    };
+    VincularTarea.prototype.focusLinkPro = function (e) {
+        e.preventDefault();
+        var link = ReactDOM.findDOMNode(this).querySelector(".btn-proyecto");
+        link.style.border = "red solid 3px";
+        link.style.color = "red";
+        var link = ReactDOM.findDOMNode(this).querySelector(".btn-tarea");
+        link.style.borderColor = "rgb(0,51,102)";
+        link.style.color = "rgb(0,51,102)";
+    };
     VincularTarea.prototype.renderInformación = function () {
         var _this = this;
         return (React.createElement("div", { style: {
                 border: "4px solid white", padding: "20px", width: "600px", backgroundColor: "rgba(255,255,255,0.5)", margin: "auto"
             } },
-            React.createElement("label", null,
-                React.createElement("p", { className: "ptext" }, "Vincular a : ")),
-            React.createElement("div", { id: "tab", className: "btn-group", "data-toggle": "buttons-radio" },
-                React.createElement("a", { href: "#tarea", className: "btn btn-large btn-danger active", "data-toggle": "tab" }, "Tarea"),
-                React.createElement("a", { href: "#proyecto", className: "btn btn-large btn-danger", "data-toggle": "tab" }, "Proyecto")),
+            React.createElement("div", { style: { textAlign: "center" } },
+                React.createElement("label", null,
+                    React.createElement("p", { className: "ptext" }, "Vincular a : ")),
+                React.createElement("div", { id: "tab", className: "btn-group", "data-toggle": "buttons-radio", style: { zIndex: 0 } },
+                    React.createElement("a", { href: "#tarea", className: "btn-tarea active", "data-toggle": "tab", onClick: this.focusLink }, "Tarea"),
+                    React.createElement("a", { href: "#proyecto", className: "btn-proyecto", "data-toggle": "tab", onClick: this.focusLinkPro }, "Proyecto"))),
             React.createElement("div", { className: "tab-content" },
                 React.createElement("div", { className: "tab-pane active", id: "tarea" },
                     React.createElement("hr", null),
@@ -299,7 +321,8 @@ var VincularTarea = /** @class */ (function (_super) {
                             return React.createElement("option", { key: modulo.code, value: modulo.code }, modulo.name);
                         }); }); })),
                     React.createElement("hr", null),
-                    React.createElement("input", { type: "button", value: "Vincular", className: "btn btn-primary", onClick: this.vincular, disabled: !this.state.todoOk })),
+                    React.createElement("img", { src: "logo_open.png", width: "150", height: "auto", className: "img-open" }),
+                    React.createElement("input", { type: "button", value: "Vincular", className: "btn-vincular", onClick: this.vincular, disabled: !this.state.todoOk })),
                 React.createElement("div", { className: "tab-pane", id: "proyecto" },
                     React.createElement("hr", null),
                     React.createElement("label", { className: "ptext" }, "Proyecto : "),
@@ -316,10 +339,10 @@ var VincularTarea = /** @class */ (function (_super) {
                             return React.createElement("option", { key: milestone.name, value: milestone.name }, milestone.name);
                         }); })),
                     React.createElement("hr", null),
-                    React.createElement("input", { type: "button", value: "Vincular", className: "btn btn-primary", onClick: this.vincularProyecto, disabled: !this.state.todoOkProject })))));
+                    React.createElement("img", { src: "logo_open.png", width: "150", height: "auto", className: "img-open" }),
+                    React.createElement("input", { type: "button", value: "Vincular", className: "btn-vincular", onClick: this.vincularProyecto, disabled: !this.state.todoOkProject })))));
     };
     VincularTarea.prototype.closePopup = function () {
-        var prueba = 2;
         this.setState({ popup: false });
     };
     VincularTarea.prototype.render = function () {
@@ -339,6 +362,7 @@ var VincularTarea = /** @class */ (function (_super) {
         var informacion;
         if (this.state.loadedData && this.state.loadedDataJira) {
             informacion = this.renderInformación();
+            //this.focusLink();
         }
         return (React.createElement("div", null,
             formulario,
