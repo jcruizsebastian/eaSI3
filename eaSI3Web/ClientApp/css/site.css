@@ -479,13 +479,21 @@ label {
 }
 
 .wrap {
-    margin-left: 850px;
-    margin-bottom: 300px;
+    /*margin-left: 850px;
+    margin-bottom: 300px;*/
+    margin: auto;
     perspective: 800px !important;
     perspective-origin: 50% 100px !important;
+    position: fixed;
+    top:40%;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    text-align: center;
 }
 
 .cube {
+    margin: auto;
     position: relative;
     width: 200px;
     transform-style: preserve-3d;
