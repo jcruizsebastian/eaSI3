@@ -3,6 +3,7 @@ import ReactLoading from "react-loading";
 import { LoginGeneral } from './LoginGeneral';
 import { LayoutState } from './Model/States/LayoutState';
 import { NavMenu } from './NavMenu';
+import { Link } from 'react-router-dom';
 
 export interface LayoutProps {
     children?: React.ReactNode;
@@ -113,10 +114,8 @@ export class Layout extends React.Component<LayoutProps, LayoutState> {
 
         this.setState({ logged: false });
     }
-
     public render() {
 
-        var style = { backgroundColor: '#222', height: '50px' };
         let home;
 
         if (this.state.loaded) {
@@ -128,17 +127,17 @@ export class Layout extends React.Component<LayoutProps, LayoutState> {
 
                 home = <div>
                     <div className='row'>
-                        <div className='col-sm-12' style={style}>
-                            <input type="button" className="btn btn-secondary" id="logout" value="Log out" onClick={this.logout} />
+                        <div className='col-sm-12'>
+                            <Link to={'/'} style={{ color: "white", marginLeft: "10px", marginBottom: "-20px" }}>
+                                <span className='glyphicon glyphicon-chevron-left' ></span> Volver
+                            </Link>
+                            <input type="button" className="btn-logout" id="logout" value="Log out" onClick={this.logout} />
                             <label id="name">{name}</label>
                         </div>
                     </div>
 
                     <div className='row'>
-                        <div className='col-sm-3'>
-                            <NavMenu />
-                        </div>
-                        <div className='col-sm-9'>
+                        <div className='container-fluid-navmenu'>
                             {this.props.children}
                         </div>
                     </div>
@@ -146,11 +145,9 @@ export class Layout extends React.Component<LayoutProps, LayoutState> {
                 </div>
             } else { home = <LoginGeneral onLogin={this.onLogin} /> }
         }
-        const spinner = <span><ReactLoading color='#fff' type='spin' className="spinner" height={128} width={128} /></span>
+        
         return <div className='container-fluid' >
-
             {home}
-
         </div>
 
     }

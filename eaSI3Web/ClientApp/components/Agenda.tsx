@@ -5,8 +5,11 @@ import { WeekJiraIssuesProps } from './Model/Props/WeekJiraIssuesProps';
 import { AgendaState } from './Model/States/AgendaState';
 import { PopupVincularTarea } from './popupVincularTarea';
 import { Checkbox } from 'react-inputs-validation';
+import * as ReactDOM from 'react-dom';
 
 export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
+    public myLabel: HTMLLabelElement | null | undefined;
+    public labels: { [index: number]: { label: HTMLLabelElement  } } = {};
 
     constructor(props: WeekJiraIssuesProps) {
         super(props)
@@ -17,13 +20,30 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
         this.vincular = this.vincular.bind(this);
         this.closePopup = this.closePopup.bind(this);
         this.checkBoxChanged = this.checkBoxChanged.bind(this);
-        this.state = { weekissues: this.props.weekissues, link: "https://jira.openfinance.es/browse/", vincular: false, issueVincular: "", checked: false };
+        
+        this.state = { weekissues: this.props.weekissues, link: "https://jira.openfinance.es/browse/", vincular: false, issueVincular: "", checked: false, expand: 0 };
     }
-    
+
     componentDidMount() {
+
+        //con esto tengo todos los <label>
+        console.log(ReactDOM.findDOMNode(this).querySelectorAll(".agenda-events-label"));
+        var labels = ReactDOM.findDOMNode(this).querySelectorAll(".agenda-events-label");
+        for (var i = 0; i < labels.length; i++) {
+
+            var label = labels[i] as HTMLLabelElement;
+            var overflowX = label.offsetWidth < label.scrollWidth,
+                overflowY = label.offsetHeight < label.scrollHeight;
+
+            if (!overflowX && !overflowY) {
+                label.className="agenda-events-label-normal"
+            }
+        }
+
         var todoOk = this.isDisabledBtnSi3();
-        this.props.isTodoOk(todoOk); 
-    }
+        this.props.isTodoOk(todoOk);
+}
+
 
     public timeReassignment(event: React.ChangeEvent<HTMLInputElement>) {
         let day = event.currentTarget.id.split('|')[1];
@@ -39,7 +59,7 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                 }
             }
         }
-
+        
         var todoOk = this.isDisabledBtnSi3();
         this.props.isTodoOk(todoOk);
 
@@ -110,27 +130,26 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
     public checkBoxChanged(event: React.ChangeEvent<HTMLInputElement>) {
         this.setState({ checked: event.target.checked });
     }
-    public render() { 
 
+    public render() { 
+        let i: number = 0;
         let total: number = this.calculateTotalHours();
-        return <div>
+        return <div className="table-container">
             {this.state.vincular ?
                 <PopupVincularTarea keyJira={this.state.issueVincular} closePopup={this.closePopup} />
                 : null
             }
 
             <div className="table-responsive">
-                <hr></hr>
-                <input type="checkbox" className="custom-control-input" id="defaultUnchecked" onChange={this.checkBoxChanged} />
-                <label className="custom-control-label">Mostrar tipo de tarea</label>
                 <table className="table">
-                    <caption>Lista de tareas Jira</caption>
                 <thead className="thead-dark">
-                    <tr>
-                        <th>Fecha</th>
-                        <th>ID</th>
-                        <th>Tareas</th>
-                        <th>Horas</th>
+                        <tr>
+                            <th className="table-th-fecha">Fecha</th>
+                            <th className="table-th">Tarea</th>
+                            <th className="table-th-idSi3">Id Si3</th>
+                            <th className="table-th-tipo">Tipo de Tarea</th>
+                            <th className="table-th">Tareas</th>
+                            <th className="table-th-horas">Horas</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -138,8 +157,8 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                         this.props.weekissues.map(Weekissue =>
 
                             <tr key={Weekissue.fecha.toString()} >
-                                <td className="agenda-date active">
-                                    <div className="shortdate text-muted" > {new Date(Weekissue.fecha.toString()).toLocaleDateString()}</div>
+                                <td className="agenda-date">
+                                    <div className="shortdate text-dark" > {new Date(Weekissue.fecha.toString()).toLocaleDateString()}</div>
                                 </td>
 
                                 <td className="agenda-events-td-id" >
@@ -147,25 +166,58 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                                     {Weekissue.issues.filter(issue => issue.issueSI3Code == null).map(
                                         x =>
                                             <div className="agenda-events-id" key={x.issueCode}>
-                                                <a target="_blank" href={this.state.link.concat(x.issueKey)}>{x.issueKey}</a>
-                                                <button type="button" id="btn-vincular" className="btn btn-danger btn-sm" onClick={() => { this.vincular(x.issueKey) }} >Vincular</button>
-                                                {this.state.checked ? <label> {x.tipo} </label> : null} 
+                                                <a className="agenda-events-id-link" target="_blank" href={this.state.link.concat(x.issueKey)}>{x.issueKey}
+                                                    <span className="tooltiptext-id">Enlace a Jira</span>
+                                                </a>
                                             </div>
                                     )}
 
                                     {Weekissue.issues.filter(issue => issue.issueSI3Code != null).map(
                                         issue =>
                                             <div className="agenda-events-id" key={issue.issueCode}>
-                                                <a target="_blank" href={this.state.link.concat(issue.issueKey)}>{issue.issueKey}</a>
-                                                <label className="issue-si3">({issue.issueSI3Code})</label>
-                                                {this.state.checked ? <label className="label-type"> {issue.tipo} </label> : null} 
+                                                <a className="agenda-events-id-link" target="_blank" href={this.state.link.concat(issue.issueKey)}>{issue.issueKey}
+                                                    <span className="tooltiptext-id">Enlace a Jira</span>
+                                                </a>                                                
                                             </div>
                                     )
                                         }
                                     
-                                </td>
+                                    </td>
+                                    <td className="agenda-events-td-idSi3">
+                                        {Weekissue.issues.filter(issue => issue.issueSI3Code == null).map(
+                                            x =>
+                                                <div className="agenda-events-idSi3" key={x.issueCode}>
+                                                    <button type="button" id="btn-vincular" className="btn btn-danger btn-sm" onClick={() => { this.vincular(x.issueKey) }} >Vincular</button>
+                                                </div>
+                                        )}
 
-                                <td className="agenda-events-title">
+                                        {Weekissue.issues.filter(issue => issue.issueSI3Code != null).map(
+                                            issue =>
+                                                <div className="agenda-events-idSi3" key={issue.issueCode}>
+                                                    <label className="issue-si3">{issue.issueSI3Code}</label>
+                                                </div>
+                                        )
+                                        }
+                                    </td>
+                                    <td className="agenda-events-td-tipo" >
+
+                                        {Weekissue.issues.filter(issue => issue.issueSI3Code == null).map(
+                                            x =>
+                                                <div className="agenda-events-tipo">
+                                                    <label className="issue-tipo">{x.tipo}</label>
+                                                </div>
+                                        )}
+
+                                        {Weekissue.issues.filter(issue => issue.issueSI3Code != null).map(
+                                            issue =>
+                                                <div className="agenda-events-tipo">
+                                                    <label className="issue-tipo">{issue.tipo}</label>
+                                                </div>
+                                        )
+                                        }
+
+                                    </td>
+                                <td className="agenda-events-table-title">
                                     {Weekissue.issues.filter(issue => issue.issueSI3Code == null).map(
                                         issue =>
 
@@ -177,7 +229,7 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                                     {Weekissue.issues.filter(issue => issue.issueSI3Code != null).map(
                                         x =>
                                             <div className="agenda-events-title" key={x.titulo + x.issueCode}>
-                                                <label className="agenda-events-label" title={x.titulo}> {x.titulo}</label>
+                                                <label className="agenda-events-label" title={x.titulo} /*ref={c => this.labels[i++] = { label: c } this.myLabel = c}*/ > {x.titulo}</label>
                                             </div>
                                     )}
                                 </td>
@@ -212,16 +264,19 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                     }
 
                     <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td><label className="agenda-total">Horas : {total.toString()}/{this.props.availableHours.toString()} </label></td>
+                            <td className="agenda-table-total-first"></td>
+                            <td className="agenda-table-total"></td>
+                            <td className="agenda-table-total"></td>
+                            <td className="agenda-table-total"></td>
+                            <td className="agenda-table-total"></td>
+                            <td className="agenda-table-total-last">
+                                <label className="agenda-total">Horas : {total.toString()}/{this.props.availableHours.toString()} </label>
+                            </td>
                     </tr>
                 </tbody>
                 </table>
             </div>
             <br />
-            <hr></hr>
         </div>
     }
 }

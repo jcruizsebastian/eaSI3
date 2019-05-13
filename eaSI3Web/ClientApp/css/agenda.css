@@ -2,27 +2,25 @@
     padding: 3px;
     margin: 20px;
 }
-.issue-si3 {
-    margin-left: 10px;
-}
 .text {
     margin: 3px;
 }
 .agenda-events-label {
-   width:600px; 
+   width:700px; 
    height:40px;
    margin-bottom: 0px;
 }
+.agenda-events-tipo {
+    height: 40px;
+}
 .agenda-events-td-id {
-   
 }
 .agenda-events-id {
     height: 40px;
-    min-width: 280px;
 }
 .agenda-events-title {
-    overflow: hidden;
-    text-overflow: ellipsis;
+    //overflow: hidden;
+    //text-overflow: ellipsis;
     white-space: nowrap;
     max-width: 100%;
 }
@@ -32,12 +30,5 @@
 .agenda-events-hours {
     height: 40px;
 }
-.invalid {
-    border-color: red;
-    width: 100px;
-    font-weight:normal;
-}
-.valid {
-    width: 100px;
-    font-weight: normal;
-}
+
+

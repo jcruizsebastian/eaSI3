@@ -11,4 +11,7 @@ export interface UserCredentialsState {
     todoOk: boolean;
     loading: boolean;
     availableHours: Number;
+    popup: boolean;
+    popup_error: boolean;
+    popup_data: String[];
 }

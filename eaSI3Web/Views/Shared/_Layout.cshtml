@@ -1,13 +1,16 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8" />
     <title>@ViewData["Title"] - eaSI3Web</title>
     <base href="~/" />
-
+    <link href="https://fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Lora" rel="stylesheet">
     <link rel="stylesheet" href="~/dist/vendor.css" asp-append-version="true" />
-    
+    <link href="https://cdn.jsdelivr.net/css-toggle-switch/latest/toggle-switch.css" rel="stylesheet" />
+
     <environment exclude="Development">
         <link rel="stylesheet" href="~/dist/site.css" asp-append-version="true" />
     </environment>
@@ -15,7 +18,8 @@
 <body>
     @RenderBody()
 
-    <script src="~/dist/vendor.js" asp-append-version="true"></script>
+    <script src="~/dist/vendor.js" asp-append-version="true" charset="utf-8"></script>
+
     @RenderSection("scripts", required: false)
 </body>
 </html>
