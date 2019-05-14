@@ -375,7 +375,7 @@ namespace eaSI3Web.Controllers
                         issue.tipo = Tipos.Mejora;
                         break;
                     case "Preventa":
-                        issue.tipo = Tipos.Help_and_Documentation;
+                        issue.tipo = Tipos.Pdte_asignacion_proyecto;
                         break;
                     case "Pruebas":
                         issue.tipo = Tipos.Pruebas;
