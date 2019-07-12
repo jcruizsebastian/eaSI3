@@ -167,7 +167,8 @@ var VincularTarea = /** @class */ (function (_super) {
         else {
             key = this.refs["tbKeyJira"].value;
         }
-        fetch('api/Jira/updateIssueSi3Project?codeProject=' + this.state.projectSelected + '&codeMilestone=' + this.state.milestoneSelected + '&jiraKey=' + key + '&idSi3=' + this.state.idSi3)
+        var code = this.state.milestoneSelected.replace("#", "-");
+        fetch('api/Jira/updateIssueSi3Project?codeProject=' + this.state.projectSelected + '&codeMilestone=' + code + '&jiraKey=' + key + '&idSi3=' + this.state.idSi3)
             .then(function (response) {
             if (!response.ok) {
                 response.text().then(function (data) {

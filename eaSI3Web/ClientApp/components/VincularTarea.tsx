@@ -179,9 +179,10 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
         } else {
             key = (this.refs["tbKeyJira"] as HTMLInputElement).value;
         }
-        
 
-        fetch('api/Jira/updateIssueSi3Project?codeProject=' + this.state.projectSelected + '&codeMilestone=' + this.state.milestoneSelected + '&jiraKey=' + key + '&idSi3=' + this.state.idSi3)
+        var code = this.state.milestoneSelected.replace("#", "-");
+
+        fetch('api/Jira/updateIssueSi3Project?codeProject=' + this.state.projectSelected + '&codeMilestone=' + code + '&jiraKey=' + key + '&idSi3=' + this.state.idSi3)
             .then(response => {
                 if (!response.ok) {
                     (response.text() as Promise<string>).then(data => {
