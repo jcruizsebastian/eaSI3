@@ -65,7 +65,16 @@ namespace SI3Connector
 
             _userCode = request.Result.Split("code!='")[1].Split("'")[0];
         }
+        public void EditIssue(string idSi3, int tipo)
+        {
+            var x_www_form_url_encoded = new Dictionary<string, string>();
+            x_www_form_url_encoded.Clear();
+            x_www_form_url_encoded.Add("isid", idSi3);
+            x_www_form_url_encoded.Add("types", tipo.ToString());
 
+            var request2 = _si3HttpRequest.Post(new Uri($"{_si3Url}Si3/its/asp/saveIssue.asp"), x_www_form_url_encoded);
+            request2.Wait();
+        }
         public string NewIssue(Issue newIssueData)
         {
             int max = 55;
@@ -73,7 +82,7 @@ namespace SI3Connector
             {
                 max = newIssueData.title.Length;
             }
-            
+
             var x_www_form_url_encoded = new Dictionary<string, string>();
             x_www_form_url_encoded.Clear();
             x_www_form_url_encoded.Add("product", newIssueData.product);
@@ -276,6 +285,87 @@ namespace SI3Connector
             return milestones;
         }
 
+        public class CacheEntity
+        {
+            public DateTime LastTime { get; set; }
+
+            public List<Project> Projects { get; set; }
+        }
+
+        private static Dictionary<string, CacheEntity> cacheDeProyectos {get; set;}
+
+        public List<Project> GetProjectsUser()
+        {
+            if(cacheDeProyectos != null && cacheDeProyectos.ContainsKey(_userCode) && cacheDeProyectos[_userCode].LastTime < DateTime.Now.AddHours(1))
+                return cacheDeProyectos[_userCode].Projects;
+
+            List<Project> projects = new List<Project>();
+
+            var request = _si3HttpRequest.Post(new Uri($"{_si3Url}/Si3/treport/asp/weeklyreport.asp?cod={GetWeekCode(GetIso8601WeekOfYear(DateTime.Today))}&aa={DateTime.Today.Year}&pn=Resumen"), null);
+            request.Wait();
+
+            var doc = new HtmlDocument();
+            doc.LoadHtml(request.Result);
+
+            var documentProjects = doc.DocumentNode.SelectNodes("//*/tr[contains(@id,'proyecto')]/td/label");
+            for (int i = 1; i<= documentProjects.Count; i++)
+            {
+                string idProject = doc.DocumentNode.SelectSingleNode($"//*/tr[contains(@id,'proyecto')][{i}]").Id;
+                string project = doc.DocumentNode.SelectSingleNode($"//*/tr[contains(@id,'proyecto')][{i}]/td/label").InnerHtml.Trim().Replace("-","").Trim();
+
+                Regex regex = new Regex(@"O+[0-9]*");
+                Match match = regex.Match(project);                
+                string code = match.Value;
+
+                string rowProject = "row" + idProject;
+                var projectMilestones = doc.DocumentNode.SelectNodes($"//*/tr[contains(@name,'{rowProject}')]");
+
+                for (int j = 1; j <= projectMilestones.Count; j++)
+                {
+                    string milestone = doc.DocumentNode.SelectSingleNode($"//*/tr[contains(@name,'{rowProject}')][{j}]/td[1]").InnerHtml.Trim().Substring(12).Replace("-","");
+                    projects.Add(new Project
+                    {
+                        Code = code + milestone
+                    });
+                }
+                
+            }
+
+            if (cacheDeProyectos != null)
+            {
+                if (!cacheDeProyectos.ContainsKey(_userCode))
+                {
+                    cacheDeProyectos.Add(_userCode, new CacheEntity { Projects = projects, LastTime = DateTime.Now });
+                }
+                else
+                {
+                    cacheDeProyectos[_userCode].Projects = projects;
+                    cacheDeProyectos[_userCode].LastTime = DateTime.Now;
+                }
+            }
+            else
+            {
+                cacheDeProyectos = new Dictionary<string, CacheEntity>();
+                cacheDeProyectos.Add(_userCode, new CacheEntity { Projects = projects, LastTime = DateTime.Now });
+            }
+
+            return projects;
+        }
+       
+        public bool existsProject(string issueid)
+        {
+            List<Project> projects = GetProjectsUser();
+            string code = issueid.Replace("-", "").Replace(",", "").Trim();
+
+            Project project = new Project{ Code = code };
+            foreach (Project p in projects)
+            {
+                if (p.Code == code)
+                    return true;
+            }
+
+            return false;
+        }
         public List<Project> GetProjects()
         {
             List<Project> projects = new List<Project>();

@@ -20,6 +20,25 @@ namespace SI3Connector.Test
         }
 
         [TestMethod]
+        public void EditIssue()
+        {
+            SI3Service service = new SI3Service("ofjcruiz", "_*_d1d4ct1c", 40, "http://si3.infobolsa.es/");
+            service.EditIssue("30779", 2);
+        }
+
+        [TestMethod]
+        public void GetProjectsUser()
+        {
+            SI3Service service = new SI3Service("ofjcruiz", "_*_d1d4ct1c", 40, "http://si3.infobolsa.es/");
+            service.GetProjectsUser();
+        }
+        [TestMethod]
+        public void ExistsProject()
+        {
+            SI3Service service = new SI3Service("ofjcruiz", "_*_d1d4ct1c", 40, "http://si3.infobolsa.es/");
+            var x = service.existsProject("O-120,H-53");
+        }
+        [TestMethod]
         public void AddProjectWork()
         {
             SI3Service service = new SI3Service("ofjcruiz", "_*_d1d4ct1c", 40, "http://si3.infobolsa.es/");
