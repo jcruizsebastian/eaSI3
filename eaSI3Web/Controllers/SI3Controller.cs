@@ -172,7 +172,7 @@ namespace eaSI3Web.Controllers
             return users.OrderBy(x => x.nombre).ToList();
         }
         [HttpGet("[action]")]
-        public ActionResult<int> AvailableHours() {
+        public ActionResult<int> AvailableHours(string selectedWeek) {
 
             var cookie = Request.Cookies.First(x => x.Key == "userId");
             var idUser = cookie.Value;
@@ -182,7 +182,7 @@ namespace eaSI3Web.Controllers
             try
             {
                 SI3Service Si3Service = new SI3Service(user.SI3UserName, bdStatistics.DecryptSi3Password(user.SI3UserName), data.Value.Week_Hours, data.Value.Si3_Host_URL);
-                var a = Si3Service.SpendedHours().Sum(x => x.Value);
+                var a = Si3Service.SpendedHours(Convert.ToInt32(selectedWeek)).Sum(x => x.Value);
                 return a;
             }
             catch (HttpRequestException ex)
@@ -482,6 +482,7 @@ namespace eaSI3Web.Controllers
         {
             var cookie = Request.Cookies.First(x => x.Key == "userId");
             var idUser = cookie.Value;
+            int weekNumber = Convert.ToInt32(selectedWeek);
 
             BdStatistics bdStatistics = new BdStatistics(_context);
             eaSI3Web.Models.User user = bdStatistics.GetUser(int.Parse(idUser));
@@ -507,7 +508,7 @@ namespace eaSI3Web.Controllers
                 if (validacion.Count() != 0)
                     throw new SI3Exception(validacion);
 
-                model = NormalizarHoras(model, SI3Service);
+                model = NormalizarHoras(model, SI3Service, weekNumber);
 
                 Dictionary<string, Dictionary<DayOfWeek, int>> weekWork = new Dictionary<string, Dictionary<DayOfWeek, int>>();
 
@@ -549,27 +550,27 @@ namespace eaSI3Web.Controllers
 
                 foreach (var week in weekWork)
                 {
-                    SI3Service.AddProjectWork(week.Key, week.Value);
+                    SI3Service.AddProjectWork(week.Key, week.Value, weekNumber);
                 }
 
                 if (submit && a.IsCompletedSuccessfully)
-                    SI3Service.Submit();
+                    SI3Service.Submit(weekNumber);
             }
             catch (SI3Exception e)
             {
                 logger.Error("Username: " + user.SI3UserName + " ,Error: " + e.Message);
-                bdStatistics.AddWorkTracking(user.SI3UserName, int.Parse(selectedWeek), totalHours, 1, e.Message);
+                bdStatistics.AddWorkTracking(user.SI3UserName, weekNumber, totalHours, 1, e.Message);
                 return StatusCode(400, e.errors);
             }
             catch (Exception e)
             {
                 logger.Error("Username: " + user.SI3UserName + " ,Error: " + e.Message);
-                bdStatistics.AddWorkTracking(user.SI3UserName, int.Parse(selectedWeek), totalHours, 1, e.Message);
+                bdStatistics.AddWorkTracking(user.SI3UserName, weekNumber, totalHours, 1, e.Message);
                 if (e is InvalidCredentialException) { return StatusCode(401, e.Message); }
                 return StatusCode(400, "Error :" + e.Message);
             }
 
-            bdStatistics.AddWorkTracking(user.SI3UserName, int.Parse(selectedWeek), totalHours, 0, "Horas imputadas en Si3 correctamente");
+            bdStatistics.AddWorkTracking(user.SI3UserName, weekNumber, totalHours, 0, "Horas imputadas en Si3 correctamente");
             return Ok();
         }
 
@@ -608,12 +609,12 @@ namespace eaSI3Web.Controllers
             return errors.Distinct();
         }
 
-        private IEnumerable<WeekJiraIssues> NormalizarHoras(IEnumerable<WeekJiraIssues> tareasSinNormalizar, SI3Service SI3Service)
+        private IEnumerable<WeekJiraIssues> NormalizarHoras(IEnumerable<WeekJiraIssues> tareasSinNormalizar, SI3Service SI3Service, int weekNumber)
         {
             var issues = tareasSinNormalizar.SelectMany(x => x.Issues).ToList();
             var issuesQueue = new LinkedList<JiraIssues>(issues);
 
-            var availableHours = SI3Service.SpendedHours();
+            var availableHours = SI3Service.SpendedHours(weekNumber);
 
             IList<WeekJiraIssues> normalized = new List<WeekJiraIssues>();
 

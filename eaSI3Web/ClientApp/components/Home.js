@@ -4,7 +4,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -70,7 +70,7 @@ var Home = /** @class */ (function (_super) {
                         _this.setState({ loadingJira: false, loadedJira: false, loading: false, popup: true, popup_error: true, popup_data: ["No hay tareas en Jira"] });
                     }
                     else {
-                        fetch('api/Si3/AvailableHours').then(function (response) {
+                        fetch('api/Si3/AvailableHours?selectedWeek=' + _this.state.selectedWeek).then(function (response) {
                             if (!response.ok) {
                                 response.text().then(function (data) {
                                     _this.setState({ popup: true, popup_error: true, popup_data: [data] });
@@ -150,7 +150,7 @@ var Home = /** @class */ (function (_super) {
                 total += Number(Issue.tiempo);
             }
         }
-        fetch('api/Si3/AvailableHours').then(function (response) {
+        fetch('api/Si3/AvailableHours?selectedWeek=' + this.state.selectedWeek).then(function (response) {
             if (!response.ok) {
                 response.text().then(function (data) {
                     _this.setState({ popup: true, popup_error: true, popup_data: [data] });
@@ -198,8 +198,8 @@ var Home = /** @class */ (function (_super) {
         if (this.state.loadedJira) {
             jira = React.createElement("input", { type: "button", className: "btnJira", value: "Recargar", onClick: this.onLoginJira });
             calendar = React.createElement("div", { className: "select-calendar" },
-                React.createElement("label", { className: "oculto" }, "Elija semana de trabajo :"),
-                React.createElement("select", { className: "custom-select-oculto" /*onChange={this.handleChangeWeek}*/ }, this.state.calendar.weeks.map(function (week) {
+                React.createElement("label", { className: "ocultoo" }, "Elija semana de trabajo :"),
+                React.createElement("select", { className: "custom-select-ocultoo" /*onChange={this.handleChangeWeek}*/ }, this.state.calendar.weeks.map(function (week) {
                     return React.createElement("option", { value: week.numberWeek, key: week.numberWeek, selected: week.numberWeek == _this.state.calendar.weeks.length ? true : false }, week.description);
                 })));
         }
@@ -212,7 +212,7 @@ var Home = /** @class */ (function (_super) {
                 React.createElement("input", { type: "button", className: "btnSi3", value: "Enviar a Si3", disabled: this.state.todoOk, onClick: this.onLoginSi3 }));
         }
         return (React.createElement("div", null,
-            React.createElement("span", { className: "oculto" }, this.state.calendar.version),
+            React.createElement("span", { className: "ocultoo" }, this.state.calendar.version),
             calendar,
             React.createElement("div", { className: "container-home" },
                 jira,

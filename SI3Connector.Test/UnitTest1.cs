@@ -46,7 +46,7 @@ namespace SI3Connector.Test
             work.Add(DayOfWeek.Monday, 5);
             work.Add(DayOfWeek.Thursday, 3);
 
-            service.AddProjectWork("O-120,H-53", work);
+            service.AddProjectWork("O-120,H-53", work, 5);
         }
 
         [TestMethod]
@@ -128,7 +128,7 @@ namespace SI3Connector.Test
         public void testAvailableHours()
         {
             SI3Service service = new SI3Service("ofjcruiz", "_*_d1d4ct1c", 40, "http://si3.infobolsa.es/");
-            var a = service.SpendedHours();
+            var a = service.SpendedHours(5);
         }
 
         [TestMethod]
@@ -175,7 +175,7 @@ namespace SI3Connector.Test
         public void SubmitTest()
         {
             SI3Service service = new SI3Service(_user, _password, _workHours, "http://si3.infobolsa.es/");
-            service.Submit();
+            service.Submit(5);
         }
     }
     

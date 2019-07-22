@@ -77,7 +77,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
 
                         }
                         else {
-                            fetch('api/Si3/AvailableHours').then(response => {
+                            fetch('api/Si3/AvailableHours?selectedWeek=' + this.state.selectedWeek).then(response => {
                                 if (!response.ok) {
                                     (response.text() as Promise<String>).then(
                                         data => {
@@ -162,7 +162,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
             }
         }
 
-        fetch('api/Si3/AvailableHours').then(response => {
+        fetch('api/Si3/AvailableHours?selectedWeek=' + this.state.selectedWeek).then(response => {
             if (!response.ok) {
                 (response.text() as Promise<String>).then(
                     data => {
@@ -216,8 +216,8 @@ export class Home extends React.Component<{}, UserCredentialsState> {
             jira = <input type="button" className="btnJira" value="Recargar" onClick={this.onLoginJira} />
 
             calendar = <div className="select-calendar">
-                <label className="oculto">Elija semana de trabajo :</label>
-                <select className="custom-select-oculto" /*onChange={this.handleChangeWeek}*/>
+                <label className="ocultoo">Elija semana de trabajo :</label>
+                <select className="custom-select-ocultoo" /*onChange={this.handleChangeWeek}*/>
                     {
                         this.state.calendar.weeks.map(week =>
                             <option value={week.numberWeek} key={week.numberWeek} selected={week.numberWeek == this.state.calendar.weeks.length ? true : false}>
@@ -243,7 +243,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
 
         return (
             <div>
-                <span className="oculto">{this.state.calendar.version}</span>
+                <span className="ocultoo">{this.state.calendar.version}</span>
                 {calendar}
                 <div className="container-home">
                 {jira}

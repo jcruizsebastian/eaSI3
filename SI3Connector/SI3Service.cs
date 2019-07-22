@@ -156,10 +156,9 @@ namespace SI3Connector
             return request.Result.Contains("Open&nbsp;&nbsp");
         }
 
-        public string AddProjectWork(string issueid, Dictionary<DayOfWeek, int> weekWork)
+        public string AddProjectWork(string issueid, Dictionary<DayOfWeek, int> weekWork, int weekNumber)
         {
             var projectCode = GetMilestone(issueid).Code;
-            var weekNumber = GetIso8601WeekOfYear(DateTime.Today);
             var weekCode = GetWeekCode(weekNumber);
 
             var x_www_form_url_encoded = GetAlreadyRecordedWork(weekNumber, weekCode);
@@ -436,11 +435,10 @@ namespace SI3Connector
             return CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(time, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
         }
 
-        public Dictionary<DayOfWeek, int> SpendedHours()
+        public Dictionary<DayOfWeek, int> SpendedHours(int weekNumber)
         {
             Dictionary<DayOfWeek, int> availableHours = new Dictionary<DayOfWeek, int>();
 
-            var weekNumber = GetIso8601WeekOfYear(DateTime.Today);
             var weekCode = GetWeekCode(weekNumber);
 
             var request = _si3HttpRequest.Post(new Uri($"{_si3Url}Si3/treport/asp/weeklyreport.asp?cod={weekCode}&aa={DateTime.Today.Year}&pn=Resumen"));
@@ -487,13 +485,12 @@ namespace SI3Connector
         }
 
         //TODO: Verificar que esto funciona.
-        public void Submit()
+        public void Submit(int weekNumber)
         {
-            var spendedHours = SpendedHours().Sum(x => x.Value);
+            var spendedHours = SpendedHours(weekNumber).Sum(x => x.Value);
             if (spendedHours != _workHours)
                 throw new SI3Exception($"No se pueden consignar menos de {_workHours} horas.");
 
-            var weekNumber = GetIso8601WeekOfYear(DateTime.Today);
             var weekCode = GetWeekCode(weekNumber);
 
             var x_www_form_url_encoded = new Dictionary<string, string>();
