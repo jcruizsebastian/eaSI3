@@ -53,7 +53,13 @@ var Home = /** @class */ (function (_super) {
         fetch('api/Jira/Weeks')
             .then(function (response) { return response.json(); })
             .then(function (data) {
-            _this.setState({ calendar: data, calendarLoaded: true, selectedWeek: data.weeks.length.toString() });
+            var weekNumber;
+            data.weeks.forEach(function (week) {
+                if (week.actualWeek == true) {
+                    weekNumber = week.numberWeek.toString();
+                }
+            });
+            _this.setState({ calendar: data, calendarLoaded: true, selectedWeek: weekNumber });
             _this.onLoginJira();
         });
     };
@@ -157,7 +163,7 @@ var Home = /** @class */ (function (_super) {
         fetch('api/Si3/AvailableHours?selectedWeek=' + this.state.selectedWeek).then(function (response) {
             if (!response.ok) {
                 response.text().then(function (data) {
-                    _this.setState({ popup: true, popup_error: true, popup_data: [data] });
+                    _this.setState({ loading: false, popup: true, popup_error: true, popup_data: [data] });
                 });
             }
             else {
@@ -204,7 +210,7 @@ var Home = /** @class */ (function (_super) {
             calendar = React.createElement("div", { className: "select-calendar" },
                 React.createElement("label", { className: "ocultoo" }, "Elija semana de trabajo :"),
                 React.createElement("select", { className: "custom-select-ocultoo", onChange: this.handleChangeWeek }, this.state.calendar.weeks.map(function (week) {
-                    return React.createElement("option", { value: week.numberWeek, key: week.numberWeek, selected: week.numberWeek == _this.state.calendar.weeks.length ? true : false }, week.description);
+                    return React.createElement("option", { value: week.numberWeek, key: week.numberWeek, selected: week.numberWeek.toString() == _this.state.selectedWeek ? true : false }, week.description);
                 })));
         }
         if (this.state.loadedJira) {
@@ -216,7 +222,7 @@ var Home = /** @class */ (function (_super) {
                 React.createElement("input", { type: "button", className: "btnSi3", value: "Enviar a Si3", disabled: this.state.todoOk, onClick: this.onLoginSi3 }));
         }
         return (React.createElement("div", null,
-            React.createElement("span", { className: "ocultoo" }, this.state.calendar.version),
+            React.createElement("span", { className: "oculto" }, this.state.calendar.version),
             calendar,
             React.createElement("div", { className: "container-home" },
                 jira,

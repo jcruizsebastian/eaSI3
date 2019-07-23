@@ -291,9 +291,6 @@ hr {
     border: 2px solid;
 }
 
-.select-calendar {
-    margin: 10px;
-}
 
 #tab {
     margin-left: 10px;
@@ -796,3 +793,24 @@ label {
     background-color: transparent;
     color: white;
 }
+
+.select-calendar {
+    margin: auto;
+    width: fit-content;
+}
+    .select-calendar label {
+        color: white;
+        font-weight: bold;
+    }
+    .select-calendar select {
+        color: rgb(0,51,102);
+        padding: 5px;
+        margin-left: 5px;
+        background-color: transparent;
+        font-weight: bold;
+        border: 3px solid rgb(0,51,102);
+    }
+    .select-calendar option {
+        font-weight: bold;
+        color: rgb(0,51,102);
+    }

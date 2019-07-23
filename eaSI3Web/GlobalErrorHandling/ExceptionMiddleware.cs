@@ -35,11 +35,13 @@ namespace eaSI3Web.GlobalErrorHandling
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
-            return context.Response.WriteAsync(new ErrorDetails()
-            {
-                StatusCode = context.Response.StatusCode,
-                Message = exception.Message
-            }.ToString());
+            //return context.Response.WriteAsync(new ErrorDetails()
+            //{
+            //    StatusCode = context.Response.StatusCode,
+            //    Message = exception.Message
+            //}.ToString());
+
+            return context.Response.WriteAsync("Error " + context.Response.StatusCode + " - " + exception.Message);
         }
     }
 }

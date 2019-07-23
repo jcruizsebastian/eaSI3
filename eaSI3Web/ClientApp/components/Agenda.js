@@ -30,8 +30,7 @@ var Agenda = /** @class */ (function (_super) {
         _this.state = { weekissues: _this.props.weekissues, link: "https://jira.openfinance.es/browse/", vincular: false, issueVincular: "", checked: false, expand: 0 };
         return _this;
     }
-    Agenda.prototype.componentDidMount = function () {
-        //con esto tengo todos los <label>
+    Agenda.prototype.componentDidUpdate = function () {
         console.log(ReactDOM.findDOMNode(this).querySelectorAll(".agenda-events-label"));
         var labels = ReactDOM.findDOMNode(this).querySelectorAll(".agenda-events-label");
         for (var i = 0; i < labels.length; i++) {
@@ -41,8 +40,20 @@ var Agenda = /** @class */ (function (_super) {
                 label.className = "agenda-events-label-normal";
             }
         }
+    };
+    Agenda.prototype.componentDidMount = function () {
         var todoOk = this.isDisabledBtnSi3();
         this.props.isTodoOk(todoOk);
+    };
+    Agenda.prototype.changeLabelClass = function () {
+        var labels = ReactDOM.findDOMNode(this).querySelectorAll(".agenda-events-label");
+        for (var i = 0; i < labels.length; i++) {
+            var label = labels[i];
+            var overflowX = label.offsetWidth < label.scrollWidth, overflowY = label.offsetHeight < label.scrollHeight;
+            if (!overflowX && !overflowY) {
+                label.className = "agenda-events-label-normal";
+            }
+        }
     };
     Agenda.prototype.timeReassignment = function (event) {
         var day = event.currentTarget.id.split('|')[1];

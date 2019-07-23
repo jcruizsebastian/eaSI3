@@ -59,7 +59,13 @@ export class Home extends React.Component<{}, UserCredentialsState> {
         fetch('api/Jira/Weeks')
             .then(response => response.json() as Promise<Calendar>)
             .then(data => {
-                this.setState({ calendar: data, calendarLoaded: true, selectedWeek: data.weeks.length.toString() });
+                var weekNumber;
+                data.weeks.forEach(function (week) {
+                    if (week.actualWeek == true) {
+                        weekNumber = week.numberWeek.toString();
+                    }
+                });
+                this.setState({ calendar: data, calendarLoaded: true, selectedWeek:weekNumber });
                 this.onLoginJira();
             });
     }
@@ -172,7 +178,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
             if (!response.ok) {
                 (response.text() as Promise<String>).then(
                     data => {
-                        this.setState({ popup: true, popup_error: true, popup_data: [data] });
+                        this.setState({ loading: false,popup: true, popup_error: true, popup_data: [data] });
                     }
                 );
             } else {
@@ -222,11 +228,11 @@ export class Home extends React.Component<{}, UserCredentialsState> {
             jira = <input type="button" className="btnJira" value="Recargar" onClick={this.onLoginJira} />
 
             calendar = <div className="select-calendar">
-                <label className="ocultoo">Elija semana de trabajo :</label>
+                <label className="ocultoo" >Elija semana de trabajo :</label>
                 <select className="custom-select-ocultoo" onChange={this.handleChangeWeek} >
                     {
                         this.state.calendar.weeks.map(week =>
-                            <option value={week.numberWeek} key={week.numberWeek} selected={week.numberWeek == this.state.calendar.weeks.length ? true : false}>
+                            <option value={week.numberWeek} key={week.numberWeek} selected={week.numberWeek.toString() == this.state.selectedWeek ? true : false}>
                                 {week.description}
                             </option>)
                     }
@@ -249,7 +255,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
 
         return (
             <div>
-                <span className="ocultoo">{this.state.calendar.version}</span>
+                <span className="oculto">{this.state.calendar.version}</span>
                 {calendar}
                 <div className="container-home">
                 {jira}

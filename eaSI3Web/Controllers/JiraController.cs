@@ -25,36 +25,36 @@ namespace eaSI3Web.Controllers
         public IOptions<Data> data;
         private readonly StatisticsContext _context;
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-        public JiraController( StatisticsContext context, IOptions<Data> data)
+        public JiraController(StatisticsContext context, IOptions<Data> data)
         {
             this.data = data;
-            _context = context;   
+            _context = context;
         }
 
         static Models.Calendar calendar = new Models.Calendar();
-        
+
         [HttpGet("[action]")]
         public ActionResult<Models.Calendar> Weeks()
         {
-
             var version = GetType().Assembly.GetName().Version.ToString();
             calendar.version = version;
             calendar.Weeks = new List<CalendarWeeks>();
             DateTime lastDayOfYear = new DateTime(DateTime.Now.Year, 12, 31);
-            int weekOfYear = CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(lastDayOfYear, CalendarWeekRule.FirstDay, DayOfWeek.Monday);
+            int weekOfYear = CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(DateTime.Now, CalendarWeekRule.FirstDay, 0);
 
-            int intDay = 1;
-            int intMonth = 1;
+            DateTime firstDay = getMonday(DateTime.Now.Year, 1);
 
+            int intDay = firstDay.Day;
+            int intMonth = firstDay.Month;
+            int intYear = firstDay.Year;
             for (int i = 0; i < weekOfYear; i++)
             {
-
-                DateTime day = new DateTime(DateTime.Now.Year, intMonth, intDay);
+                DateTime day = new DateTime(intYear, intMonth, intDay);
                 int aSumar = 6;
 
                 //Este if hay que revisarlo , no sirve para todos los años, solo para el actual
                 //i == 0 es lo mismo que comprobar que es la primera semana.
-                if (i == 0) { aSumar = 5; }
+                //if (i == 0) { aSumar = 5; }
 
                 //Semana entre dos meses
                 if (intDay + aSumar > CultureInfo.InvariantCulture.Calendar.GetDaysInMonth(DateTime.Now.Year, day.Month))
@@ -66,41 +66,69 @@ namespace eaSI3Web.Controllers
 
                 if (intDay + aSumar == CultureInfo.InvariantCulture.Calendar.GetDaysInMonth(DateTime.Now.Year, day.Month))
                 {
-                    intDay =  CultureInfo.InvariantCulture.Calendar.GetDaysInMonth(DateTime.Now.Year, day.Month);
+                    intDay = CultureInfo.InvariantCulture.Calendar.GetDaysInMonth(DateTime.Now.Year, day.Month);
                     aSumar = 0;
                 }
 
-                
-
-                var year = DateTime.Now.Year ;
+                var year = intYear;
+                bool cambioAño = false;
                 if (intMonth == 13)
                 {
-                    year = DateTime.Now.Year + 1;
+                    cambioAño = true;
+                    year = intYear + 1;                    
                     intMonth = 1;
                 }
 
-                string description = day.Day + "/" + day.Month + "/" + DateTime.Now.Year + " to " + (intDay + aSumar) + "/" + intMonth + "/" + year;
+                string description = day.Day + "/" + day.Month + "/" + intYear + " to " + (intDay + aSumar) + "/" + intMonth + "/" + year;
 
-                calendar.Weeks.Add(new CalendarWeeks()
+                if (year <= DateTime.Now.Year)
                 {
-                    numberWeek = i + 1,
-                    description = description,
-                    startOfWeek = new DateTime(DateTime.Now.Year, day.Month, day.Day),
-                    endOfWeek = new DateTime(year, intMonth, (intDay + aSumar))
-                });
+                    CalendarWeeks calendarWeek = new CalendarWeeks()
+                    {
+                        numberWeek = i + 1,
+                        description = description,
+                        startOfWeek = new DateTime(intYear, day.Month, day.Day),
+                        endOfWeek = new DateTime(year, intMonth, (intDay + aSumar)),
+                        actualWeek = false
+                    };
 
+
+                    if (calendarWeek.numberWeek == CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(DateTime.Now.Date, CalendarWeekRule.FirstDay, DayOfWeek.Monday))
+                    {
+                        calendarWeek.actualWeek = true;
+                    }
+
+                    calendar.Weeks.Add(calendarWeek);
+                }
                 intDay += aSumar + 1;
                 if (intDay > CultureInfo.InvariantCulture.Calendar.GetDaysInMonth(DateTime.Now.Year, day.Month))
                 {
                     intDay = 1;
                     intMonth += 1;
                 }
-                
+                if (cambioAño)
+                {
+                    intYear++;
+                }
             }
 
             return calendar;
         }
-        
+
+        DateTime getMonday(int year, int week)
+        {
+            // 4 January is always in week 1 (see http://en.wikipedia.org/wiki/ISO_week_date)
+            DateTime jan4 = new DateTime(year, 1, 4);
+
+            // get a day in the requested week
+            DateTime day = jan4.AddDays((week - 1) * 7);
+
+            // get day of week, with [mon = 0 ... sun = 6] instead of [sun = 0 ... sat = 6]
+            int dayOfWeek = ((int)day.DayOfWeek + 6) % 7;
+
+            var firstDay = day.AddDays(-dayOfWeek);
+            return firstDay;
+        }
 
         [HttpGet("[action]")]
         public ActionResult<WeekJiraIssuesResponse> Worklog(string selectedWeek)
@@ -176,7 +204,8 @@ namespace eaSI3Web.Controllers
 
         }
         [HttpPost("[action]")]
-        public ActionResult ValidateLogin() {
+        public ActionResult ValidateLogin()
+        {
             var idUser = "";
 
             if (Request.Cookies.ContainsKey("userId"))
@@ -186,7 +215,7 @@ namespace eaSI3Web.Controllers
             }
             else
             {
-                return StatusCode(400,"Por favor, inicia sesión de nuevo");
+                return StatusCode(400, "Por favor, inicia sesión de nuevo");
             }
 
             BdStatistics bdStatistics = new BdStatistics(_context);

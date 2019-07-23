@@ -474,13 +474,14 @@ namespace SI3Connector
                 var htmlWeekNumber = innerDoc.DocumentNode.SelectNodes("/b").First().InnerText;
                 if (htmlWeekNumber == weekNumber.ToString())
                 {
-                    if (innerDoc.DocumentNode.InnerHtml.Contains("Submitted"))
+                    if (innerDoc.DocumentNode.InnerHtml.Contains("Submitted") || innerDoc.DocumentNode.InnerHtml.Contains("Approved"))
                         throw new Exception("Semana ya confirmada.");
 
                     return week.OuterHtml.Split("openWeek('")[1].Split("'")[0];
                 }
             }
 
+            
             throw new Exception("Semana no dada de alta");
         }
 

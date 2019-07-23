@@ -11,5 +11,6 @@ namespace eaSI3Web.Controllers.Models
         public string description { get; set; }
         public DateTime startOfWeek { get; set; }
         public DateTime endOfWeek { get; set; }
+        public bool actualWeek { get; set; }
     }
 }

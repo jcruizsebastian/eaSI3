@@ -23,11 +23,18 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
         
         this.state = { weekissues: this.props.weekissues, link: "https://jira.openfinance.es/browse/", vincular: false, issueVincular: "", checked: false, expand: 0 };
     }
-
+    componentDidUpdate() {
+        this.changeLabelClass();
+    }
     componentDidMount() {
+        this.changeLabelClass();
 
-        //con esto tengo todos los <label>
-        console.log(ReactDOM.findDOMNode(this).querySelectorAll(".agenda-events-label"));
+        var todoOk = this.isDisabledBtnSi3();
+        this.props.isTodoOk(todoOk);
+    }
+
+    public changeLabelClass() {
+
         var labels = ReactDOM.findDOMNode(this).querySelectorAll(".agenda-events-label");
         for (var i = 0; i < labels.length; i++) {
 
@@ -36,14 +43,10 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
                 overflowY = label.offsetHeight < label.scrollHeight;
 
             if (!overflowX && !overflowY) {
-                label.className="agenda-events-label-normal"
+                label.className = "agenda-events-label-normal"
             }
         }
-
-        var todoOk = this.isDisabledBtnSi3();
-        this.props.isTodoOk(todoOk);
-}
-
+    }
 
     public timeReassignment(event: React.ChangeEvent<HTMLInputElement>) {
         let day = event.currentTarget.id.split('|')[1];
