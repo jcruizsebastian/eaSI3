@@ -461,7 +461,38 @@ namespace eaSI3Web.Controllers
 
             return projects;
         }
+        [HttpGet("[action]")]
+        public ActionResult editIssue(string id, int tipo, int user)
+        {
+            BdStatistics bdStatistics = new BdStatistics(_context);
+            eaSI3Web.Models.User usuario = bdStatistics.GetUser(user);
 
+            try
+            {
+                SI3Service service = new SI3Service(usuario.SI3UserName, bdStatistics.DecryptSi3Password(usuario.SI3UserName),0,data.Value.Si3_Host_URL);
+                service.EditIssue(id,tipo);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
+            }
+            return Ok();
+        }
+        [HttpGet("[action]")]
+        public ActionResult<List<Tipo>> getTypes()
+        {
+            List<Tipo> tipos = new List<Tipo>();
+
+            BdStatistics bdStatistics = new BdStatistics(_context);
+            eaSI3Web.Models.User usuario = bdStatistics.GetUser(1);
+
+            foreach (int i in Enum.GetValues(typeof(Tipos)))
+            {
+                var name = Enum.GetName(typeof(Tipos), i);
+                tipos.Add(new Tipo { name = name, cod = i});
+            }
+            return tipos;
+        }
         [HttpPost("[action]")]
         public ActionResult Submit([FromBody] BodyData body)
         {
