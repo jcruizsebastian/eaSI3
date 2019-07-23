@@ -30,6 +30,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
         this.getWeekofYear = this.getWeekofYear.bind(this);
         this.isDisabledBtnSi3 = this.isDisabledBtnSi3.bind(this);
         this.getCookie = this.getCookie.bind(this);
+        this.handleChangeWeek = this.handleChangeWeek.bind(this);
 
         this.state = {
             Weekissues: [], loadedJira: false, loadingJira: false, calendar: { version: "", weeks: [] }, calendarLoaded: false, todoOk: false,
@@ -46,6 +47,11 @@ export class Home extends React.Component<{}, UserCredentialsState> {
             loadingJira: false,
             loadedJira: true
         });
+    }
+
+    public handleChangeWeek(event: React.FormEvent<HTMLSelectElement>) {
+        this.setState({ selectedWeek: event.currentTarget.value });
+
     }
 
     private getWeekofYear() {
@@ -81,7 +87,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
                                 if (!response.ok) {
                                     (response.text() as Promise<String>).then(
                                         data => {
-                                            this.setState({ popup: true, popup_error: true, popup_data: [data] });
+                                            this.setState({ loadingJira: false, loading: false, popup: true, popup_error: true, popup_data: [data] });
                                         }
                                     );
                                 } else {
@@ -217,7 +223,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
 
             calendar = <div className="select-calendar">
                 <label className="ocultoo">Elija semana de trabajo :</label>
-                <select className="custom-select-ocultoo" /*onChange={this.handleChangeWeek}*/>
+                <select className="custom-select-ocultoo" onChange={this.handleChangeWeek} >
                     {
                         this.state.calendar.weeks.map(week =>
                             <option value={week.numberWeek} key={week.numberWeek} selected={week.numberWeek == this.state.calendar.weeks.length ? true : false}>

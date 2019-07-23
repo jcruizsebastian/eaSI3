@@ -40,7 +40,8 @@ namespace eaSI3Web.Controllers
             var version = GetType().Assembly.GetName().Version.ToString();
             calendar.version = version;
             calendar.Weeks = new List<CalendarWeeks>();
-            int weekOfYear = CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(DateTime.Now, CalendarWeekRule.FirstDay, DayOfWeek.Monday);
+            DateTime lastDayOfYear = new DateTime(DateTime.Now.Year, 12, 31);
+            int weekOfYear = CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(lastDayOfYear, CalendarWeekRule.FirstDay, DayOfWeek.Monday);
 
             int intDay = 1;
             int intMonth = 1;
@@ -69,15 +70,23 @@ namespace eaSI3Web.Controllers
                     aSumar = 0;
                 }
 
-                string description = day.Day + "/" + day.Month + "/" + DateTime.Now.Year + " to " + (intDay + aSumar) + "/" + intMonth + "/" + DateTime.Now.Year;
+                
 
+                var year = DateTime.Now.Year ;
+                if (intMonth == 13)
+                {
+                    year = DateTime.Now.Year + 1;
+                    intMonth = 1;
+                }
+
+                string description = day.Day + "/" + day.Month + "/" + DateTime.Now.Year + " to " + (intDay + aSumar) + "/" + intMonth + "/" + year;
 
                 calendar.Weeks.Add(new CalendarWeeks()
                 {
                     numberWeek = i + 1,
                     description = description,
                     startOfWeek = new DateTime(DateTime.Now.Year, day.Month, day.Day),
-                    endOfWeek = new DateTime(DateTime.Now.Year, intMonth, (intDay + aSumar))
+                    endOfWeek = new DateTime(year, intMonth, (intDay + aSumar))
                 });
 
                 intDay += aSumar + 1;

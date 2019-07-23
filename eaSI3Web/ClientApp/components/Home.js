@@ -4,7 +4,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    };
+    }
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -29,6 +29,7 @@ var Home = /** @class */ (function (_super) {
         _this.getWeekofYear = _this.getWeekofYear.bind(_this);
         _this.isDisabledBtnSi3 = _this.isDisabledBtnSi3.bind(_this);
         _this.getCookie = _this.getCookie.bind(_this);
+        _this.handleChangeWeek = _this.handleChangeWeek.bind(_this);
         _this.state = {
             Weekissues: [], loadedJira: false, loadingJira: false, calendar: { version: "", weeks: [] }, calendarLoaded: false, todoOk: false,
             loading: false, availableHours: 0, popup: false, popup_error: false, popup_data: []
@@ -43,6 +44,9 @@ var Home = /** @class */ (function (_super) {
             loadingJira: false,
             loadedJira: true
         });
+    };
+    Home.prototype.handleChangeWeek = function (event) {
+        this.setState({ selectedWeek: event.currentTarget.value });
     };
     Home.prototype.getWeekofYear = function () {
         var _this = this;
@@ -73,7 +77,7 @@ var Home = /** @class */ (function (_super) {
                         fetch('api/Si3/AvailableHours?selectedWeek=' + _this.state.selectedWeek).then(function (response) {
                             if (!response.ok) {
                                 response.text().then(function (data) {
-                                    _this.setState({ popup: true, popup_error: true, popup_data: [data] });
+                                    _this.setState({ loadingJira: false, loading: false, popup: true, popup_error: true, popup_data: [data] });
                                 });
                             }
                             else {
@@ -199,7 +203,7 @@ var Home = /** @class */ (function (_super) {
             jira = React.createElement("input", { type: "button", className: "btnJira", value: "Recargar", onClick: this.onLoginJira });
             calendar = React.createElement("div", { className: "select-calendar" },
                 React.createElement("label", { className: "ocultoo" }, "Elija semana de trabajo :"),
-                React.createElement("select", { className: "custom-select-ocultoo" /*onChange={this.handleChangeWeek}*/ }, this.state.calendar.weeks.map(function (week) {
+                React.createElement("select", { className: "custom-select-ocultoo", onChange: this.handleChangeWeek }, this.state.calendar.weeks.map(function (week) {
                     return React.createElement("option", { value: week.numberWeek, key: week.numberWeek, selected: week.numberWeek == _this.state.calendar.weeks.length ? true : false }, week.description);
                 })));
         }
