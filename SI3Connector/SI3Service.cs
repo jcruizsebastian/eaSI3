@@ -481,8 +481,8 @@ namespace SI3Connector
                 }
             }
 
-            
-            throw new Exception("Semana no dada de alta");
+            return $"0-{weekNumber}";
+            //throw new Exception("Semana no dada de alta");
         }
 
         //TODO: Verificar que esto funciona.

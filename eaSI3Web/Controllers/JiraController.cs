@@ -40,7 +40,7 @@ namespace eaSI3Web.Controllers
             calendar.version = version;
             calendar.Weeks = new List<CalendarWeeks>();
             DateTime lastDayOfYear = new DateTime(DateTime.Now.Year, 12, 31);
-            int weekOfYear = CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(DateTime.Now, CalendarWeekRule.FirstDay, 0);
+            int weekOfYear = CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(lastDayOfYear, CalendarWeekRule.FirstDay, 0);
 
             DateTime firstDay = getMonday(DateTime.Now.Year, 1);
 
