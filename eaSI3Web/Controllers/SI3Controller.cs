@@ -627,16 +627,16 @@ namespace eaSI3Web.Controllers
                 }
                 else
                 {
-                    var userProjects = sI3Service.GetProjectsUser();
+                    //var userProjects = sI3Service.GetProjectsUser();
 
                     tasks.Add(Task.Run(() =>
                     {
 
                         if (!sI3Service.IsProjectOpened(issueid))
                            errors.Add($"El proyecto con id {issueid} no está abierto, revise Si3.");
-                        else
-                            if (!userProjects.Select(x => x.Code).Contains(issueid))
-                                errors.Add($"El proyecto con id {issueid} no está asociado a su usuario.");
+                        //else
+                        //    if (!userProjects.Select(x => x.Code).Contains(issueid))
+                        //        errors.Add($"El proyecto con id {issueid} no está asociado a su usuario.");
                     }));
                 }
             }
