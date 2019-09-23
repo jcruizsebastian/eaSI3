@@ -632,8 +632,8 @@ namespace eaSI3Web.Controllers
                     tasks.Add(Task.Run(() =>
                     {
 
-                        if (!sI3Service.IsProjectOpened(issueid))
-                           errors.Add($"El proyecto con id {issueid} no está abierto, revise Si3.");
+                        if (!sI3Service.existsProject(issueid) || !sI3Service.IsProjectOpened(issueid))
+                           errors.Add($"El proyecto con id {issueid} no está abierto o no tienes permisos para imputar en él, revise Si3.");
                         //else
                         //    if (!userProjects.Select(x => x.Code).Contains(issueid))
                         //        errors.Add($"El proyecto con id {issueid} no está asociado a su usuario.");
