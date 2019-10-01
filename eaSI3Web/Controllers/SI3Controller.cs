@@ -344,57 +344,50 @@ namespace eaSI3Web.Controllers
 
                 switch (data.Tipo)
                 {
-                    case "Mantenimiento":
+                    case "Data_Maintenance":
                         issue.tipo = Tipos.Data_Maintenance;
                         break;
                     case "Asistencia":
                         issue.tipo = Tipos.Asistencia;
                         break;
-                    case "Bolsa de Horas":
+                    case "Bolsa_de_horas":
                         issue.tipo = Tipos.Bolsa_de_horas;
                         break;
-                    case "Corrección":
+                    case "Defecto":
                         issue.tipo = Tipos.Defecto;
                         break;
-                    case "Especificación":
-                    case "Análisis":
+                    case "Especificacion":
                         issue.tipo = Tipos.Especificacion;
                         break;
-                    case "Formación":
+                    case "Help_and_Documentation":
                         issue.tipo = Tipos.Help_and_Documentation;
                         break;
-                    case "Gestión":
-                    case "Vacaciones":
+                    case "Gestion":
                         issue.tipo = Tipos.Gestion;
                         break;
-                    case "Desarrollo":
-                    case "Tarea":
-                    case "Workpack":
-                    case "Calidad":
-                    case "Change Request":
+                    case "Mejora":
                         issue.tipo = Tipos.Mejora;
                         break;
-                    case "Preventa":
+                    case "Pdte_asignacion_proyecto":
                         issue.tipo = Tipos.Pdte_asignacion_proyecto;
                         break;
                     case "Pruebas":
                         issue.tipo = Tipos.Pruebas;
                         break;
-                    case "Sistemas":
-                    case "Interno":
+                    case "Security":
                         issue.tipo = Tipos.Security;
                         break;
-                    case "Épica":
-                    case "Permisos":
-                        issue.tipo = Tipos.Mejora;
+                    case "Performance":
+                        issue.tipo = Tipos.Performance;
                         break;
+
                     default:
                         issue.tipo = Tipos.Mejora;
                         break;
                 }
 
                 if (data.Tipo == "Corrección") { issue.type = Types.error; } else { issue.type = Types.improv; }
-                NewIssue = SI3Service.NewIssue(issue);
+               NewIssue = SI3Service.NewIssue(issue);
             }
             catch (InvalidCredentialException e)
             {
@@ -479,6 +472,7 @@ namespace eaSI3Web.Controllers
             return Ok();
         }
         [HttpGet("[action]")]
+        [ResponseCache(Duration = 86400, Location = ResponseCacheLocation.Any, NoStore = false)]
         public ActionResult<List<Tipo>> getTypes()
         {
             List<Tipo> tipos = new List<Tipo>();

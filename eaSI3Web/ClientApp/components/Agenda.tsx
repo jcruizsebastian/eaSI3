@@ -27,8 +27,7 @@ export class Agenda extends React.Component<WeekJiraIssuesProps, AgendaState> {
         this.changeLabelClass();
     }
     componentDidMount() {
-        this.changeLabelClass();
-
+        this.changeLabelClass();        
         var todoOk = this.isDisabledBtnSi3();
         this.props.isTodoOk(todoOk);
     }

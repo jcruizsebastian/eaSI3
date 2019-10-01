@@ -31,17 +31,10 @@ var Agenda = /** @class */ (function (_super) {
         return _this;
     }
     Agenda.prototype.componentDidUpdate = function () {
-        console.log(ReactDOM.findDOMNode(this).querySelectorAll(".agenda-events-label"));
-        var labels = ReactDOM.findDOMNode(this).querySelectorAll(".agenda-events-label");
-        for (var i = 0; i < labels.length; i++) {
-            var label = labels[i];
-            var overflowX = label.offsetWidth < label.scrollWidth, overflowY = label.offsetHeight < label.scrollHeight;
-            if (!overflowX && !overflowY) {
-                label.className = "agenda-events-label-normal";
-            }
-        }
+        this.changeLabelClass();
     };
     Agenda.prototype.componentDidMount = function () {
+        this.changeLabelClass();
         var todoOk = this.isDisabledBtnSi3();
         this.props.isTodoOk(todoOk);
     };

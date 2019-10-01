@@ -84,16 +84,17 @@ export class Home extends React.Component<{}, UserCredentialsState> {
                     });
                 } else
                     (response.json() as Promise<WeekJiraIssuesResponse>).then(data => {
-                        if (data.weekJiraIssues.length == 0) {
-                            this.setState({ loadingJira: false, loadedJira: false, loading: false, popup: true, popup_error: true, popup_data: ["No hay tareas en Jira"] });
+                        // if (data.weekJiraIssues.length == 0) {
+                        //      this.setState({ loadingJira: false, loadedJira: false, loading: false, popup: true, popup_error: true, popup_data: ["No hay tareas en Jira"] });
 
-                        }
-                        else {
+                        // }
+                        // else {
                             fetch('api/Si3/AvailableHours?selectedWeek=' + this.state.selectedWeek).then(response => {
                                 if (!response.ok) {
                                     (response.text() as Promise<String>).then(
                                         data => {
                                             this.setState({ loadingJira: false, loading: false, popup: true, popup_error: true, popup_data: [data] });
+                                            this.isDisabledBtnSi3();
                                         }
                                     );
                                 } else {
@@ -105,7 +106,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
                             });
 
                             this.setState({ Weekissues: data.weekJiraIssues });
-                        }
+                        // }
                     })
             })
             .catch(error => {

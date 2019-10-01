@@ -24,7 +24,7 @@ var VincularTarea = /** @class */ (function (_super) {
         _this.state = {
             products: [], productSelected: "", componentSelected: "", moduleSelected: "", loadedData: false,
             loadedDataJira: false, titulo: "", prioridad: "", tipo: "", loading: false, responsable: "", todoOk: false, todoOkProject: false,
-            projects: [], milestones: [], projectSelected: "", milestoneSelected: "", idSi3: "", popup: false, popup_error: false, popup_data: []
+            projects: [], milestones: [], projectSelected: "", milestoneSelected: "", idSi3: "", popup: false, popup_error: false, popup_data: [], types: []
         };
         _this.focusLink = _this.focusLink.bind(_this);
         _this.focusLinkPro = _this.focusLinkPro.bind(_this);
@@ -36,14 +36,70 @@ var VincularTarea = /** @class */ (function (_super) {
         _this.handleChangeModules = _this.handleChangeModules.bind(_this);
         _this.handleChangeProject = _this.handleChangeProject.bind(_this);
         _this.handleChangeMilestone = _this.handleChangeMilestone.bind(_this);
+        _this.handleChangeTypes = _this.handleChangeTypes.bind(_this);
         _this.vincular = _this.vincular.bind(_this);
         _this.vincularProyecto = _this.vincularProyecto.bind(_this);
         _this.generarInformacion = _this.generarInformacion.bind(_this);
+        _this.mapType = _this.mapType.bind(_this);
         return _this;
     }
     VincularTarea.prototype.handleSubmit = function (e) {
         e.preventDefault();
         this.generarInformacion();
+    };
+    VincularTarea.prototype.mapType = function (type) {
+        var tipo = "";
+        switch (type) {
+            case "Mantenimiento":
+                tipo = "Data_Maintenance";
+                break;
+            case "Asistencia":
+                tipo = "Asistencia";
+                break;
+            case "Bolsa de Horas":
+                tipo = "Bolsa_de_horas";
+                break;
+            case "Corrección":
+                tipo = "Defecto";
+                break;
+            case "Especificación":
+            case "Análisis":
+                tipo = "Especificacion";
+                break;
+            case "Formación":
+            case "Microinformática":
+                tipo = "Help_and_Documentation";
+                break;
+            case "Gestión":
+            case "Vacaciones":
+                tipo = "Gestion";
+                break;
+            case "Desarrollo":
+            case "Tarea":
+            case "Workpack":
+            case "Calidad":
+            case "Change Request":
+                tipo = "Mejora";
+                break;
+            case "Preventa":
+                tipo = "Pdte_asignacion_proyecto";
+                break;
+            case "Pruebas":
+                tipo = "Pruebas";
+                break;
+            case "Sistemas":
+            case "Interno":
+                tipo = "Security";
+                break;
+            case "Épica":
+            case "Permisos":
+                tipo = "Mejora";
+                break;
+            default:
+                tipo = "Mejora";
+                break;
+        }
+        return tipo;
     };
     VincularTarea.prototype.generarInformacion = function () {
         var _this = this;
@@ -55,6 +111,19 @@ var VincularTarea = /** @class */ (function (_super) {
             keyJira = this.refs["tbKeyJira"].value;
         }
         this.setState({ loading: true });
+        fetch('api/Si3/getTypes')
+            .then(function (response) {
+            if (!response.ok) {
+                response.text().then(function (data) {
+                    _this.setState({ loadedDataJira: false, loading: false, popup: true, popup_error: true, popup_data: [data] });
+                });
+            }
+            else {
+                response.json().then(function (data) {
+                    _this.setState({ types: data });
+                });
+            }
+        });
         fetch('api/Si3/products')
             .then(function (response) {
             if (!response.ok) {
@@ -93,6 +162,7 @@ var VincularTarea = /** @class */ (function (_super) {
                                             prioridad_ = "Bloqueadora";
                                             break;
                                     }
+                                    var tipo_ = _this.mapType(data.issuetype);
                                     fetch('api/Si3/Projects')
                                         .then(function (response) {
                                         if (!response.ok) {
@@ -121,7 +191,7 @@ var VincularTarea = /** @class */ (function (_super) {
                                     });
                                     _this.setState({
                                         titulo: data.summary, prioridad: prioridad_,
-                                        tipo: data.issuetype, responsable: data.assignee, idSi3: data.si3ID
+                                        tipo: tipo_, responsable: data.assignee, idSi3: data.si3ID
                                     });
                                 }
                                 else {
@@ -156,6 +226,9 @@ var VincularTarea = /** @class */ (function (_super) {
     };
     VincularTarea.prototype.handleChangeModules = function (event) {
         this.setState({ moduleSelected: event.currentTarget.value });
+    };
+    VincularTarea.prototype.handleChangeTypes = function (event) {
+        this.setState({ tipo: event.currentTarget.value });
     };
     VincularTarea.prototype.vincularProyecto = function () {
         var _this = this;
@@ -274,6 +347,7 @@ var VincularTarea = /** @class */ (function (_super) {
     };
     VincularTarea.prototype.renderInformación = function () {
         var _this = this;
+        console.log(this.state.tipo);
         return (React.createElement("div", { style: {
                 border: "4px solid white", padding: "20px", width: "600px", backgroundColor: "rgba(255,255,255,0.5)", margin: "auto"
             } },
@@ -296,11 +370,14 @@ var VincularTarea = /** @class */ (function (_super) {
                         " ",
                         this.state.prioridad),
                     React.createElement("p", { className: "ptext" },
-                        React.createElement("b", null, "Tipo : "),
-                        this.state.tipo),
-                    React.createElement("p", { className: "ptext" },
                         React.createElement("b", null, "Responsable : "),
                         this.state.responsable),
+                    React.createElement("label", { className: "ptext" },
+                        React.createElement("b", null, "Tipo : ")),
+                    React.createElement("select", { className: "custom-select", onChange: this.handleChangeTypes }, this.state.types.map(function (type) {
+                        return React.createElement("option", { key: type.cod, value: type.name, selected: type.name == _this.state.tipo }, type.name);
+                    })),
+                    React.createElement("br", null),
                     React.createElement("label", { className: "ptext" }, "Producto : "),
                     React.createElement("select", { className: "custom-select", onChange: this.handleChangeProducts },
                         React.createElement("option", { value: "default", selected: true }, "Seleccione un producto"),

@@ -703,6 +703,17 @@ label {
     width: 150px;
     height: 43px;
     background-color: transparent;
+    border: 3px solid green;
+    border-radius: 5px;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: black;
+}
+.btn-popup-close-error {
+    margin-top: 30px;
+    width: 150px;
+    height: 43px;
+    background-color: transparent;
     border: 3px solid red;
     border-radius: 5px;
     text-transform: uppercase;

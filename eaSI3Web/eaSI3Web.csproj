@@ -57,6 +57,7 @@
     <None Remove="ClientApp\components\Model\States\PopupState.tsx" />
     <None Remove="ClientApp\components\Model\States\UserCredentialsState.tsx" />
     <None Remove="ClientApp\components\Model\States\VincularState.tsx" />
+    <None Remove="ClientApp\components\Model\Type.tsx" />
     <None Remove="ClientApp\components\Model\User.tsx" />
     <None Remove="ClientApp\components\Model\WeekJiraIssues.tsx" />
     <None Remove="ClientApp\components\Model\WeekJiraIssuesProps.tsx" />
@@ -96,6 +97,7 @@
     <TypeScriptCompile Include="ClientApp\components\Model\States\PopupState.tsx" />
     <TypeScriptCompile Include="ClientApp\components\Model\States\UserCredentialsState.tsx" />
     <TypeScriptCompile Include="ClientApp\components\Model\States\VincularState.tsx" />
+    <TypeScriptCompile Include="ClientApp\components\Model\Type.tsx" />
     <TypeScriptCompile Include="ClientApp\components\Model\User.tsx" />
     <TypeScriptCompile Include="ClientApp\components\Model\WeekJiraIssues.tsx" />
     <TypeScriptCompile Include="ClientApp\components\Model\Props\WeekJiraIssuesProps.tsx" />

@@ -12,6 +12,7 @@ import { Link } from "react-router-dom";
 import { Cube } from "./Cube";
 import { Popup } from "./Popup";
 import * as ReactDOM from "react-dom";
+import { Type } from "./Model/Type";
 
 export class VincularTarea extends React.Component<VincularTareaProps, VincularState> {
     constructor(props: VincularTareaProps) {
@@ -20,8 +21,9 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
         this.state = {
             products: [], productSelected: "", componentSelected: "", moduleSelected: "", loadedData: false,
             loadedDataJira: false, titulo: "", prioridad: "", tipo: "", loading: false, responsable: "", todoOk: false, todoOkProject: false,
-            projects: [], milestones: [], projectSelected: "", milestoneSelected: "", idSi3: "", popup: false, popup_error: false, popup_data: []
+            projects: [], milestones: [], projectSelected: "", milestoneSelected: "", idSi3: "", popup: false, popup_error: false, popup_data: [], types: []
         };
+
         this.focusLink = this.focusLink.bind(this);
         this.focusLinkPro = this.focusLinkPro.bind(this);
         this.closePopup = this.closePopup.bind(this);
@@ -32,15 +34,75 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
         this.handleChangeModules = this.handleChangeModules.bind(this);
         this.handleChangeProject = this.handleChangeProject.bind(this);
         this.handleChangeMilestone = this.handleChangeMilestone.bind(this);
+        this.handleChangeTypes = this.handleChangeTypes.bind(this);
         this.vincular = this.vincular.bind(this);
         this.vincularProyecto = this.vincularProyecto.bind(this);
         this.generarInformacion = this.generarInformacion.bind(this);
+        this.mapType = this.mapType.bind(this);
     }
 
     public handleSubmit(e: { preventDefault: () => void; }) {
         e.preventDefault();
         this.generarInformacion();
 
+    }
+
+    public mapType(type: string)
+    {
+        var tipo: string = "";
+
+        switch (type) {
+            case "Mantenimiento":
+                tipo = "Data_Maintenance";
+                break;
+            case "Asistencia":
+                tipo = "Asistencia";
+                break;
+            case "Bolsa de Horas":
+                tipo = "Bolsa_de_horas";
+                break;
+            case "Corrección":
+                tipo = "Defecto";
+                break;
+            case "Especificación":
+            case "Análisis":
+                tipo = "Especificacion";
+                break;
+            case "Formación":
+            case "Microinformática":
+                tipo = "Help_and_Documentation";
+                break;
+            case "Gestión":
+            case "Vacaciones":
+                tipo = "Gestion";
+                break;
+            case "Desarrollo":
+            case "Tarea":
+            case "Workpack":
+            case "Calidad":
+            case "Change Request":
+                tipo = "Mejora";
+                break;
+            case "Preventa":
+                tipo = "Pdte_asignacion_proyecto";
+                break;
+            case "Pruebas":
+                tipo = "Pruebas";
+                break;
+            case "Sistemas":
+            case "Interno":
+                tipo = "Security";
+                break;
+            case "Épica":
+            case "Permisos":
+                tipo = "Mejora";
+                break;
+            default:
+                tipo = "Mejora";
+                break;
+        }
+
+        return tipo;
     }
 
     public generarInformacion() {
@@ -53,6 +115,25 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
         }
 
         this.setState({ loading: true });
+
+        
+        fetch('api/Si3/getTypes')
+            .then(response => {
+                if (!response.ok) {
+                    (response.text() as Promise<String>).then(
+                        data => {
+                            this.setState({ loadedDataJira: false, loading: false, popup: true, popup_error: true, popup_data: [data] });
+                        }
+                    );
+                } else {
+                    (response.json() as Promise<Type[]>).then(
+                        data => {
+                            this.setState({types: data});
+                        }
+                    )
+                }
+            });
+        
 
         fetch('api/Si3/products')
             .then(response => {
@@ -77,6 +158,7 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
                                         )
                                     }
                                     else {
+                                        
                                         (response.json() as Promise<Issue>).then(
                                             data => {
                                                 if (data.si3ID == null || data.si3ID.charAt(data.si3ID.length -1) ==";") {
@@ -98,6 +180,8 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
                                                             prioridad_ = "Bloqueadora";
                                                             break
                                                     }
+
+                                                    var tipo_ = this.mapType(data.issuetype);
 
                                                     fetch('api/Si3/Projects')
                                                         .then(response => {
@@ -133,7 +217,7 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
 
                                                     this.setState({
                                                         titulo: data.summary, prioridad: prioridad_,
-                                                        tipo: data.issuetype, responsable: data.assignee, idSi3: data.si3ID
+                                                        tipo: tipo_, responsable: data.assignee, idSi3: data.si3ID
                                                     });
                                                 } else {
                                                     
@@ -169,6 +253,10 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
         this.setState({ moduleSelected: event.currentTarget.value });
     }
 
+    public handleChangeTypes(event: React.FormEvent<HTMLSelectElement>)
+    {
+        this.setState({ tipo: event.currentTarget.value });
+    }
     public vincularProyecto() {
 
         this.setState({loading: true});
@@ -294,7 +382,7 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
         
     }
     public renderInformación() {
-        
+        console.log(this.state.tipo);
         return (
 
             <div style={{
@@ -312,8 +400,17 @@ export class VincularTarea extends React.Component<VincularTareaProps, VincularS
                         <hr></hr>
                         <p className="ptext"><b>Título Jira :</b> {this.state.titulo} </p>
                         <p className="ptext"><b>Prioridad :</b> {this.state.prioridad}</p>
-                        <p className="ptext"><b>Tipo : </b>{this.state.tipo}</p>
                         <p className="ptext"><b>Responsable : </b>{this.state.responsable}</p>
+                        <label className="ptext"><b>Tipo : </b></label>
+                        <select className="custom-select" onChange={this.handleChangeTypes}>
+                            {
+                                this.state.types.map(type =>
+                                    <option key={type.cod} value={type.name} selected={type.name == this.state.tipo}>
+                                        {type.name}
+                                    </option>
+                                )
+                            }
+                        </select><br></br>
                         <label className="ptext">Producto : </label>
                         <select className="custom-select" onChange={this.handleChangeProducts} >
                             <option value="default" selected={true}>Seleccione un producto</option>

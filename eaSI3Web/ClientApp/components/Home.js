@@ -76,25 +76,26 @@ var Home = /** @class */ (function (_super) {
             }
             else
                 response.json().then(function (data) {
-                    if (data.weekJiraIssues.length == 0) {
-                        _this.setState({ loadingJira: false, loadedJira: false, loading: false, popup: true, popup_error: true, popup_data: ["No hay tareas en Jira"] });
-                    }
-                    else {
-                        fetch('api/Si3/AvailableHours?selectedWeek=' + _this.state.selectedWeek).then(function (response) {
-                            if (!response.ok) {
-                                response.text().then(function (data) {
-                                    _this.setState({ loadingJira: false, loading: false, popup: true, popup_error: true, popup_data: [data] });
-                                });
-                            }
-                            else {
-                                response.json().then(function (data) {
-                                    _this.setState({ availableHours: 40 - data, loading: false, loadedJira: true });
-                                    _this.isDisabledBtnSi3();
-                                });
-                            }
-                        });
-                        _this.setState({ Weekissues: data.weekJiraIssues });
-                    }
+                    // if (data.weekJiraIssues.length == 0) {
+                    //      this.setState({ loadingJira: false, loadedJira: false, loading: false, popup: true, popup_error: true, popup_data: ["No hay tareas en Jira"] });
+                    // }
+                    // else {
+                    fetch('api/Si3/AvailableHours?selectedWeek=' + _this.state.selectedWeek).then(function (response) {
+                        if (!response.ok) {
+                            response.text().then(function (data) {
+                                _this.setState({ loadingJira: false, loading: false, popup: true, popup_error: true, popup_data: [data] });
+                                _this.isDisabledBtnSi3();
+                            });
+                        }
+                        else {
+                            response.json().then(function (data) {
+                                _this.setState({ availableHours: 40 - data, loading: false, loadedJira: true });
+                                _this.isDisabledBtnSi3();
+                            });
+                        }
+                    });
+                    _this.setState({ Weekissues: data.weekJiraIssues });
+                    // }
                 });
         })
             .catch(function (error) {

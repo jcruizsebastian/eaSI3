@@ -22,16 +22,18 @@ var Popup = /** @class */ (function (_super) {
         this.props.data.map(function (ax) { return console.log(ax) + "-"; });
         return (React.createElement("div", { className: "popup_alert" },
             React.createElement("div", { className: "popup_inner_alert" },
-                React.createElement("div", { className: "popup_information" },
-                    this.props.error ?
+                React.createElement("div", { className: "popup_information" }, this.props.error ?
+                    React.createElement("div", null,
                         React.createElement("div", null,
                             React.createElement("img", { src: "error.png", width: "200" }),
-                            React.createElement("div", { className: "popup_information_text" }, this.props.data.map(function (ax) { return React.createElement("div", null, ax.toString()); })))
-                        :
+                            React.createElement("div", { className: "popup_information_text" }, this.props.data.map(function (ax) { return React.createElement("div", null, ax.toString()); }))),
+                        React.createElement("button", { onClick: function () { _this.props.closePopup(); }, className: "btn-popup-close-error" }, "Cerrar"))
+                    :
+                        React.createElement("div", null,
                             React.createElement("div", null,
                                 React.createElement("img", { src: "not_error.png", width: "200", className: "img_not_error" }),
                                 React.createElement("div", { className: "popup_information_text" }, this.props.data)),
-                    React.createElement("button", { onClick: function () { _this.props.closePopup(); }, className: "btn-popup-close" }, "Cerrar")))));
+                            React.createElement("button", { onClick: function () { _this.props.closePopup(); }, className: "btn-popup-close" }, "Cerrar"))))));
     };
     return Popup;
 }(React.Component));

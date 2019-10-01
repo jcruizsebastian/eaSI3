@@ -36,6 +36,9 @@ namespace JiraConnector
 
             var response = client.Execute<T>(request);
 
+            if (response.StatusCode == System.Net.HttpStatusCode.BadRequest && response.ErrorMessage.Contains("customfield_10300' cannot be set. It is not on the appropriate screen, or unknown."))
+                throw new InvalidOperationException($"La tarea {queryStringRequest.Split("/")[queryStringRequest.Split("/").Length - 1]} no contiene el campo ID SI3.");
+
             if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
                 throw new InvalidCredentialException("Usuario y/o contraseña de JIRA incorrectos.");
 

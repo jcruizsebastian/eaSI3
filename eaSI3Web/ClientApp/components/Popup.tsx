@@ -17,20 +17,26 @@ export class Popup extends React.Component<PopupAlertProps, {}>{
                     <div className="popup_information">
                         {this.props.error ?
                             <div>
-                                <img src="error.png" width="200" />
-                                <div className="popup_information_text">
-                                    {this.props.data.map(ax => <div>{ax.toString()}</div>)}
+                                <div>
+                                    <img src="error.png" width="200" />
+                                    <div className="popup_information_text">
+                                        {this.props.data.map(ax => <div>{ax.toString()}</div>)}
+                                    </div>
                                 </div>
+                                <button onClick={() => { this.props.closePopup() }} className="btn-popup-close-error">Cerrar</button>
                             </div>
                             :
                             <div>
-                                <img src="not_error.png" width="200" className="img_not_error" />
-                                <div className="popup_information_text">
-                                    {this.props.data}
+                                <div>
+                                    <img src="not_error.png" width="200" className="img_not_error" />
+                                    <div className="popup_information_text">
+                                        {this.props.data}
+                                    </div>
                                 </div>
+                                <button onClick={() => { this.props.closePopup() }} className="btn-popup-close">Cerrar</button>
                             </div>
                         }
-                        <button onClick={() => { this.props.closePopup() }} className="btn-popup-close">Cerrar</button>
+                        
                     </div>
                     
                 </div>

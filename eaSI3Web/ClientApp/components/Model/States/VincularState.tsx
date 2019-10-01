@@ -1,6 +1,7 @@
 ﻿import { Product } from '../Product'
 import { Project } from '../Project';
 import { Milestones } from '../Milestones';
+import { Type } from '../Type';
 
 export interface VincularState {
     products: Product[]
@@ -24,4 +25,5 @@ export interface VincularState {
     popup: boolean;
     popup_error: boolean;
     popup_data: String[];
+    types: Type[];
 }
