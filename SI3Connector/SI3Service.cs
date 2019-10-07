@@ -489,8 +489,8 @@ namespace SI3Connector
         public void Submit(int weekNumber)
         {
             var spendedHours = SpendedHours(weekNumber).Sum(x => x.Value);
-            if (spendedHours != _workHours)
-                throw new SI3Exception($"No se pueden consignar menos de {_workHours} horas.");
+            //if (spendedHours != _workHours)
+            //    throw new SI3Exception($"No se pueden consignar menos de {_workHours} horas.");
 
             var weekCode = GetWeekCode(weekNumber);
 

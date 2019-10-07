@@ -522,8 +522,11 @@ namespace eaSI3Web.Controllers
                     week.Issues.ForEach(x => x.IssueSI3Code = x.IssueSI3Code.Trim().Split(';')[x.IssueSI3Code.Trim().Split(';').Length -1].Trim());
                 }
 
-                if (!model.SelectMany(x => x.Issues).Any())
-                    throw new Exception("No existen tareas con id de SI a imputar.");
+                if (submit && !model.SelectMany(x => x.Issues).Any())
+                {
+                    SI3Service.Submit(weekNumber);
+                    return Ok();
+                }
 
                 var a = ValidarImputación(SI3Service, model);
                 a.Wait();
@@ -586,13 +589,6 @@ namespace eaSI3Web.Controllers
                 logger.Error("Username: " + user.SI3UserName + " ,Error: " + e.Message);
                 bdStatistics.AddWorkTracking(user.SI3UserName, weekNumber, totalHours, 1, e.Message);
                 return StatusCode(400, e.errors);
-            }
-            catch (Exception e)
-            {
-                logger.Error("Username: " + user.SI3UserName + " ,Error: " + e.Message);
-                bdStatistics.AddWorkTracking(user.SI3UserName, weekNumber, totalHours, 1, e.Message);
-                if (e is InvalidCredentialException) { return StatusCode(401, e.Message); }
-                return StatusCode(400, "Error :" + e.Message);
             }
 
             bdStatistics.AddWorkTracking(user.SI3UserName, weekNumber, totalHours, 0, "Horas imputadas en Si3 correctamente");

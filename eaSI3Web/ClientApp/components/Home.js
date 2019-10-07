@@ -148,6 +148,7 @@ var Home = /** @class */ (function (_super) {
     Home.prototype.onLoginSi3 = function (e) {
         var _this = this;
         e.preventDefault();
+        var mensaje = true;
         // si el radio button está seleccionado o no
         var submit = this.refs["submitRadioBtn"].checked;
         this.setState({ loading: true });
@@ -161,40 +162,47 @@ var Home = /** @class */ (function (_super) {
                 total += Number(Issue.tiempo);
             }
         }
-        fetch('api/Si3/AvailableHours?selectedWeek=' + this.state.selectedWeek).then(function (response) {
-            if (!response.ok) {
-                response.text().then(function (data) {
-                    _this.setState({ loading: false, popup: true, popup_error: true, popup_data: [data] });
-                });
-            }
-            else {
-                response.json().then(function (data) {
-                    if ((40 - data) != _this.state.availableHours) {
-                        _this.setState({ availableHours: 40 - data, loading: false, popup: true, popup_error: true, popup_data: ["Se han imputador horas en Si3 mientras utilizabas eaSI3"] });
-                    }
-                    else {
-                        fetch('api/SI3/register?selectedWeek=' + _this.state.selectedWeek + '&totalHours=' + total + '&submit=' + submit, {
-                            method: 'post',
-                            body: JSON.stringify(agenda.props.weekissues),
-                            headers: {
-                                'Accept': 'application/json',
-                                'Content-Type': 'application/json'
-                            },
-                        })
-                            .then(function (response) {
-                            if (!response.ok) {
-                                response.json().then(function (data) {
-                                    _this.setState({ loading: false, popup: true, popup_error: true, popup_data: data });
-                                });
-                            }
-                            else {
-                                _this.setState({ loading: false, todoOk: true, popup: true, popup_error: false, popup_data: ["Horas imputadas correctamente"] });
-                            }
-                        });
-                    }
-                });
-            }
-        });
+        if (total < 40 && submit) {
+            mensaje = confirm("¿Estas seguro de que quieres hacer submit de " + total + " horas?");
+        }
+        if (mensaje) {
+            fetch('api/Si3/AvailableHours?selectedWeek=' + this.state.selectedWeek).then(function (response) {
+                if (!response.ok) {
+                    response.text().then(function (data) {
+                        _this.setState({ loading: false, popup: true, popup_error: true, popup_data: [data] });
+                    });
+                }
+                else {
+                    response.json().then(function (data) {
+                        if ((40 - data) != _this.state.availableHours) {
+                            _this.setState({ availableHours: 40 - data, loading: false, popup: true, popup_error: true, popup_data: ["Se han imputador horas en Si3 mientras utilizabas eaSI3"] });
+                        }
+                        else {
+                            fetch('api/SI3/register?selectedWeek=' + _this.state.selectedWeek + '&totalHours=' + total + '&submit=' + submit, {
+                                method: 'post',
+                                body: JSON.stringify(agenda.props.weekissues),
+                                headers: {
+                                    'Accept': 'application/json',
+                                    'Content-Type': 'application/json'
+                                },
+                            }).then(function (response) {
+                                if (!response.ok) {
+                                    response.json().then(function (data) {
+                                        _this.setState({ loading: false, popup: true, popup_error: true, popup_data: data });
+                                    });
+                                }
+                                else {
+                                    _this.setState({ loading: false, todoOk: true, popup: true, popup_error: false, popup_data: ["Horas imputadas correctamente"] });
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
+        else {
+            this.setState({ loading: false });
+        }
     };
     Home.prototype.isTodoOk = function (val) { this.setState({ todoOk: val }); };
     Home.prototype.closePopup = function () {
@@ -217,7 +225,7 @@ var Home = /** @class */ (function (_super) {
         if (this.state.loadedJira) {
             agenda = React.createElement(Agenda, { weekissues: this.state.Weekissues, ref: "agenda1", isTodoOk: this.isTodoOk, availableHours: this.state.availableHours });
             si3 = React.createElement("div", { className: "container-si3" },
-                React.createElement("input", { id: "radiobtn", className: "form-check-input", type: "radio", ref: "submitRadioBtn", value: "option1" }),
+                React.createElement("input", { id: "checkbox", className: "form-check-input", type: "checkbox", ref: "submitRadioBtn", value: "option1" }),
                 React.createElement("label", { className: "form-check-label" }, "Submit en Si3"),
                 React.createElement("br", null),
                 React.createElement("input", { type: "button", className: "btnSi3", value: "Enviar a Si3", disabled: this.state.todoOk, onClick: this.onLoginSi3 }));

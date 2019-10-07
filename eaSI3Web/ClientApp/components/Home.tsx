@@ -161,6 +161,8 @@ export class Home extends React.Component<{}, UserCredentialsState> {
 
     private onLoginSi3(e: { preventDefault: () => void; }) {
         e.preventDefault();
+
+        var mensaje = true;
         // si el radio button está seleccionado o no
         var submit = (this.refs["submitRadioBtn"] as HTMLInputElement).checked;
 
@@ -175,41 +177,46 @@ export class Home extends React.Component<{}, UserCredentialsState> {
             }
         }
 
-        fetch('api/Si3/AvailableHours?selectedWeek=' + this.state.selectedWeek).then(response => {
-            if (!response.ok) {
-                (response.text() as Promise<String>).then(
-                    data => {
-                        this.setState({ loading: false,popup: true, popup_error: true, popup_data: [data] });
-                    }
-                );
-            } else {
-                (response.json() as Promise<number>).then(data => {
-                    if ((40 - data) != this.state.availableHours) {
-                        this.setState({ availableHours: 40 - data, loading: false, popup: true, popup_error: true, popup_data: ["Se han imputador horas en Si3 mientras utilizabas eaSI3"] });
-                    } else {
-                        fetch('api/SI3/register?selectedWeek=' + this.state.selectedWeek + '&totalHours=' + total + '&submit=' + submit, {
-                            method: 'post',
-                            body: JSON.stringify(agenda.props.weekissues),
-                            headers: {
-                                'Accept': 'application/json',
-                                'Content-Type': 'application/json'
-                            },
-                        })
-                            .then(response => {
+        if (total < 40 && submit) {
+            mensaje = confirm("¿Estas seguro de que quieres hacer submit de " + total + " horas?");
+        }
+
+        if (mensaje) {
+            fetch('api/Si3/AvailableHours?selectedWeek=' + this.state.selectedWeek).then(response => {
+                if (!response.ok) {
+                    (response.text() as Promise<String>).then(
+                        data => {
+                            this.setState({ loading: false, popup: true, popup_error: true, popup_data: [data] });
+                        }
+                    );
+                } else {
+                    (response.json() as Promise<number>).then(data => {
+                        if ((40 - data) != this.state.availableHours) {
+                            this.setState({ availableHours: 40 - data, loading: false, popup: true, popup_error: true, popup_data: ["Se han imputador horas en Si3 mientras utilizabas eaSI3"] });
+                        } else {
+                            fetch('api/SI3/register?selectedWeek=' + this.state.selectedWeek + '&totalHours=' + total + '&submit=' + submit, {
+                                method: 'post',
+                                body: JSON.stringify(agenda.props.weekissues),
+                                headers: {
+                                    'Accept': 'application/json',
+                                    'Content-Type': 'application/json'
+                                },
+                            }).then(response => {
                                 if (!response.ok) {
-                                    (response.json() as Promise<string[]>).then(data =>
-                                    {
+                                    (response.json() as Promise<String[]>).then(data => {
                                         this.setState({ loading: false, popup: true, popup_error: true, popup_data: data });
                                     });
                                 } else {
-                                    this.setState({ loading: false, todoOk: true, popup:true, popup_error: false, popup_data:["Horas imputadas correctamente"] });                                                                     
+                                    this.setState({ loading: false, todoOk: true, popup: true, popup_error: false, popup_data: ["Horas imputadas correctamente"] });
                                 }
                             });
-                    }
-                });
-            }
-        });
-
+                        }
+                    });
+                }
+            });
+        } else {
+            this.setState({ loading: false });
+        }
 
     }
 
@@ -245,7 +252,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
 
             agenda = <Agenda weekissues={this.state.Weekissues} ref="agenda1" isTodoOk={this.isTodoOk} availableHours={this.state.availableHours} />
             si3 = <div className="container-si3">
-                <input id="radiobtn" className="form-check-input" type="radio" ref="submitRadioBtn" value="option1" />
+                <input id="checkbox" className="form-check-input" type="checkbox" ref="submitRadioBtn" value="option1" />
                 <label className="form-check-label">
                     Submit en Si3
                 </label>
