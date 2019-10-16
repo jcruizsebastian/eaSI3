@@ -154,7 +154,7 @@ var Home = /** @class */ (function (_super) {
         this.setState({ loading: true });
         var agenda = this.refs["agenda1"];
         var total = 0;
-        var WeekJiraIssues = agenda.state.weekissues;
+        var WeekJiraIssues = agenda.props.weekissues;
         for (var _i = 0, WeekJiraIssues_2 = WeekJiraIssues; _i < WeekJiraIssues_2.length; _i++) {
             var weekIssue = WeekJiraIssues_2[_i];
             for (var _a = 0, _b = weekIssue.issues; _a < _b.length; _a++) {

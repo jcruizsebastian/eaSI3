@@ -170,7 +170,7 @@ export class Home extends React.Component<{}, UserCredentialsState> {
 
         let agenda = (this.refs["agenda1"] as React.Component<WeekJiraIssuesProps, AgendaState>);
         let total = 0;
-        let WeekJiraIssues = agenda.state.weekissues;
+        let WeekJiraIssues = agenda.props.weekissues;
         for (let weekIssue of WeekJiraIssues) {
             for (let Issue of weekIssue.issues) {
                 total += Number(Issue.tiempo);
