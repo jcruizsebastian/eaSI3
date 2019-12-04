@@ -159,7 +159,7 @@ namespace eaSI3Web.Controllers
             }
             catch (Exception e)
             {
-                logger.Error("Usuario : " + user.JiraUserName + " Semana Elegida : " + selectedWeek + "Error : " + e.Message);
+                logger.Error(e, "Usuario : " + user.JiraUserName + " Semana Elegida : " + selectedWeek + "Error : " + e.Message);
                 if (e is InvalidCredentialException || e is UnauthorizedAccessException || e is InvalidOperationException)
                     return StatusCode(401, e.Message);
 
@@ -188,7 +188,7 @@ namespace eaSI3Web.Controllers
             }
             catch (Exception e)
             {
-                logger.Error("Username: " + user.JiraUserName + " ,Issue: " + jiraKey + " ,Error: " + e.Message);
+                logger.Error(e, "Username: " + user.JiraUserName + " ,Issue: " + jiraKey + " ,Error: " + e.Message);
                 bdStatistics.AddIssueCreation(user.JiraUserName, jiraKey, jiraIssue.si3ID, 1, e.Message);
                 if (e is InvalidCredentialException || e is UnauthorizedAccessException || e is InvalidOperationException)
                     return StatusCode(401, e.Message);
@@ -233,7 +233,7 @@ namespace eaSI3Web.Controllers
             }
             catch (Exception e)
             {
-                logger.Error("Username: " + user.JiraUserName + " ,Error: " + e.Message);
+                logger.Error(e, "Username: " + user.JiraUserName + " ,Error: " + e.Message);
                 if (e is InvalidCredentialException || e is UnauthorizedAccessException || e is InvalidOperationException)
                     return StatusCode(401, e.Message);
             }
@@ -249,7 +249,7 @@ namespace eaSI3Web.Controllers
             }
             catch (Exception e)
             {
-                logger.Error("Username: " + bodyData.usernameJira + " ,Error: " + e.Message);
+                logger.Error(e, "Username: " + bodyData.usernameJira + " ,Error: " + e.Message);
                 if (e is InvalidCredentialException || e is UnauthorizedAccessException || e is InvalidOperationException)
                     return StatusCode(401, e.Message);
 
@@ -299,7 +299,7 @@ namespace eaSI3Web.Controllers
             }
             catch (Exception e)
             {
-                logger.Error("Username: " + user.JiraUserName + " ,Error: " + e.Message);
+                logger.Error(e, "Username: " + user.JiraUserName + " ,Error: " + e.Message);
                 bdStatistics.AddIssueCreation(user.JiraUserName, jiraKey, key, 1, e.Message);
 
                 if (e is InvalidCredentialException || e is UnauthorizedAccessException || e is InvalidOperationException)
@@ -331,7 +331,7 @@ namespace eaSI3Web.Controllers
             }
             catch (Exception e)
             {
-                logger.Error("Username: " + user.JiraUserName + " ,Error: " + e.Message);
+                logger.Error(e, "Username: " + user.JiraUserName + " ,Error: " + e.Message);
                 bdStatistics.AddIssueCreation(user.JiraUserName, jirakey, issueKey, 1, e.Message);
 
                 if (e is InvalidCredentialException || e is UnauthorizedAccessException || e is InvalidOperationException)

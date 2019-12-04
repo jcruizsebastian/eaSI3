@@ -99,7 +99,7 @@ namespace eaSI3Web.Controllers
                     }
                 }
             } catch (InvalidCredentialException e) {
-                logger.Error("Username: " + user.SI3UserName + " ,Error: " + e.Message);
+                logger.Error(e, "Username: " + user.SI3UserName + " ,Error: " + e.Message);
                 return StatusCode(401, e.Message);
             }
             
@@ -165,7 +165,7 @@ namespace eaSI3Web.Controllers
             }
             catch (InvalidCredentialException e)
             {
-                logger.Error("Error: " + e.Message);
+                logger.Error(e, "Error: " + e.Message);
                 return StatusCode(401, e.Message);
             }
 
@@ -191,7 +191,7 @@ namespace eaSI3Web.Controllers
             }
             catch (InvalidCredentialException e)
             {
-                logger.Error("Username: " + user.SI3UserName + " ,Error: " + e.Message);
+                logger.Error(e, "Username: " + user.SI3UserName + " ,Error: " + e.Message);
                 return StatusCode(401, e.Message);
             }
         }
@@ -218,7 +218,7 @@ namespace eaSI3Web.Controllers
             }
             catch (InvalidCredentialException e)
             {
-                logger.Error("Username: " + user.JiraUserName + " ,Error: " + e.Message);
+                logger.Error(e, "Username: " + user.JiraUserName + " ,Error: " + e.Message);
                 return StatusCode(401, e.Message);
             }
 
@@ -241,7 +241,7 @@ namespace eaSI3Web.Controllers
             }
             catch (InvalidCredentialException e)
             {
-                logger.Error("Username: " +bodyData.usernameJira + " ,Error: " + e.Message);
+                logger.Error(e, "Username: " +bodyData.usernameJira + " ,Error: " + e.Message);
                 return StatusCode(401, e.Message);
             }
 
@@ -391,7 +391,7 @@ namespace eaSI3Web.Controllers
             }
             catch (InvalidCredentialException e)
             {
-                logger.Error("Username: " + user.SI3UserName + " ,Error: " + e.Message);
+                logger.Error(e, "Username: " + user.SI3UserName + " ,Error: " + e.Message);
                 return StatusCode(401, e.Message);
             }
             return NewIssue;
@@ -448,7 +448,7 @@ namespace eaSI3Web.Controllers
             }
             catch (InvalidCredentialException e)
             {
-                logger.Error("Username: " + user.SI3UserName + " ,Error: " + e.Message);
+                logger.Error(e, "Username: " + user.SI3UserName + " ,Error: " + e.Message);
                 return StatusCode(401,e.Message);
             }
 
@@ -586,7 +586,7 @@ namespace eaSI3Web.Controllers
             }
             catch (SI3Exception e)
             {
-                logger.Error("Username: " + user.SI3UserName + " ,Error: " + e.Message);
+                logger.Error(e, "Username: " + user.SI3UserName + " ,Error: " + e.Message);
                 bdStatistics.AddWorkTracking(user.SI3UserName, weekNumber, totalHours, 1, e.Message);
                 return StatusCode(400, e.errors);
             }

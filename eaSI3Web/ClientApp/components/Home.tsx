@@ -203,9 +203,14 @@ export class Home extends React.Component<{}, UserCredentialsState> {
                                 },
                             }).then(response => {
                                 if (!response.ok) {
-                                    (response.json() as Promise<String[]>).then(data => {
-                                        this.setState({ loading: false, popup: true, popup_error: true, popup_data: data });
-                                    });
+                                    if (response.status == 502) {
+                                        this.setState({ loading: false, popup: true, popup_error: true, popup_data: ["Error de saturación"] });
+                                    }
+                                    else {
+                                        (response.json() as Promise<String[]>).then(data => {
+                                            this.setState({ loading: false, popup: true, popup_error: true, popup_data: data });
+                                        });
+                                    }                                    
                                 } else {
                                     this.setState({ loading: false, todoOk: true, popup: true, popup_error: false, popup_data: ["Horas imputadas correctamente"] });
                                 }
