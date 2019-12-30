@@ -7,5 +7,7 @@
         public string SI3UserName { get; set; }
         public byte[] Password_Encrypted { get; set; }
         public byte[] PasswordSi3_Encrypted { get; set; }
+        public int CodUser { get; set; }
+        public string Name { get; set; }
     }
 }

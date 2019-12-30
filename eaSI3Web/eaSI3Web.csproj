@@ -32,6 +32,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20191220075618_CodUserAdded.cs" />
+    <Compile Remove="Migrations\20191220075618_CodUserAdded.Designer.cs" />
+    <Compile Remove="Migrations\20191220075806_CodUserAdded.cs" />
+    <Compile Remove="Migrations\20191220075806_CodUserAdded.Designer.cs" />
+    <Compile Remove="Migrations\20191220080410_CodUserAdded.cs" />
+    <Compile Remove="Migrations\20191220080410_CodUserAdded.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="ClientApp\components\Agenda.tsx" />
     <None Remove="ClientApp\components\Cube.tsx" />
     <None Remove="ClientApp\components\LoginGeneral.tsx" />
@@ -40,6 +49,7 @@
     <None Remove="ClientApp\components\Model\Component.tsx" />
     <None Remove="ClientApp\components\Model\Issue.tsx" />
     <None Remove="ClientApp\components\Model\JiraIssues.tsx" />
+    <None Remove="ClientApp\components\Model\LoginJira.tsx" />
     <None Remove="ClientApp\components\Model\Milestone.tsx" />
     <None Remove="ClientApp\components\Model\Milestones.tsx" />
     <None Remove="ClientApp\components\Model\Milestonetsx.tsx" />
@@ -52,6 +62,7 @@
     <None Remove="ClientApp\components\Model\Props\VincularTareaProps.tsx" />
     <None Remove="ClientApp\components\Model\States\AgendaState.tsx" />
     <None Remove="ClientApp\components\Model\States\LayoutState.tsx" />
+    <None Remove="ClientApp\components\Model\States\LoginJiraState.tsx" />
     <None Remove="ClientApp\components\Model\States\LoginState.tsx" />
     <None Remove="ClientApp\components\Model\States\PopupAlertState.tsx" />
     <None Remove="ClientApp\components\Model\States\PopupState.tsx" />
@@ -82,6 +93,7 @@
     <TypeScriptCompile Include="ClientApp\components\Model\Component.tsx" />
     <TypeScriptCompile Include="ClientApp\components\Model\Issue.tsx" />
     <TypeScriptCompile Include="ClientApp\components\Model\JiraIssues.tsx" />
+    <TypeScriptCompile Include="ClientApp\components\LoginJira.tsx" />
     <TypeScriptCompile Include="ClientApp\components\Model\Milestone.tsx" />
     <TypeScriptCompile Include="ClientApp\components\Model\Milestones.tsx" />
     <TypeScriptCompile Include="ClientApp\components\Model\Module.tsx" />
@@ -93,6 +105,7 @@
     <TypeScriptCompile Include="ClientApp\components\Model\Props\VincularTareaProps.tsx" />
     <TypeScriptCompile Include="ClientApp\components\Model\States\AgendaState.tsx" />
     <TypeScriptCompile Include="ClientApp\components\Model\States\LayoutState.tsx" />
+    <TypeScriptCompile Include="ClientApp\components\Model\States\LoginJiraState.tsx" />
     <TypeScriptCompile Include="ClientApp\components\Model\States\LoginState.tsx" />
     <TypeScriptCompile Include="ClientApp\components\Model\States\PopupState.tsx" />
     <TypeScriptCompile Include="ClientApp\components\Model\States\UserCredentialsState.tsx" />

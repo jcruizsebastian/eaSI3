@@ -38,12 +38,31 @@ namespace eaSI3Web.Controllers.UsageStatistics
                 //_context.SaveChanges();
             }
         }
-
+        public void SetCodUser(int codUser, int User, string name)
+        {
+            User user = GetUser(User);
+            if (user.CodUser != codUser || user.Name != name)
+            {
+                user.CodUser = codUser;
+                user.Name = name;
+                _context.Update(user);
+                _context.SaveChanges();
+            }
+        }
         public int GetUserId(string usernameSi3)
         {
             var users = from u in _context.Users where u.SI3UserName.Equals(usernameSi3) select u;
             return users.First().UserId;
         }
+        public bool ExistUser(int user)
+        {
+            var users = from u in _context.Users where u.UserId == user select u;
+            if (users.Count() > 0)
+                    return true;
+
+            return false;                        
+        }
+        
         public User GetUser(int id)
         {
             var users = from u in _context.Users where u.UserId == id select u;

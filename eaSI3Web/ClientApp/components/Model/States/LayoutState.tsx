@@ -3,4 +3,5 @@
     cookiesOk: boolean;
     name: string;
     loaded: boolean;
+    registered: boolean;
 }

@@ -81,8 +81,6 @@ namespace eaSI3Web.Controllers
 
                 string description = day.Day + "/" + day.Month + "/" + intYear + " to " + (intDay + aSumar) + "/" + intMonth + "/" + year;
 
-                if (year <= DateTime.Now.Year)
-                {
                     CalendarWeeks calendarWeek = new CalendarWeeks()
                     {
                         numberWeek = i + 1,
@@ -99,7 +97,7 @@ namespace eaSI3Web.Controllers
                     }
 
                     calendar.Weeks.Add(calendarWeek);
-                }
+                
                 intDay += aSumar + 1;
                 if (intDay > CultureInfo.InvariantCulture.Calendar.GetDaysInMonth(DateTime.Now.Year, day.Month))
                 {
@@ -203,6 +201,44 @@ namespace eaSI3Web.Controllers
             return jiraIssue;
 
         }
+        [HttpGet("[action]")]
+        public ActionResult ExistsUser()
+        {
+            var idUser = int.MinValue;
+
+            if (Request.Cookies.ContainsKey("userId"))
+            {
+                var cookie = Request.Cookies.First(x => x.Key == "userId");
+                idUser = int.Parse(cookie.Value);                
+            }
+            else
+            {
+                return StatusCode(400, "Por favor, inicia sesión de nuevo");
+            }
+
+            if (IsRegistered(idUser) && CheckUser(idUser))
+                return Ok();
+
+            return StatusCode(400, "Por favor, inicia sesión de nuevo");
+        }
+        public bool IsRegistered(int user)
+        {
+            BdStatistics bdStatistics = new BdStatistics(_context);
+            bool exists = bdStatistics.ExistUser(user);
+            return exists;
+        }
+
+        public bool CheckUser(int userId)
+        {
+            BdStatistics bd = new BdStatistics(_context);
+            eaSI3Web.Models.User user = bd.GetUser(userId);
+
+            if (user.Name == null || user.CodUser == 0) 
+                    return false;
+
+            return true;
+        }
+
         [HttpPost("[action]")]
         public ActionResult ValidateLogin()
         {
@@ -232,7 +268,7 @@ namespace eaSI3Web.Controllers
                 JiraWorkLogService jiraWorkLogService = new JiraWorkLogService(user.JiraUserName, bdStatistics.DecryptJiraPassword(user.JiraUserName), data.Value.Jira_Host_URL);
             }
             catch (Exception e)
-            {
+            {                
                 logger.Error(e, "Username: " + user.JiraUserName + " ,Error: " + e.Message);
                 if (e is InvalidCredentialException || e is UnauthorizedAccessException || e is InvalidOperationException)
                     return StatusCode(401, e.Message);
@@ -367,6 +403,26 @@ namespace eaSI3Web.Controllers
             }
 
             return weekJiraIssues.OrderBy(d => d.Fecha);
+        }
+        [HttpGet("[action]")]
+        public ActionResult<string> GetUserName()
+        {
+            var cookie = Request.Cookies.First(x => x.Key == "userId");
+            var idUser = cookie.Value;
+
+            BdStatistics bdStatistics = new BdStatistics(_context);
+            eaSI3Web.Models.User user = bdStatistics.GetUser(int.Parse(idUser));
+            return user.Name;
+        }
+        [HttpGet("[action]")]
+        public ActionResult<int> GetCodUser()
+        {
+            var cookie = Request.Cookies.First(x => x.Key == "userId");
+            var idUser = cookie.Value;
+
+            BdStatistics bdStatistics = new BdStatistics(_context);
+            eaSI3Web.Models.User user = bdStatistics.GetUser(int.Parse(idUser));
+            return user.CodUser;
         }
 
     }

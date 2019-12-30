@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using eaSI3Web.Models;
 
 namespace eaSI3Web.Migrations
 {
     [DbContext(typeof(StatisticsContext))]
-    partial class StatisticsContextModelSnapshot : ModelSnapshot
+    [Migration("20191220092312_CodUserAdded")]
+    partial class CodUserAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -70,8 +72,6 @@ namespace eaSI3Web.Migrations
                     b.Property<int>("CodUser");
 
                     b.Property<string>("JiraUserName");
-
-                    b.Property<string>("Name");
 
                     b.Property<byte[]>("PasswordSi3_Encrypted");
 

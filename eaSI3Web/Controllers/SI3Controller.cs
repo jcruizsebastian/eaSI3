@@ -503,6 +503,14 @@ namespace eaSI3Web.Controllers
             return Ok();
         }
         [HttpPost("[action]")]
+        public ActionResult SetCodUser([FromBody] BodyUser body)
+        {
+            BdStatistics bdStatistics = new BdStatistics(_context);
+            bdStatistics.SetCodUser(body.CodUser, body.User, body.Name);
+            return Ok();
+        }
+
+        [HttpPost("[action]")]
         public ActionResult Register([FromQuery]string selectedWeek, [FromQuery]int totalHours, [FromBody]IEnumerable<WeekJiraIssues> model, bool submit)
         {
             var cookie = Request.Cookies.First(x => x.Key == "userId");
@@ -586,8 +594,11 @@ namespace eaSI3Web.Controllers
             }
             catch (SI3Exception e)
             {
-                logger.Error(e, "Username: " + user.SI3UserName + " ,Error: " + e.Message);
-                bdStatistics.AddWorkTracking(user.SI3UserName, weekNumber, totalHours, 1, e.Message);
+                e.errors.ToList().ForEach(error => {
+                    logger.Error(e, "Username: " + user.SI3UserName + " ,Error: " + error);
+                    bdStatistics.AddWorkTracking(user.SI3UserName, weekNumber, totalHours, 1, error);
+                });
+
                 return StatusCode(400, e.errors);
             }
 

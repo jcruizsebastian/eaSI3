@@ -49,6 +49,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 import * as React from 'react';
 import { LoginGeneral } from './LoginGeneral';
 import { Link } from 'react-router-dom';
+import { LoginJira } from './LoginJira';
 var Layout = /** @class */ (function (_super) {
     __extends(Layout, _super);
     function Layout(props) {
@@ -58,7 +59,7 @@ var Layout = /** @class */ (function (_super) {
         _this.logout = _this.logout.bind(_this);
         _this.validate = _this.validate.bind(_this);
         _this.setCookie = _this.setCookie.bind(_this);
-        _this.state = { logged: false, cookiesOk: false, name: "", loaded: false };
+        _this.state = { logged: false, cookiesOk: false, name: "", loaded: false, registered: true };
         return _this;
     }
     Layout.prototype.componentDidMount = function () {
@@ -112,9 +113,16 @@ var Layout = /** @class */ (function (_super) {
             .then(function (response) {
             if (!response.ok) {
                 response.text().then(function (data) {
-                    alert(data);
-                    _this.setState({ loaded: true, cookiesOk: false });
-                    _this.logout();
+                    fetch('/api/Jira/ExistsUser').then(function (response) {
+                        if (!response.ok) {
+                            alert(data);
+                            _this.setState({ loaded: true, cookiesOk: false });
+                            _this.logout();
+                        }
+                        else {
+                            _this.setState({ loaded: true, cookiesOk: false, registered: true });
+                        }
+                    });
                 });
             }
             else {
@@ -173,6 +181,9 @@ var Layout = /** @class */ (function (_super) {
                             React.createElement("label", { id: "name" }, name))),
                     React.createElement("div", { className: 'row' },
                         React.createElement("div", { className: 'container-fluid-navmenu' }, this.props.children)));
+            }
+            else if (this.state.registered) {
+                home = React.createElement(LoginJira, { onLogin: this.onLogin });
             }
             else {
                 home = React.createElement(LoginGeneral, { onLogin: this.onLogin });

@@ -4,6 +4,7 @@ import { LoginGeneral } from './LoginGeneral';
 import { LayoutState } from './Model/States/LayoutState';
 import { NavMenu } from './NavMenu';
 import { Link } from 'react-router-dom';
+import { LoginJira } from './LoginJira';
 
 export interface LayoutProps {
     children?: React.ReactNode;
@@ -19,7 +20,7 @@ export class Layout extends React.Component<LayoutProps, LayoutState> {
         this.validate = this.validate.bind(this);
         this.setCookie = this.setCookie.bind(this);
 
-        this.state = { logged: false, cookiesOk: false, name: "", loaded: false };
+        this.state = { logged: false, cookiesOk: false, name: "", loaded: false, registered: true };
     }
     async componentDidMount() {
         await this.validate();
@@ -67,9 +68,16 @@ export class Layout extends React.Component<LayoutProps, LayoutState> {
                 if (!response.ok) {
                     (response.text() as Promise<String>).then(data =>
                     {
-                        alert(data);
-                        this.setState({ loaded: true, cookiesOk: false });
-                        this.logout();
+                        fetch('/api/Jira/ExistsUser').then(response => {
+                            if (!response.ok) {
+                                alert(data);
+                                this.setState({ loaded: true, cookiesOk: false });
+                                this.logout();
+                            } else {
+                                this.setState({ loaded: true, cookiesOk: false, registered: true });
+                            }
+                        });
+
                     });
                 } else {
 
@@ -143,6 +151,8 @@ export class Layout extends React.Component<LayoutProps, LayoutState> {
                     </div>
 
                 </div>
+            } else if (this.state.registered) {
+                home = <LoginJira onLogin={this.onLogin} />
             } else { home = <LoginGeneral onLogin={this.onLogin} /> }
         }
         

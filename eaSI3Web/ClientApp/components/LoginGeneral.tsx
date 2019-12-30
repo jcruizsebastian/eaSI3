@@ -6,6 +6,7 @@ import '../css/logingeneral.css';
 import { LoginProps } from './Model/Props/LoginProps';
 import { LoginState } from './Model/States/LoginState';
 import { User } from './Model/User';
+import { Cube } from './Cube';
 
 export class LoginGeneral extends React.Component<LoginProps, LoginState> {
     constructor(props: any) {
@@ -91,8 +92,17 @@ export class LoginGeneral extends React.Component<LoginProps, LoginState> {
 
         var codUserSi3 = (this.refs["tbCodUserSi3"] as HTMLSelectElement).value;
         var name = (((this.refs["tbCodUserSi3"] as HTMLSelectElement).children.item((this.refs["tbCodUserSi3"] as HTMLSelectElement).selectedIndex)) as HTMLOptionElement).innerText;
-
+        
         if (this.state.userJiraLoaded && this.state.userSi3Loaded && codUserSi3 != "default") {
+            
+            fetch('api/Si3/SetCodUser', {
+                method: 'post',
+                body: JSON.stringify({ CodUser: codUserSi3, User: idUser, Name: name }),
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+            });
 
             this.setState({ loading: false });
             var expiration_date = new Date();
@@ -100,8 +110,6 @@ export class LoginGeneral extends React.Component<LoginProps, LoginState> {
 
             document.cookie = "userId=" + idUser + "; path=/;" + "expires=" + expiration_date;
             document.cookie = "codUserSi3=" + codUserSi3 + "; path=/;" + "expires=" + expiration_date;
-
-
             this.props.onLogin(name);
 
         } else { this.setState({ loading: false });}
@@ -112,10 +120,14 @@ export class LoginGeneral extends React.Component<LoginProps, LoginState> {
         return (
             <div className="bodyLogin">
                 <form className="formulario" onSubmit={this.handleSubmit}>
-                    <img src="logo_open.png" width="200" height="75" className="img" />
-                    <div><label id="labelForm">Usuario de Jira : <input type="text" name="name" ref="tbUserJira" placeholder="Introduzca usuario de Jira" autoComplete="off" /></label></div>
-                    <div><label id="labelForm">Contraseña de Jira : <input type="password" name="name" ref="tbPassJira" placeholder="Introduzca contraseña de Jira" autoComplete="off" /></label></div>
-                    <div><label id="labelForm">Nombre de usuario : <select ref="tbCodUserSi3">
+                    <div className="form1">
+                        <img src="logo_open.png" width="200" height="75" className="img" />
+                        <div><label>Si accede a eaSi3 podrá imputar sus horas de trabajo de una forma rápida y sencilla.</label></div>
+                    </div>
+                    <div className="form2">
+                    <div><input type="text" name="name" ref="tbUserJira" placeholder="Introduzca usuario de Jira" autoComplete="off" /></div>
+                    <div><input type="password" name="name" ref="tbPassJira" placeholder="Introduzca contraseña de Jira" autoComplete="off" /></div>
+                    <div><select ref="tbCodUserSi3">
                         <option value="default">Seleccione un usuario</option>
                         {
                             this.state.users.map(user =>
@@ -124,12 +136,13 @@ export class LoginGeneral extends React.Component<LoginProps, LoginState> {
                                 </option>
                             )
                         }
-                    </select></label></div>
-                    <div><label id="labelForm">Usuario de Si3 : <input type="text" name="name" ref="tbUserSi3" placeholder="Introduzca usuario de Si3" autoComplete="off" /></label></div>
-                    <div><label id="labelForm">Contraseña de Si3 : <input type="password" name="name" ref="tbPassSi3" placeholder="Introduzca contraseña de Si3" autoComplete="off" /></label></div>
-                    <div><input type="submit" name="submit" value="Iniciar Sesión" className="btn btn-primary" /></div>
+                    </select></div>
+                    <div><input type="text" name="name" ref="tbUserSi3" placeholder="Introduzca usuario de Si3" autoComplete="off" /></div>
+                    <div><input type="password" name="name" ref="tbPassSi3" placeholder="Introduzca contraseña de Si3" autoComplete="off" /></div>
+                        <div><input type="submit" name="submit" value="Iniciar Sesión" className="btn btn-primary" /></div>
+                    </div>
                 </form>
-                <Loader show={this.state.loading} message={spinner} hideContentOnLoad={false} className={(this.state.loading == true) ? "overlay" : "overlay-1"} />
+                <Loader show={this.state.loading} message={<Cube />} hideContentOnLoad={false} className={(this.state.loading == true) ? "overlay" : "overlay-1"} />
             </div>
         )
     }

@@ -1,29 +1,37 @@
 ﻿.bodyLogin {
-    width: 600px;
+    width: 700px;
     margin: auto;
-    background-color: #E2ECEE;
+    background-color: transparent;
 }
 
-.img {
-    margin:auto;
-    position:center;
-    margin-left:70px;
-    margin-bottom:10px;
-    margin-right:160px;
+.img {    
+    position: center;
+    margin-bottom: 20px;
+    margin-right: 70px;
+}
+.form1 {
+    text-align: left;
+    border-right: 1px solid black;
+}
+.form2 {
+    margin-left: 50px;
+    text-align: left;
 }
 .formulario {
-    border: 1px solid #32CD32;
+    display: flex;
+    border: 1px solid black;
     border-radius: 6px;
     padding: 45px 45px 20px;
     margin-top: 50px;
     background-color: white;
-    box-shadow: 0px 5px 10px #B5C1C5, 0 0 0 10px #EEF inset;
     text-align:end;
 }
 
     .formulario label {
-        display: block;
-        font-weight: bold;
+        border-top: 1px solid black;
+        padding-top: 30px;
+        margin-top: 10px;
+        width: 200px;
     }
 
     .formulario div {
@@ -33,15 +41,13 @@
     .formulario input[type='text'], .formulario input[type ='password'], .formulario select {
         padding: 7px 6px;
         width: 294px;
-        border: 1px solid #32CD32;
+        border: 1px solid black;
         resize: none;
-        box-shadow: 0 0 0 3px #EEF;
         margin: 5px 0;
         
     }
     .formulario input[type='text']:focus, .formulario input[type ='password']:focus {
             outline: none;
-            box-shadow: 0 0 0 3px rgb(206, 213, 215);
     }
 
 
