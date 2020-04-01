@@ -43,7 +43,12 @@ namespace JiraConnector
             if (username == "csorribes")
                 username = "pcamacho";
 
-            workLog.RemoveAll(x => (x.RecordDate < startDate || x.RecordDate > endDate) || x.Author != username);
+            workLog.RemoveAll(x => (x.RecordDate < startDate || x.RecordDate > endDate));
+
+            if(!string.IsNullOrEmpty(username))
+            {
+                workLog.RemoveAll(x => x.Author != username);
+            }
 
             List<Task> issuetasks = new List<Task>();
             foreach (var log in workLog)

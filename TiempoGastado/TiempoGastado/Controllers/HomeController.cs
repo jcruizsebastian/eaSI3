@@ -41,7 +41,7 @@ namespace TiempoGastado.Controllers
         }
 
         [HttpPost]
-        public ActionResult Obtener2(TiempoGastado.Models.HomeModel homemodel)
+        public ActionResult Obtener(TiempoGastado.Models.HomeModel homemodel)
         {
             List<IssueConveter.Model.WorkLog> worklog = ObtenerTrabajo(homemodel);
 
@@ -55,7 +55,7 @@ namespace TiempoGastado.Controllers
             return worklog;
         }
 
-        public IActionResult Obtener(TiempoGastado.Models.HomeModel homemodel)
+        public FileResult Obtener2(TiempoGastado.Models.HomeModel homemodel)
         {
             IWorkbook workbook = new HSSFWorkbook();
             ISheet sheet = workbook.CreateSheet("My sheet");
@@ -91,11 +91,13 @@ namespace TiempoGastado.Controllers
             cell.SetCellValue("Status");
             cell = row.CreateCell(CuentaColumnas++);
             cell.SetCellValue("FixVersions");
-            
-            foreach(var trabajo in ObtenerTrabajo(homemodel))
+
+            var trabajos = ObtenerTrabajo(homemodel);
+            foreach (var trabajo in trabajos)
             {
                 CuentaColumnas = 0;
                 row = sheet.CreateRow(cuentaFilas++);
+                cell = row.CreateCell(CuentaColumnas++);
 
                 cell.SetCellValue(trabajo.Author);
                 cell = row.CreateCell(CuentaColumnas++);
@@ -124,11 +126,19 @@ namespace TiempoGastado.Controllers
                 cell.SetCellValue(trabajo.FixVersions);
             }
 
-            FileStream ms = new FileStream("C:\\SIOC\\ejemplo.xlsx", FileMode.Create, System.IO.FileAccess.Write);
+            //FileStream ms = new FileStream($"C:\\SIOC\\{homemodel.project} {homemodel.initDate.Replace("/", "")}-{homemodel.endDate.Replace("/", "")}.xls", FileMode.Create, FileAccess.Write);
+            MemoryStream ms = new System.IO.MemoryStream();
             workbook.Write(ms);
-            ms.Close();
-
-            return File(ms, "application/vnd.ms-excel", "trabajo.xlsx");
+            try
+            {
+                ms.Position = 0;
+                return File(ms, "application/vnd.ms-excel", $"C:\\SIOC\\{homemodel.project} {homemodel.initDate.Replace("/", "")}-{homemodel.endDate.Replace("/", "")}.xls");
+            }
+            catch
+            {
+                ms.Dispose();
+                throw;
+            }
         }
     }
 }
