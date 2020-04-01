@@ -41,7 +41,7 @@ namespace TiempoGastado.Controllers
         }
 
         [HttpPost]
-        public ActionResult Obtener(TiempoGastado.Models.HomeModel homemodel)
+        public ActionResult Obtener2(TiempoGastado.Models.HomeModel homemodel)
         {
             List<IssueConveter.Model.WorkLog> worklog = ObtenerTrabajo(homemodel);
 
@@ -50,12 +50,12 @@ namespace TiempoGastado.Controllers
 
         private static List<IssueConveter.Model.WorkLog> ObtenerTrabajo(HomeModel homemodel)
         {
-            JiraConnector.JiraWorkLogService jiraWorkLogService = new JiraConnector.JiraWorkLogService("jcruiz", "_*_d1d4ct1c109", "https://jira.openfinance.es/");
+            JiraConnector.JiraWorkLogService jiraWorkLogService = new JiraConnector.JiraWorkLogService("USERJIRA", "PASSWORDJIRA", "https://jira.openfinance.es/");
             var worklog = jiraWorkLogService.GetWorklog(DateTime.Parse(homemodel.initDate), DateTime.Parse(homemodel.endDate), homemodel.user, homemodel.project);
             return worklog;
         }
 
-        public FileResult Obtener2(TiempoGastado.Models.HomeModel homemodel)
+        public FileResult Obtener(TiempoGastado.Models.HomeModel homemodel)
         {
             IWorkbook workbook = new HSSFWorkbook();
             ISheet sheet = workbook.CreateSheet("My sheet");

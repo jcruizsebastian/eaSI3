@@ -8,40 +8,40 @@ namespace SI3Connector.Test
     [TestClass]
     public class SI3IntegrationTests
     {
-        public string _user = "ofjcruiz";
-        public string _password = "_*_d1d4ct1c";
+        public string _user = "USERSI3";
+        public string _password = "PASSWORDSI3";
         public int _workHours = 40;
 
         [TestMethod]
         public void AddIssueWork()
         {
-            SI3Service service = new SI3Service("ofjcruiz", "_*_d1d4ct1c", 40, "http://si3.infobolsa.es/");
+            SI3Service service = new SI3Service("USERSI3", "PASSWORDSI3", 40, "http://si3.infobolsa.es/");
             service.AddIssueWork("45817", DateTime.Today, 1);
         }
 
         [TestMethod]
         public void EditIssue()
         {
-            SI3Service service = new SI3Service("ofjcruiz", "_*_d1d4ct1c", 40, "http://si3.infobolsa.es/");
+            SI3Service service = new SI3Service("USERSI3", "PASSWORDSI3", 40, "http://si3.infobolsa.es/");
             service.EditIssue("30779", 2);
         }
 
         [TestMethod]
         public void GetProjectsUser()
         {
-            SI3Service service = new SI3Service("ofjcruiz", "_*_d1d4ct1c", 40, "http://si3.infobolsa.es/");
+            SI3Service service = new SI3Service("USERSI3", "PASSWORDSI3", 40, "http://si3.infobolsa.es/");
             service.GetProjectsUser();
         }
         [TestMethod]
         public void ExistsProject()
         {
-            SI3Service service = new SI3Service("ofjcruiz", "_*_d1d4ct1c", 40, "http://si3.infobolsa.es/");
+            SI3Service service = new SI3Service("USERSI3", "PASSWORDSI3", 40, "http://si3.infobolsa.es/");
             var x = service.existsProject("O-120,H-53");
         }
         [TestMethod]
         public void AddProjectWork()
         {
-            SI3Service service = new SI3Service("ofjcruiz", "_*_d1d4ct1c", 40, "http://si3.infobolsa.es/");
+            SI3Service service = new SI3Service("USERSI3", "PASSWORDSI3", 40, "http://si3.infobolsa.es/");
             Dictionary<DayOfWeek, int> work = new Dictionary<DayOfWeek, int>();
             work.Add(DayOfWeek.Monday, 5);
             work.Add(DayOfWeek.Thursday, 3);
@@ -53,8 +53,8 @@ namespace SI3Connector.Test
         public void testrefactor()
         {
             var x_www_form_url_encoded = new Dictionary<string, string>();
-            x_www_form_url_encoded.Add("user", "ofjcruiz");
-            x_www_form_url_encoded.Add("pwd", "_*_d1d4ct1c");
+            x_www_form_url_encoded.Add("user", "USERSI3");
+            x_www_form_url_encoded.Add("pwd", "PASSWORDSI3");
             x_www_form_url_encoded.Add("DSN", "GESOPENFINANCE");
 
             SI3HttpRequest request = new SI3HttpRequest();
@@ -71,28 +71,28 @@ namespace SI3Connector.Test
         [TestMethod]
         public void testGetWeekCode()
         {
-            SI3Service service = new SI3Service("ofjcruiz", "_*_d1d4ct1c", 40, "http://si3.infobolsa.es/");
+            SI3Service service = new SI3Service("USERSI3", "PASSWORDSI3", 40, "http://si3.infobolsa.es/");
             var a = service.GetWeekCode(5);
         }
 
         [TestMethod]
         public void testGetSubproject()
         {
-            SI3Service service = new SI3Service("ofjcruiz", "_*_d1d4ct1c", 40, "http://si3.infobolsa.es/");
+            SI3Service service = new SI3Service("USERSI3", "PASSWORDSI3", 40, "http://si3.infobolsa.es/");
             var a = service.GetMilestone("O-180,H-10");
         }
 
         [TestMethod]
         public void testIsIssueOpened()
         {
-            SI3Service service = new SI3Service("ofjcruiz", "_*_d1d4ct1c", 40, "http://si3.infobolsa.es/");
+            SI3Service service = new SI3Service("USERSI3", "PASSWORDSI3", 40, "http://si3.infobolsa.es/");
             var a = service.IsIssueOpened("44383");
         }
 
         [TestMethod]
         public void testIsProjectOpened()
         {
-            SI3Service service = new SI3Service("ofjcruiz", "_*_d1d4ct1c", 40, "http://si3.infobolsa.es/");
+            SI3Service service = new SI3Service("USERSI3", "PASSWORDSI3", 40, "http://si3.infobolsa.es/");
             var a = service.IsProjectOpened("O-180,H-10");
         }
 
@@ -127,7 +127,7 @@ namespace SI3Connector.Test
         [TestMethod]
         public void testAvailableHours()
         {
-            SI3Service service = new SI3Service("ofjcruiz", "_*_d1d4ct1c", 40, "http://si3.infobolsa.es/");
+            SI3Service service = new SI3Service("USERSI3", "PASSWORDSI3", 40, "http://si3.infobolsa.es/");
             var a = service.SpendedHours(5);
         }
 
@@ -148,26 +148,26 @@ namespace SI3Connector.Test
                 component = "591"               
             };
 
-            SI3Service service = new SI3Service("ofjcruiz", "_*_d1d4ct1c", 40, "http://si3.infobolsa.es/");
+            SI3Service service = new SI3Service("USERSI3", "PASSWORDSI3", 40, "http://si3.infobolsa.es/");
             var a = service.NewIssue(newissue);
         }
         [TestMethod]
         public void GetProjects()
         {
-            SI3Service service = new SI3Service("ofjcruiz", "_*_d1d4ct1c", 40, "http://si3.infobolsa.es/");
+            SI3Service service = new SI3Service("USERSI3", "PASSWORDSI3", 40, "http://si3.infobolsa.es/");
             var a = service.GetProjects();
         }
         [TestMethod]
         public void GetMilestones()
         {
-            SI3Service service = new SI3Service("ofjcruiz", "_*_d1d4ct1c", 40, "http://si3.infobolsa.es/");
+            SI3Service service = new SI3Service("USERSI3", "PASSWORDSI3", 40, "http://si3.infobolsa.es/");
             var a = service.GetMilestones();
         }
 
         [TestMethod]
         public void GetJustAddeProjectWorkTest()
         {
-            SI3Service service = new SI3Service("ofjcruiz", "_*_d1d4ct1c", 40, "http://si3.infobolsa.es/");
+            SI3Service service = new SI3Service("USERSI3", "PASSWORDSI3", 40, "http://si3.infobolsa.es/");
             var a = service.GetAlreadyTimeRecorded("47983-10");
         }
 

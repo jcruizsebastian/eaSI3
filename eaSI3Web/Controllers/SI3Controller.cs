@@ -51,7 +51,7 @@ namespace eaSI3Web.Controllers
             var productos = new Dictionary<String,String>();
             try
             {
-                SI3Service SI3Service = new SI3Service("ofjcruiz", "_*_d1d4ct1c",data.Value.Week_Hours,data.Value.Si3_Host_URL);
+                SI3Service SI3Service = new SI3Service("USERSI3", "PASSWORDSI3",data.Value.Week_Hours,data.Value.Si3_Host_URL);
                 productos = SI3Service.GetProducts();
                 foreach (var product in productos)
                 {
@@ -151,7 +151,7 @@ namespace eaSI3Web.Controllers
             List<Models.User> users = new List<Models.User>();
             try
             {
-                SI3Service SI3Service = new SI3Service("ofjcruiz", "_*_d1d4ct1c", data.Value.Week_Hours, data.Value.Si3_Host_URL);
+                SI3Service SI3Service = new SI3Service("USERSI3", "PASSWORDSI3", data.Value.Week_Hours, data.Value.Si3_Host_URL);
                 foreach (var userDic in SI3Service.GetUsers())
                 {
                     Models.User user = new Models.User
