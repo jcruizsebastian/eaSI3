@@ -19,7 +19,7 @@ namespace JiraConnector.Test
         public void InitializeTests()
         {
             username = "jcruiz";
-            password = "_*_d1d4ct1c98";
+            password = "_*_d1d4ct1c109";
             jiraUrl = "https://jira.openfinance.es/";
 
             jiraWorkLogService = new JiraWorkLogService(username, password,jiraUrl);
@@ -29,7 +29,7 @@ namespace JiraConnector.Test
         public void TestGetCurrentWorklog()
         {
             //Act
-            var worklog = jiraWorkLogService.GetWorklog(new DateTime(2019, 01, 01), new DateTime(2019, 01, 07), username);
+            var worklog = jiraWorkLogService.GetWorklog(new DateTime(2019, 01, 01), new DateTime(2019, 02, 07), username, "VAC");
 
             //Assert
             Assert.IsNotNull(worklog, "No se recibió issue alguna");

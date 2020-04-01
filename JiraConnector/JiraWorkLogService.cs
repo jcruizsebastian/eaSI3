@@ -28,9 +28,9 @@ namespace JiraConnector
             var response = jiraHttpRequest.DoJiraRequest<IssuesList>(JiraURIRepository.UPDATE_ISSUE(issueKey), Method.PUT, jsonBody);
         }
 
-        public List<WorkLog> GetWorklog(DateTime startDate, DateTime endDate, string username)
+        public List<WorkLog> GetWorklog(DateTime startDate, DateTime endDate, string username, string project= null)
         {            
-            var response = jiraHttpRequest.DoJiraRequest<IssuesList>(JiraURIRepository.GET_WORKLOG(startDate, endDate, username), Method.GET);
+            var response = jiraHttpRequest.DoJiraRequest<IssuesList>(JiraURIRepository.GET_WORKLOG(startDate, endDate, username, project), Method.GET);
 
             List<WorkLog> workLog = new List<WorkLog>();
 
@@ -54,6 +54,9 @@ namespace JiraConnector
                     log.Summary = issue.Summary;
                     log.Key = issue.Key;
                     log.Type = issue.Issuetype;
+                    log.Components = string.Join(", ", issue.Components.ToArray());
+                    log.Status = issue.Status;
+                    log.FixVersions = string.Join(", ", issue.FixVersions.ToArray());
 
                     var fields = response.Data.Issues.First(x => x.id == log.IssueId)?.fields;
                     var properties = fields.GetType().GetProperties();

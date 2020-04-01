@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace IssueConveter.Model
 {
@@ -14,5 +15,10 @@ namespace IssueConveter.Model
         public string Summary { get; set; }
         public string si3ID { get; set; }
         public string Type { get; set; }
+        public string Components { get; set; }
+        public string Status { get; set; }
+        public string FixVersions { get; set; }
+        public string WorkType { get; set; }
     }
+
 }

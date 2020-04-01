@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2027
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29609.76
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JiraConnector", "JiraConnector\JiraConnector.csproj", "{B71EF083-7372-4020-A6F6-FA5B415EF742}"
 EndProject
@@ -22,6 +22,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IssueConveter", "IssueConveter\IssueConveter.csproj", "{53379D54-EB69-446E-A728-18B82BB38220}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SI3Connector.Test", "SI3Connector.Test\SI3Connector.Test.csproj", "{FC57DB4C-624D-4F9F-81F9-3F363678B8C1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TiempoGastado", "TiempoGastado\TiempoGastado\TiempoGastado.csproj", "{7B30F321-2D29-468D-97FB-0A45309F32B8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,6 +63,10 @@ Global
 		{FC57DB4C-624D-4F9F-81F9-3F363678B8C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FC57DB4C-624D-4F9F-81F9-3F363678B8C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FC57DB4C-624D-4F9F-81F9-3F363678B8C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B30F321-2D29-468D-97FB-0A45309F32B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B30F321-2D29-468D-97FB-0A45309F32B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B30F321-2D29-468D-97FB-0A45309F32B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B30F321-2D29-468D-97FB-0A45309F32B8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
